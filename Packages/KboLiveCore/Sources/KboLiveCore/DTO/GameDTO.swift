@@ -1,0 +1,175 @@
+import Foundation
+
+public struct TodayGamesResponseDTO: Decodable, Sendable {
+    public let date: String
+    public let games: [GameDTO]
+
+    public init(date: String, games: [GameDTO]) {
+        self.date = date
+        self.games = games
+    }
+}
+
+public struct GameDetailResponseDTO: Decodable, Sendable {
+    public let date: String
+    public let game: GameDTO?
+
+    public init(date: String, game: GameDTO?) {
+        self.date = date
+        self.game = game
+    }
+}
+
+public struct GameDTO: Decodable, Identifiable, Sendable {
+    public let gameId: String
+    public let date: String
+    public let venue: String?
+    public let startTime: String?
+    public let status: GameStatusDTO
+    public let awayTeam: TeamDTO
+    public let homeTeam: TeamDTO
+    public let score: ScoreDTO
+    public let inning: InningDTO?
+    public let count: CountDTO?
+    public let bases: BasesDTO?
+    public let current: CurrentMatchupDTO?
+    public let probablePitchers: ProbablePitchersDTO
+    public let recentPlay: String?
+    public let sourceMeta: SourceMetaDTO
+
+    public var id: String { gameId }
+
+    public init(
+        gameId: String,
+        date: String,
+        venue: String?,
+        startTime: String?,
+        status: GameStatusDTO,
+        awayTeam: TeamDTO,
+        homeTeam: TeamDTO,
+        score: ScoreDTO,
+        inning: InningDTO?,
+        count: CountDTO?,
+        bases: BasesDTO?,
+        current: CurrentMatchupDTO?,
+        probablePitchers: ProbablePitchersDTO,
+        recentPlay: String?,
+        sourceMeta: SourceMetaDTO
+    ) {
+        self.gameId = gameId
+        self.date = date
+        self.venue = venue
+        self.startTime = startTime
+        self.status = status
+        self.awayTeam = awayTeam
+        self.homeTeam = homeTeam
+        self.score = score
+        self.inning = inning
+        self.count = count
+        self.bases = bases
+        self.current = current
+        self.probablePitchers = probablePitchers
+        self.recentPlay = recentPlay
+        self.sourceMeta = sourceMeta
+    }
+}
+
+public struct TeamDTO: Decodable, Sendable {
+    public let id: String
+    public let name: String
+
+    public init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
+}
+
+public struct ScoreDTO: Decodable, Sendable {
+    public let away: Int
+    public let home: Int
+
+    public init(away: Int, home: Int) {
+        self.away = away
+        self.home = home
+    }
+}
+
+public struct InningDTO: Decodable, Sendable {
+    public let number: Int
+    public let half: InningHalfDTO
+
+    public init(number: Int, half: InningHalfDTO) {
+        self.number = number
+        self.half = half
+    }
+}
+
+public struct CountDTO: Decodable, Sendable {
+    public let balls: Int
+    public let strikes: Int
+    public let outs: Int
+
+    public init(balls: Int, strikes: Int, outs: Int) {
+        self.balls = balls
+        self.strikes = strikes
+        self.outs = outs
+    }
+}
+
+public struct BasesDTO: Decodable, Sendable {
+    public let first: Bool
+    public let second: Bool
+    public let third: Bool
+
+    public init(first: Bool, second: Bool, third: Bool) {
+        self.first = first
+        self.second = second
+        self.third = third
+    }
+}
+
+public struct CurrentMatchupDTO: Decodable, Sendable {
+    public let batter: String?
+    public let pitcher: String?
+
+    public init(batter: String?, pitcher: String?) {
+        self.batter = batter
+        self.pitcher = pitcher
+    }
+}
+
+public struct ProbablePitchersDTO: Decodable, Sendable {
+    public let away: String?
+    public let home: String?
+
+    public init(away: String?, home: String?) {
+        self.away = away
+        self.home = home
+    }
+}
+
+public struct SourceMetaDTO: Decodable, Sendable {
+    public let rawStatusCode: String?
+    public let rawTopBottomCode: String?
+    public let fetchedAt: String
+
+    public init(rawStatusCode: String?, rawTopBottomCode: String?, fetchedAt: String) {
+        self.rawStatusCode = rawStatusCode
+        self.rawTopBottomCode = rawTopBottomCode
+        self.fetchedAt = fetchedAt
+    }
+}
+
+public enum GameStatusDTO: String, Decodable, Sendable {
+    case scheduled
+    case live
+    case final
+    case delayed
+    case cancelled
+    case unknown
+}
+
+public enum InningHalfDTO: String, Decodable, Sendable {
+    case top
+    case bottom
+}
