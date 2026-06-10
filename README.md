@@ -32,6 +32,7 @@ Packages/         # Swift shared package scaffold
 - polling / dump / fixture 저장 흐름
 - `Packages/KboLiveCore` 최소 DTO/domain/mapper/test scaffold
 - widget / live activity / menu bar projection 모델 및 mapper 초안
+- `Packages/KboLiveDesignSystem` token/theme/primitive scaffold
 
 ## 빠른 시작
 

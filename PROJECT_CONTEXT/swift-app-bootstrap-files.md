@@ -9,6 +9,7 @@
 - `TodayGamesResponseDTO`, `GameDetailResponseDTO`, `GameDTO` 및 하위 DTO 초안 코드 작성 완료
 - `GameDTO -> Game` mapper 초안 작성 완료
 - widget / live activity / menu bar용 shared projection(`WidgetGameSnapshot`, `ActivityGameState`, `MenuBarGameSummary`) 및 mapper 초안 추가 완료
+- `Packages/KboLiveDesignSystem` package 및 token/theme/primitive scaffold 추가 완료
 - fixture 기반 decode/mapper/projection 테스트 파일 추가 완료
 - 단, 현재 Linux 호스트에는 Swift toolchain이 없어 `swift test` 실행 검증은 아직 미완료
 
