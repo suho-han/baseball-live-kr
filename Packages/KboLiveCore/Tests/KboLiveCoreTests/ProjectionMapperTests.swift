@@ -1,0 +1,79 @@
+import Foundation
+import Testing
+@testable import KboLiveCore
+
+struct ProjectionMapperTests {
+    @Test func mapsScheduledGameToWidgetSnapshot() throws {
+        let response = try loadFixtureResponse()
+        let game = GameDTOMapper.map(try #require(response.games.first))
+        let snapshot = WidgetGameSnapshotMapper.map(game)
+
+        #expect(snapshot.gameId == "20260610SKLG0")
+        #expect(snapshot.awayTeamName == "SSG")
+        #expect(snapshot.homeTeamName == "LG")
+        #expect(snapshot.status == .scheduled)
+        #expect(snapshot.inningText == "18:30 예정")
+        #expect(snapshot.baseState == BasesState(first: false, second: false, third: false))
+        #expect(snapshot.recentPlay == nil)
+    }
+
+    @Test func mapsLiveGameToActivityState() throws {
+        let response = try loadFixtureResponse()
+        let game = GameDTOMapper.map(response.games[1])
+        let state = ActivityGameStateMapper.map(game)
+
+        #expect(state.awayScore == 3)
+        #expect(state.homeScore == 2)
+        #expect(state.status == .live)
+        #expect(state.inningText == "7회말")
+        #expect(state.outs == 2)
+        #expect(state.hasRunnerOnFirst == true)
+        #expect(state.hasRunnerOnSecond == false)
+        #expect(state.hasRunnerOnThird == true)
+        #expect(state.shortRecentPlay == "좌전 적시타")
+    }
+
+    @Test func mapsLiveGameToMenuBarSummary() throws {
+        let response = try loadFixtureResponse()
+        let game = GameDTOMapper.map(response.games[1])
+        let summary = MenuBarGameSummaryMapper.map(game)
+
+        #expect(summary.gameId == "20260610HTHH0")
+        #expect(summary.status == .live)
+        #expect(summary.isLive == true)
+        #expect(summary.primaryText == "KIA 3:2 한화")
+        #expect(summary.secondaryText == "LIVE · 7회말 · 2사")
+    }
+
+    @Test func truncatesLongRecentPlayForActivityState() {
+        let game = makeGame(recentPlay: "오스틴의 좌중간 담장을 때리는 아주 긴 적시 2루타 설명")
+        let state = ActivityGameStateMapper.map(game)
+
+        #expect(state.shortRecentPlay == "오스틴의 좌중간 담장을 때리는 아주 긴 적…")
+    }
+
+    private func loadFixtureResponse() throws -> TodayGamesResponseDTO {
+        let data = try FixtureLoader.loadData(named: "today-games-response")
+        return try JSONDecoder().decode(TodayGamesResponseDTO.self, from: data)
+    }
+
+    private func makeGame(recentPlay: String?) -> Game {
+        Game(
+            id: "sample",
+            date: "20260610",
+            venue: "잠실",
+            startTime: nil,
+            status: .live,
+            awayTeam: Team(id: "LG", name: "LG"),
+            homeTeam: Team(id: "OB", name: "두산"),
+            score: Score(away: 4, home: 3),
+            inning: InningState(number: 9, half: .bottom),
+            count: CountState(balls: 1, strikes: 2, outs: 2),
+            bases: BasesState(first: true, second: true, third: false),
+            current: CurrentMatchup(batter: "오스틴", pitcher: "박치국"),
+            probablePitchers: ProbablePitchers(away: nil, home: nil),
+            recentPlay: recentPlay,
+            sourceMeta: SourceMeta(rawStatusCode: nil, rawTopBottomCode: nil, fetchedAt: "2026-06-10T10:05:00.000Z")
+        )
+    }
+}
