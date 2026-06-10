@@ -1,0 +1,28 @@
+.DS_Store
+*.log
+*.tmp
+
+# Node
+node_modules/
+backend-spike/node_modules/
+backend-spike/dist/
+
+# Runtime outputs
+backend-spike/logs/polling/
+
+# Swift
+.build/
+DerivedData/
+Package.resolved
+
+# Xcode user data
+*.xcuserdata/
+*.xcuserstate
+
+# Local env
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
