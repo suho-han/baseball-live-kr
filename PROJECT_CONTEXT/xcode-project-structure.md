@@ -1,6 +1,7 @@
 # KBO Live Project Structure
 
 작성일: 2026-06-13  
+업데이트: 2026-06-14  
 상태: Current
 
 이 문서는 현재 `kbo-live` 저장소의 실제 구조와 개발 진입점을 정리한 기준 문서다.
@@ -175,9 +176,25 @@ KboLiveApp/
 
 - Fastify 서버
 - KBO source 호출
+- month-level schedule loading
+- schedule metadata normalization
 - fixture dump
 - polling 로그 저장
 - `today`, `game detail`, `debug source` endpoint
+
+로컬 실행:
+
+```bash
+./scripts/backend-start.sh
+./scripts/backend-stop.sh
+```
+
+macOS 앱 연결:
+
+- 기본 backend URL: `http://127.0.0.1:3000`
+- `KBO_LIVE_BASE_URL` 환경변수로 override 가능
+- 메뉴바에서 설정, 메인 창, 서버 상태 확인 버튼을 같은 행에 표시
+- 서버 상태는 `/health`를 5초 주기로 확인
 
 ## 8. 개발 진입점
 

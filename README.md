@@ -43,6 +43,17 @@ npm install
 npm run dev
 ```
 
+백그라운드 실행/종료:
+```bash
+./scripts/backend-start.sh
+./scripts/backend-stop.sh
+```
+
+로그:
+```bash
+tail -f backend-spike/logs/backend.log
+```
+
 ### Swift package
 이 Linux 호스트에는 Swift toolchain이 없어서 검증은 Mac/Xcode 환경에서 진행해야 합니다.
 
@@ -70,8 +81,8 @@ open KboLiveApp.xcodeproj
 - `KboLiveWidgetExtension`
 
 macOS 앱 기본 동작:
-- `KBO_LIVE_BASE_URL`을 지정하지 않으면 샘플 경기 데이터로 실행됩니다.
-- 실데이터 백엔드에 연결하려면 예: `KBO_LIVE_BASE_URL=http://127.0.0.1:3000`
+- `KBO_LIVE_BASE_URL`을 지정하지 않으면 `http://127.0.0.1:3000` 백엔드를 사용합니다.
+- 다른 백엔드에 연결하려면 예: `KBO_LIVE_BASE_URL=http://127.0.0.1:3000`
 
 로컬 검증에 사용한 명령:
 ```bash

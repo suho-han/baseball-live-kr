@@ -1,6 +1,7 @@
 # KBO Live Forward Development Roadmap
 
 작성일: 2026-06-12
+업데이트: 2026-06-14
 상태: Working v0.1
 목표: 현재 backend spike와 shared Swift package 상태에서 실제 Apple 플랫폼 MVP까지 가는 개발 계획을 정의한다.
 
@@ -28,6 +29,7 @@ MVP에서 제외:
 - `backend-spike` Fastify 서버
 - KBO 공식 웹서비스 호출
 - normalized game JSON 응답
+- 월 단위 schedule + 날짜별 game list 병합
 - `/health`
 - `/games/today`
 - `/games/:gameId`
@@ -35,21 +37,23 @@ MVP에서 제외:
 - `KboLiveCore` domain/DTO/mapper/projection
 - `KboLiveCore` networking/repository/polling service
 - `KboLiveDesignSystem` token/theme/primitive scaffold
+- Xcode workspace/project
+- iOS app target
+- macOS menu bar target
+- Widget extension
+- SwiftUI Today Games / Game Detail 화면
+- macOS 메뉴바 서버 상태 확인 UI
 - Discord connector 응답 규칙용 `AGENTS.md`
 
 검증된 것:
 - `backend-spike` typecheck/test/build 통과
 - `KboLiveCore` Swift test 16개 통과
 - 실제 KBO 응답 기준 `/games/today` 정상 동작 확인
+- 2026-06-14 기준 6월 전체 schedule 90경기 로드 확인
+- `KboLivemacOS` Xcode build 통과
 
 아직 없는 것:
-- Xcode workspace
-- iOS app target
-- macOS menu bar target
-- Widget extension
 - Live Activity extension
-- 실제 SwiftUI 화면
-- 앱 상태 관리/view model
 - local backend base URL 설정 UI
 - `recentPlay` 백엔드 매핑
 

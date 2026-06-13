@@ -5,33 +5,16 @@ import KboLiveCore
 
 enum AppRuntime {
     static func makeClient() -> GameFeedClient {
-        if let baseURL {
-            return GameFeedClient.live(baseURL: baseURL)
-        }
-
-        return GameFeedClient(
-            repository: MockGameRepository(
-                todayGames: SampleGameFactory.todayGames,
-                gameDetailsById: sampleGameDetails
-            ),
-            pollingInterval: .seconds(30)
-        )
+        GameFeedClient.live(baseURL: backendBaseURL)
     }
 
-    private static var baseURL: URL? {
+    static var backendBaseURL: URL {
         if let configured = ProcessInfo.processInfo.environment["KBO_LIVE_BASE_URL"],
            let url = URL(string: configured) {
             return url
         }
 
-        return nil
+        return URL(string: "http://127.0.0.1:3000")!
     }
 
-    private static var sampleGameDetails: [String: GameDetail] {
-        Dictionary(
-            uniqueKeysWithValues: SampleGameFactory.todayGames.games.map { game in
-                (game.id, GameDetail(date: SampleGameFactory.todayGames.date, game: game))
-            }
-        )
-    }
 }

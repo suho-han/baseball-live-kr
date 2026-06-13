@@ -96,6 +96,8 @@ schemes:
         KboLivemacOS: all
     run:
       config: Debug
+      environmentVariables:
+        KBO_LIVE_BASE_URL: http://127.0.0.1:3000
   KboLiveWidgetExtension:
     build:
       targets:

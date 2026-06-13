@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 #if canImport(AppKit)
 import AppKit
 #endif
@@ -16,6 +17,7 @@ struct MenuBarDashboardView: View {
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var navigationModel: AppNavigationModel
     @Environment(\.openWindow) private var openWindow
+    @State private var backendStatus: BackendServerStatus = .checking
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -31,16 +33,25 @@ struct MenuBarDashboardView: View {
 
             Divider()
 
-            VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
                 SettingsLink {
-                    actionRow(title: "설정", systemImage: "gearshape")
+                    compactActionButton(title: "설정", systemImage: "gearshape")
                 }
                 .buttonStyle(.plain)
 
                 Button {
                     openWindow(id: "main-window")
                 } label: {
-                    actionRow(title: "앱 창 열기", systemImage: "macwindow")
+                    compactActionButton(title: "메인으로", systemImage: "macwindow")
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    Task {
+                        await refreshBackendStatus()
+                    }
+                } label: {
+                    compactStatusButton
                 }
                 .buttonStyle(.plain)
             }
@@ -49,6 +60,7 @@ struct MenuBarDashboardView: View {
         .frame(width: 340)
         .task {
             await viewModel.loadIfNeeded()
+            await monitorBackendStatus()
         }
     }
 
@@ -204,28 +216,85 @@ struct MenuBarDashboardView: View {
 #endif
     }
 
-    private func actionRow(title: String, systemImage: String) -> some View {
-        HStack(spacing: 10) {
+    private func compactActionButton(title: String, systemImage: String) -> some View {
+        VStack(spacing: 6) {
             Image(systemName: systemImage)
-                .font(.caption.weight(.semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(headerAccentColor.opacity(0.85))
-                .frame(width: 16)
+                .frame(height: 16)
 
             Text(title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
-
-            Spacer()
-
-            Image(systemName: "chevron.right")
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 54)
         .background(Color.primary.opacity(0.05))
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    private var compactStatusButton: some View {
+        VStack(spacing: 6) {
+            Image(systemName: backendStatus.systemImage)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(backendStatus.color)
+                .frame(height: 16)
+
+            Text(backendStatus.title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+        }
+        .frame(maxWidth: .infinity, minHeight: 54)
+        .background(backendStatus.color.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(backendStatus.color.opacity(0.35), lineWidth: 1)
+        }
+        .help(backendStatus.helpText)
+    }
+
+    private func refreshBackendStatus() async {
+        guard let healthURL = backendHealthURL else {
+            backendStatus = .notConfigured
+            return
+        }
+
+        backendStatus = .checking
+
+        do {
+            var request = URLRequest(url: healthURL)
+            request.timeoutInterval = 1.5
+            let (_, response) = try await URLSession.shared.data(for: request)
+
+            if let httpResponse = response as? HTTPURLResponse,
+               (200..<300).contains(httpResponse.statusCode) {
+                backendStatus = .active
+            } else {
+                backendStatus = .inactive
+            }
+        } catch {
+            backendStatus = .inactive
+        }
+    }
+
+    private func monitorBackendStatus() async {
+        while Task.isCancelled == false {
+            await refreshBackendStatus()
+
+            do {
+                try await Task.sleep(for: .seconds(5))
+            } catch {
+                return
+            }
+        }
+    }
+
+    private var backendHealthURL: URL? {
+        AppRuntime.backendBaseURL.appending(path: "health")
     }
 
     private func teamBadge(for team: Team) -> some View {
@@ -460,4 +529,63 @@ struct MenuBarDashboardView: View {
         formatter.dateFormat = "yyyyMMdd"
         return formatter
     }()
+}
+
+private enum BackendServerStatus {
+    case checking
+    case active
+    case inactive
+    case notConfigured
+
+    var title: String {
+        switch self {
+        case .checking:
+            return "확인 중"
+        case .active:
+            return "서버 ON"
+        case .inactive:
+            return "서버 OFF"
+        case .notConfigured:
+            return "서버 미설정"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .checking:
+            return "arrow.clockwise"
+        case .active:
+            return "checkmark.circle.fill"
+        case .inactive:
+            return "xmark.circle.fill"
+        case .notConfigured:
+            return "exclamationmark.circle.fill"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .checking:
+            return .secondary
+        case .active:
+            return .green
+        case .inactive:
+            return .red
+        case .notConfigured:
+            return .orange
+        }
+    }
+
+    var helpText: String {
+        switch self {
+        case .checking:
+            return "백엔드 서버 상태를 확인하고 있습니다."
+        case .active:
+            return "백엔드 서버가 응답 중입니다."
+        case .inactive:
+            return "백엔드 서버가 응답하지 않습니다."
+        case .notConfigured:
+            return "KBO_LIVE_BASE_URL이 설정되지 않았습니다."
+        }
+    }
 }
