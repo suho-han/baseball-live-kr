@@ -20,12 +20,64 @@ public enum GameDTOMapper {
                 home: nilIfBlank(dto.probablePitchers.home)
             ),
             recentPlay: nilIfBlank(dto.recentPlay),
+            teamRecords: mapTeamRecords(dto.teamRecords),
+            boxScore: mapBoxScore(dto.boxScore),
+            lineupPreview: mapLineupPreview(dto.lineupPreview),
+            analysis: mapAnalysis(dto.analysis),
             sourceMeta: SourceMeta(
                 rawStatusCode: dto.sourceMeta.rawStatusCode,
                 rawTopBottomCode: dto.sourceMeta.rawTopBottomCode,
                 fetchedAt: dto.sourceMeta.fetchedAt
             )
         )
+    }
+
+    static func mapTeamRecords(_ dto: TeamRecordsDTO?) -> TeamRecords? {
+        guard let dto else { return nil }
+        return TeamRecords(
+            away: dto.away.map(mapTeamRecordSummary),
+            home: dto.home.map(mapTeamRecordSummary)
+        )
+    }
+
+    static func mapTeamRecordSummary(_ dto: TeamRecordSummaryDTO) -> TeamRecordSummary {
+        TeamRecordSummary(
+            wins: dto.wins,
+            losses: dto.losses,
+            draws: dto.draws,
+            rank: dto.rank,
+            streak: nilIfBlank(dto.streak)
+        )
+    }
+
+    static func mapBoxScore(_ dto: BoxScoreDTO?) -> BoxScore? {
+        guard let dto else { return nil }
+        return BoxScore(
+            away: mapTeamBoxScore(dto.away),
+            home: mapTeamBoxScore(dto.home),
+            linescore: dto.linescore.map { InningScore(inning: $0.inning, away: $0.away, home: $0.home) }
+        )
+    }
+
+    static func mapTeamBoxScore(_ dto: TeamBoxScoreDTO) -> TeamBoxScore {
+        TeamBoxScore(runs: dto.runs, hits: dto.hits, errors: dto.errors, walks: dto.walks)
+    }
+
+    static func mapLineupPreview(_ dto: LineupPreviewDTO?) -> LineupPreview? {
+        guard let dto else { return nil }
+        let away = dto.away.compactMap(nilIfBlank)
+        let home = dto.home.compactMap(nilIfBlank)
+        guard !away.isEmpty || !home.isEmpty else { return nil }
+        return LineupPreview(away: away, home: home)
+    }
+
+    static func mapAnalysis(_ dto: TeamAnalysisDTO?) -> TeamAnalysis? {
+        guard let dto else { return nil }
+        let keyPoints = dto.keyPoints.compactMap(nilIfBlank)
+        let awaySummary = nilIfBlank(dto.awaySummary)
+        let homeSummary = nilIfBlank(dto.homeSummary)
+        guard awaySummary != nil || homeSummary != nil || !keyPoints.isEmpty else { return nil }
+        return TeamAnalysis(awaySummary: awaySummary, homeSummary: homeSummary, keyPoints: keyPoints)
     }
 
     static func nilIfBlank(_ value: String?) -> String? {
@@ -36,21 +88,27 @@ public enum GameDTOMapper {
 
     static func parseStartTime(_ value: String?) -> Date? {
         guard let value = nilIfBlank(value) else { return nil }
-        return ISO8601DateFormatter.kboBasic.date(from: value)
-            ?? ISO8601DateFormatter.kboExtended.date(from: value)
+        return makeKboStartTimeDateFormatter().date(from: value)
+            ?? makeKboBasicDateFormatter().date(from: value)
+            ?? makeKboExtendedDateFormatter().date(from: value)
     }
-}
 
-private extension ISO8601DateFormatter {
-    static let kboBasic: ISO8601DateFormatter = {
+    private static func makeKboStartTimeDateFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyyMMdd'T'HH:mm:ssXXXXX"
+        return formatter
+    }
+
+    private static func makeKboBasicDateFormatter() -> ISO8601DateFormatter {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate, .withTime, .withTimeZone]
         return formatter
-    }()
+    }
 
-    static let kboExtended: ISO8601DateFormatter = {
+    private static func makeKboExtendedDateFormatter() -> ISO8601DateFormatter {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         return formatter
-    }()
+    }
 }

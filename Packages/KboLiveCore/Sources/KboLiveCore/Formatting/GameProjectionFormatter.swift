@@ -1,7 +1,7 @@
 import Foundation
 
-enum GameProjectionFormatter {
-    static func inningText(for game: Game) -> String? {
+public enum GameProjectionFormatter {
+    public static func inningText(for game: Game) -> String? {
         switch game.status {
         case .scheduled:
             if let startTime = game.startTime {
@@ -24,11 +24,11 @@ enum GameProjectionFormatter {
         }
     }
 
-    static func menuBarSecondaryText(for game: Game) -> String? {
+    public static func menuBarSecondaryText(for game: Game) -> String? {
         let inningText = inningText(for: game)
         let outsText = game.status == .live ? outCountText(for: game.count?.outs) : nil
 
-        let parts = [statusLabel(for: game.status), inningText, outsText]
+        let parts = [statusLabelText(for: game.status), inningText, outsText]
             .compactMap { $0 }
             .filter { $0.isEmpty == false }
             .reduce(into: [String]()) { partialResult, part in
@@ -40,7 +40,7 @@ enum GameProjectionFormatter {
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
-    static func shortRecentPlay(_ text: String?, limit: Int) -> String? {
+    public static func shortRecentPlay(_ text: String?, limit: Int) -> String? {
         guard let trimmed = text?.trimmingCharacters(in: .whitespacesAndNewlines), trimmed.isEmpty == false else {
             return nil
         }
@@ -52,16 +52,16 @@ enum GameProjectionFormatter {
         return String(trimmed.prefix(max(limit - 1, 0))) + "…"
     }
 
-    static func scoreLine(for game: Game) -> String {
+    public static func scoreLine(for game: Game) -> String {
         "\(game.awayTeam.name) \(game.score.away):\(game.score.home) \(game.homeTeam.name)"
     }
 
-    private static func outCountText(for outs: Int?) -> String? {
+    public static func outCountText(for outs: Int?) -> String? {
         guard let outs else { return nil }
         return "\(outs)사"
     }
 
-    private static func statusLabel(for status: GameStatus) -> String? {
+    public static func statusLabelText(for status: GameStatus) -> String? {
         switch status {
         case .scheduled:
             return nil

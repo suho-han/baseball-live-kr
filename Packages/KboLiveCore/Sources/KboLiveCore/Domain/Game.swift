@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Game: Identifiable, Sendable, Equatable {
+public struct Game: Identifiable, Sendable, Equatable, Hashable {
     public let id: String
     public let date: String
     public let venue: String?
@@ -15,6 +15,10 @@ public struct Game: Identifiable, Sendable, Equatable {
     public let current: CurrentMatchup?
     public let probablePitchers: ProbablePitchers
     public let recentPlay: String?
+    public let teamRecords: TeamRecords?
+    public let boxScore: BoxScore?
+    public let lineupPreview: LineupPreview?
+    public let analysis: TeamAnalysis?
     public let sourceMeta: SourceMeta
 
     public init(
@@ -32,6 +36,10 @@ public struct Game: Identifiable, Sendable, Equatable {
         current: CurrentMatchup?,
         probablePitchers: ProbablePitchers,
         recentPlay: String?,
+        teamRecords: TeamRecords? = nil,
+        boxScore: BoxScore? = nil,
+        lineupPreview: LineupPreview? = nil,
+        analysis: TeamAnalysis? = nil,
         sourceMeta: SourceMeta
     ) {
         self.id = id
@@ -48,11 +56,15 @@ public struct Game: Identifiable, Sendable, Equatable {
         self.current = current
         self.probablePitchers = probablePitchers
         self.recentPlay = recentPlay
+        self.teamRecords = teamRecords
+        self.boxScore = boxScore
+        self.lineupPreview = lineupPreview
+        self.analysis = analysis
         self.sourceMeta = sourceMeta
     }
 }
 
-public struct Team: Sendable, Equatable {
+public struct Team: Sendable, Equatable, Hashable {
     public let id: String
     public let name: String
 
@@ -62,7 +74,7 @@ public struct Team: Sendable, Equatable {
     }
 }
 
-public struct Score: Sendable, Equatable {
+public struct Score: Sendable, Equatable, Hashable {
     public let away: Int
     public let home: Int
 
@@ -72,7 +84,7 @@ public struct Score: Sendable, Equatable {
     }
 }
 
-public struct InningState: Sendable, Equatable {
+public struct InningState: Sendable, Equatable, Hashable {
     public let number: Int
     public let half: InningHalf
 
@@ -82,7 +94,7 @@ public struct InningState: Sendable, Equatable {
     }
 }
 
-public struct CountState: Sendable, Equatable {
+public struct CountState: Sendable, Equatable, Hashable {
     public let balls: Int
     public let strikes: Int
     public let outs: Int
@@ -94,7 +106,7 @@ public struct CountState: Sendable, Equatable {
     }
 }
 
-public struct BasesState: Sendable, Equatable {
+public struct BasesState: Sendable, Equatable, Hashable {
     public let first: Bool
     public let second: Bool
     public let third: Bool
@@ -106,7 +118,7 @@ public struct BasesState: Sendable, Equatable {
     }
 }
 
-public struct CurrentMatchup: Sendable, Equatable {
+public struct CurrentMatchup: Sendable, Equatable, Hashable {
     public let batter: String?
     public let pitcher: String?
 
@@ -116,7 +128,7 @@ public struct CurrentMatchup: Sendable, Equatable {
     }
 }
 
-public struct ProbablePitchers: Sendable, Equatable {
+public struct ProbablePitchers: Sendable, Equatable, Hashable {
     public let away: String?
     public let home: String?
 
@@ -126,7 +138,95 @@ public struct ProbablePitchers: Sendable, Equatable {
     }
 }
 
-public struct SourceMeta: Sendable, Equatable {
+public struct TeamRecords: Sendable, Equatable, Hashable {
+    public let away: TeamRecordSummary?
+    public let home: TeamRecordSummary?
+
+    public init(away: TeamRecordSummary?, home: TeamRecordSummary?) {
+        self.away = away
+        self.home = home
+    }
+}
+
+public struct TeamRecordSummary: Sendable, Equatable, Hashable {
+    public let wins: Int
+    public let losses: Int
+    public let draws: Int
+    public let rank: Int?
+    public let streak: String?
+
+    public init(wins: Int, losses: Int, draws: Int, rank: Int? = nil, streak: String? = nil) {
+        self.wins = wins
+        self.losses = losses
+        self.draws = draws
+        self.rank = rank
+        self.streak = streak
+    }
+}
+
+public struct BoxScore: Sendable, Equatable, Hashable {
+    public let away: TeamBoxScore
+    public let home: TeamBoxScore
+    public let linescore: [InningScore]
+
+    public init(away: TeamBoxScore, home: TeamBoxScore, linescore: [InningScore] = []) {
+        self.away = away
+        self.home = home
+        self.linescore = linescore
+    }
+}
+
+public struct TeamBoxScore: Sendable, Equatable, Hashable {
+    public let runs: Int
+    public let hits: Int?
+    public let errors: Int?
+    public let walks: Int?
+
+    public init(runs: Int, hits: Int? = nil, errors: Int? = nil, walks: Int? = nil) {
+        self.runs = runs
+        self.hits = hits
+        self.errors = errors
+        self.walks = walks
+    }
+}
+
+public struct InningScore: Sendable, Equatable, Hashable, Identifiable {
+    public let inning: Int
+    public let away: Int?
+    public let home: Int?
+
+    public var id: Int { inning }
+
+    public init(inning: Int, away: Int?, home: Int?) {
+        self.inning = inning
+        self.away = away
+        self.home = home
+    }
+}
+
+public struct LineupPreview: Sendable, Equatable, Hashable {
+    public let away: [String]
+    public let home: [String]
+
+    public init(away: [String] = [], home: [String] = []) {
+        self.away = away
+        self.home = home
+    }
+}
+
+public struct TeamAnalysis: Sendable, Equatable, Hashable {
+    public let awaySummary: String?
+    public let homeSummary: String?
+    public let keyPoints: [String]
+
+    public init(awaySummary: String? = nil, homeSummary: String? = nil, keyPoints: [String] = []) {
+        self.awaySummary = awaySummary
+        self.homeSummary = homeSummary
+        self.keyPoints = keyPoints
+    }
+}
+
+public struct SourceMeta: Sendable, Equatable, Hashable {
     public let rawStatusCode: String?
     public let rawTopBottomCode: String?
     public let fetchedAt: String
@@ -138,7 +238,7 @@ public struct SourceMeta: Sendable, Equatable {
     }
 }
 
-public enum GameStatus: String, Sendable, Equatable {
+public enum GameStatus: String, Sendable, Equatable, Hashable {
     case scheduled
     case live
     case final
@@ -147,7 +247,7 @@ public enum GameStatus: String, Sendable, Equatable {
     case unknown
 }
 
-public enum InningHalf: String, Sendable, Equatable {
+public enum InningHalf: String, Sendable, Equatable, Hashable {
     case top
     case bottom
 }
