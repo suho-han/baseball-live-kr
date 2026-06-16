@@ -559,6 +559,12 @@ private struct FeaturedGameCardView: View {
                     .font(KboTypographyToken.caption)
                     .foregroundStyle(KboTheme.secondaryText)
             }
+
+            if game.broadcastChannels.isEmpty == false {
+                Label(game.broadcastChannels.joined(separator: ", "), systemImage: "tv")
+                    .font(KboTypographyToken.caption)
+                    .foregroundStyle(KboTheme.secondaryText)
+            }
         }
         .padding(22)
         .background(
@@ -648,6 +654,13 @@ private struct ScheduledGameRowView: View {
 
                 if let venue = game.venue, venue.isEmpty == false {
                     Text(venue)
+                        .font(KboTypographyToken.caption)
+                        .foregroundStyle(KboTheme.secondaryText)
+                        .lineLimit(1)
+                }
+
+                if game.broadcastChannels.isEmpty == false {
+                    Text(game.broadcastChannels.joined(separator: ", "))
                         .font(KboTypographyToken.caption)
                         .foregroundStyle(KboTheme.secondaryText)
                         .lineLimit(1)
@@ -759,6 +772,10 @@ private struct TodayGameCardView: View {
 
             if let venue = game.venue, venue.isEmpty == false {
                 Label(venue, systemImage: "mappin.and.ellipse")
+            }
+
+            if game.broadcastChannels.isEmpty == false {
+                Label(game.broadcastChannels.joined(separator: ", "), systemImage: "tv")
             }
         }
         .font(KboTypographyToken.caption)

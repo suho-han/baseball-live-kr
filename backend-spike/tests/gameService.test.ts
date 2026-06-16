@@ -1,18 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchKboGameDate, fetchKboGameList, fetchKboScheduleList } from '../src/clients/kboClient.js'
+import { fetchKboGameDate, fetchKboGameList, fetchKboScheduleList, fetchKboTeamRankDailyPage } from '../src/clients/kboClient.js'
 import { clearGameServiceCacheForTests, getGameById, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
 import { TEST_DATE, TEST_GAME_ID, TEST_INPUT_DATE, TEST_MONTH, TEST_NEXT_DATE, TEST_SEASON, TEST_START_TIME } from './testConfig.js'
 
 vi.mock('../src/clients/kboClient.js', () => ({
   fetchKboGameDate: vi.fn(),
   fetchKboGameList: vi.fn(),
-  fetchKboScheduleList: vi.fn()
+  fetchKboScheduleList: vi.fn(),
+  fetchKboTeamRankDailyPage: vi.fn()
 }))
 
 const mockGameDate = vi.mocked(fetchKboGameDate)
 const mockGameList = vi.mocked(fetchKboGameList)
 const mockScheduleList = vi.mocked(fetchKboScheduleList)
+const mockTeamRankDailyPage = vi.mocked(fetchKboTeamRankDailyPage)
+
+const teamRankHtml = `
+<table summary="순위, 팀명,승,패,무,승률,승차,최근10경기,연속,홈,방문" class="tData">
+  <tbody>
+    <tr><td>1</td><td>LG</td><td>65</td><td>41</td><td>24</td><td>0</td><td>0.631</td><td>0</td><td>7승0무3패</td><td>2승</td><td>24-0-11</td><td>17-0-13</td></tr>
+    <tr><td>10</td><td>롯데</td><td>64</td><td>24</td><td>39</td><td>1</td><td>0.381</td><td>16</td><td>2승0무8패</td><td>2패</td><td>9-0-22</td><td>15-1-17</td></tr>
+  </tbody>
+</table>`
 
 describe('gameService', () => {
   beforeEach(() => {
@@ -60,6 +70,7 @@ describe('gameService', () => {
         ]
       }]
     })
+    mockTeamRankDailyPage.mockResolvedValue(teamRankHtml)
   })
 
   afterEach(() => {
@@ -82,6 +93,8 @@ describe('gameService', () => {
     expect(result.games[0].startTime).toBe(TEST_START_TIME)
     expect(result.games[0].broadcastChannels).toEqual(['SPO-2T'])
     expect(result.games[0].homepageLinks.review).toContain('section=REVIEW')
+    expect(result.games[0].teamRecords?.away).toMatchObject({ wins: 24, losses: 39, draws: 1, rank: 10, streak: '2패' })
+    expect(result.games[0].teamRecords?.home).toMatchObject({ wins: 41, losses: 24, draws: 0, rank: 1, streak: '2승' })
   })
 
   it('returns a single live fixture game when test live mode is enabled', async () => {
@@ -92,6 +105,7 @@ describe('gameService', () => {
     expect(mockGameDate).not.toHaveBeenCalled()
     expect(mockGameList).not.toHaveBeenCalled()
     expect(mockScheduleList).not.toHaveBeenCalled()
+    expect(mockTeamRankDailyPage).not.toHaveBeenCalled()
     expect(result.date).toBe(TEST_DATE)
     expect(result.games).toHaveLength(1)
     expect(result.games[0]).toMatchObject({
@@ -118,6 +132,7 @@ describe('gameService', () => {
     expect(mockGameDate).toHaveBeenCalledTimes(1)
     expect(mockScheduleList).toHaveBeenCalledTimes(1)
     expect(mockGameList).toHaveBeenCalledTimes(1)
+    expect(mockTeamRankDailyPage).toHaveBeenCalledTimes(1)
   })
 
   it('deduplicates concurrent today requests for the same date', async () => {

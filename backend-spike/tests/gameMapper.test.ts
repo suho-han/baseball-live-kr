@@ -65,4 +65,19 @@ describe('mapGame recentPlay', () => {
 
     expect(game.recentPlay).toBeNull()
   })
+
+  it('maps pitcher decision names when KBO provides them', () => {
+    const game = mapGame({
+      ...baseRawGame,
+      W_PIT_P_NM: '임찬규',
+      L_PIT_P_NM: '문동주',
+      SV_PIT_P_NM: '유영찬'
+    })
+
+    expect(game.pitcherDecisions).toEqual({
+      win: '임찬규',
+      loss: '문동주',
+      save: '유영찬'
+    })
+  })
 })

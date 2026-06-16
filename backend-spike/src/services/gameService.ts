@@ -1,9 +1,10 @@
-import { fetchKboGameDate, fetchKboGameList, fetchKboScheduleList } from '../clients/kboClient.js'
+import { fetchKboGameDate, fetchKboGameList, fetchKboScheduleList, fetchKboTeamRankDailyPage } from '../clients/kboClient.js'
 import { makeTestLiveGame } from '../fixtures/testLiveGame.js'
 import { mapGame, mapScheduledGame } from '../mappers/gameMapper.js'
 import { mapScheduleGames } from '../mappers/scheduleMapper.js'
+import { parseKboTeamRankDaily } from '../mappers/teamRankMapper.js'
 import { toKboDate } from '../utils/date.js'
-import type { NormalizedGame } from '../models/normalizedGame.js'
+import type { NormalizedGame, TeamRecordSummary } from '../models/normalizedGame.js'
 
 interface TodayGamesResult {
   date: string
@@ -18,6 +19,10 @@ interface TodayGamesCacheEntry {
 
 const todayGamesCache = new Map<string, TodayGamesCacheEntry>()
 const todayGamesInFlight = new Map<string, Promise<TodayGamesResult>>()
+const teamRankCache = new Map<string, {
+  value: Map<string, TeamRecordSummary>
+  expiresAt: number
+}>()
 
 function envNumber(name: string, fallback: number): number {
   const value = process.env[name]
@@ -39,6 +44,60 @@ function gameCacheTtlSeconds(games: NormalizedGame[]): number {
 
 function staleIfErrorSeconds(): number {
   return envNumber('KBO_CACHE_STALE_IF_ERROR_SEC', 600)
+}
+
+function teamRankCacheTtlSeconds(): number {
+  return envNumber('KBO_CACHE_TTL_STANDINGS_SEC', 600)
+}
+
+async function loadTeamRecords(kboDate: string): Promise<Map<string, TeamRecordSummary>> {
+  const cached = teamRankCache.get(kboDate)
+  const now = Date.now()
+  if (cached && cached.expiresAt > now) {
+    return cached.value
+  }
+
+  try {
+    const html = await fetchKboTeamRankDailyPage(kboDate)
+    const records = new Map(
+      parseKboTeamRankDaily(html).map((entry) => [
+        entry.teamId,
+        {
+          wins: entry.wins,
+          losses: entry.losses,
+          draws: entry.draws,
+          rank: entry.rank,
+          streak: entry.streak
+        }
+      ])
+    )
+
+    teamRankCache.set(kboDate, {
+      value: records,
+      expiresAt: now + teamRankCacheTtlSeconds() * 1000
+    })
+
+    return records
+  } catch {
+    return cached?.value ?? new Map()
+  }
+}
+
+function enrichTeamRecords(game: NormalizedGame, recordsByTeamId: Map<string, TeamRecordSummary>): NormalizedGame {
+  const away = recordsByTeamId.get(game.awayTeam.id) ?? game.teamRecords?.away ?? null
+  const home = recordsByTeamId.get(game.homeTeam.id) ?? game.teamRecords?.home ?? null
+
+  if (!away && !home) {
+    return game
+  }
+
+  return {
+    ...game,
+    teamRecords: {
+      away,
+      home
+    }
+  }
 }
 
 async function loadMonthGames(kboDate: string) {
@@ -70,12 +129,10 @@ async function loadMonthGames(kboDate: string) {
     }
   }
 
-  return {
-    gameDate,
-    scheduleList,
-    scheduleGames,
-    gameLists,
-    games: [...gamesById.values()].sort((lhs, rhs) => {
+  const teamRecords = await loadTeamRecords(kboDate)
+  const games = [...gamesById.values()]
+    .map((game) => enrichTeamRecords(game, teamRecords))
+    .sort((lhs, rhs) => {
       const lhsStart = lhs.startTime ?? lhs.date
       const rhsStart = rhs.startTime ?? rhs.date
       if (lhsStart !== rhsStart) {
@@ -84,6 +141,13 @@ async function loadMonthGames(kboDate: string) {
 
       return lhs.gameId.localeCompare(rhs.gameId)
     })
+
+  return {
+    gameDate,
+    scheduleList,
+    scheduleGames,
+    gameLists,
+    games
   }
 }
 
@@ -184,4 +248,5 @@ export async function getTodayGamesRaw(date?: string) {
 export function clearGameServiceCacheForTests() {
   todayGamesCache.clear()
   todayGamesInFlight.clear()
+  teamRankCache.clear()
 }

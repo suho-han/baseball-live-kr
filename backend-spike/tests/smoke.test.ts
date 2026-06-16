@@ -221,6 +221,11 @@ function buildGame(overrides: Partial<NormalizedGame> = {}): NormalizedGame {
       review: null,
       highlight: null
     },
+    pitcherDecisions: {
+      win: null,
+      loss: null,
+      save: null
+    },
     status: 'live',
     awayTeam: { id: 'SK', name: 'SSG' },
     homeTeam: { id: 'LG', name: 'LG' },

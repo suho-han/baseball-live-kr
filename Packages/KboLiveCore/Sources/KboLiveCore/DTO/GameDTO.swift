@@ -25,6 +25,9 @@ public struct GameDTO: Decodable, Identifiable, Sendable {
     public let date: String
     public let venue: String?
     public let startTime: String?
+    public let broadcastChannels: [String]?
+    public let homepageLinks: HomepageLinksDTO?
+    public let pitcherDecisions: PitcherDecisionsDTO?
     public let status: GameStatusDTO
     public let awayTeam: TeamDTO
     public let homeTeam: TeamDTO
@@ -48,6 +51,9 @@ public struct GameDTO: Decodable, Identifiable, Sendable {
         date: String,
         venue: String?,
         startTime: String?,
+        broadcastChannels: [String]? = nil,
+        homepageLinks: HomepageLinksDTO? = nil,
+        pitcherDecisions: PitcherDecisionsDTO? = nil,
         status: GameStatusDTO,
         awayTeam: TeamDTO,
         homeTeam: TeamDTO,
@@ -68,6 +74,9 @@ public struct GameDTO: Decodable, Identifiable, Sendable {
         self.date = date
         self.venue = venue
         self.startTime = startTime
+        self.broadcastChannels = broadcastChannels
+        self.homepageLinks = homepageLinks
+        self.pitcherDecisions = pitcherDecisions
         self.status = status
         self.awayTeam = awayTeam
         self.homeTeam = homeTeam
@@ -157,6 +166,32 @@ public struct ProbablePitchersDTO: Decodable, Sendable {
     public init(away: String?, home: String?) {
         self.away = away
         self.home = home
+    }
+}
+
+public struct HomepageLinksDTO: Decodable, Sendable {
+    public let gameCenter: String?
+    public let preview: String?
+    public let review: String?
+    public let highlight: String?
+
+    public init(gameCenter: String? = nil, preview: String? = nil, review: String? = nil, highlight: String? = nil) {
+        self.gameCenter = gameCenter
+        self.preview = preview
+        self.review = review
+        self.highlight = highlight
+    }
+}
+
+public struct PitcherDecisionsDTO: Decodable, Sendable {
+    public let win: String?
+    public let loss: String?
+    public let save: String?
+
+    public init(win: String? = nil, loss: String? = nil, save: String? = nil) {
+        self.win = win
+        self.loss = loss
+        self.save = save
     }
 }
 

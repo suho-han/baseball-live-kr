@@ -176,6 +176,10 @@ public struct GameDetailView: View {
                 linescoreTable(game: game, boxScore: boxScore)
             }
 
+            if let pitcherDecisionText = pitcherDecisionText(for: game) {
+                metricPill(title: "승패 투수", value: pitcherDecisionText)
+            }
+
             HStack(spacing: 14) {
                 teamResultPanel(
                     team: game.awayTeam,
@@ -490,6 +494,7 @@ public struct GameDetailView: View {
 
             HStack(spacing: 12) {
                 metricPill(title: "상태", value: statusText(for: game))
+                metricPill(title: "중계", value: broadcastText(for: game))
                 metricPill(title: "경기 ID", value: game.id)
             }
         }
@@ -714,6 +719,21 @@ public struct GameDetailView: View {
 
     private func startTimeText(for game: Game) -> String? {
         game.startTime?.formatted(.dateTime.hour().minute())
+    }
+
+    private func broadcastText(for game: Game) -> String {
+        game.broadcastChannels.isEmpty ? "-" : game.broadcastChannels.joined(separator: ", ")
+    }
+
+    private func pitcherDecisionText(for game: Game) -> String? {
+        guard let decisions = game.pitcherDecisions else { return nil }
+        let parts = [
+            decisions.win.map { "승 \($0)" },
+            decisions.loss.map { "패 \($0)" },
+            decisions.save.map { "세 \($0)" }
+        ].compactMap { $0 }
+
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
     private func recordText(_ record: TeamRecordSummary?) -> String {

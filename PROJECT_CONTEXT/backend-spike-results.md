@@ -82,6 +82,8 @@ KBO 공식 웹서비스를 직접 앱에서 때리지 않고, 중간 backend/BFF
 - `current`
 - `probablePitchers`
 - `broadcastChannels`
+- `pitcherDecisions`
+- `teamRecords`
 - `homepageLinks`
 - `sourceMeta`
 
@@ -89,6 +91,9 @@ KBO 공식 웹서비스를 직접 앱에서 때리지 않고, 중간 backend/BFF
 - `recentPlay`
 - `current.batter`
 - `current.pitcher`
+- `boxScore`
+- `lineupPreview`
+- `analysis`
 
 이유:
 - 경기 전 데이터에서는 빈 문자열이 들어올 수 있음
@@ -134,3 +139,16 @@ backend-spike는 **초기 구조 결정용으로 충분히 유효**하다.
 - 앱이 직접 KBO source를 치지 않고 backend를 두는 구조가 타당함
 - Swift app은 normalized JSON 계약을 기준으로 shared DTO를 설계하는 것이 안전함
 - 실제 제품 개발은 이제 Swift/Xcode 쪽으로 넘어가되, live 데이터 검증은 계속 backend-spike로 병행하는 방식이 적합함
+
+---
+
+## 8. 2026-06-16 실데이터 보강 구현 상태
+
+구현됨:
+- `TeamRankDaily.aspx?date=YYYYMMDD` HTML을 backend-spike에서 조회/파싱해 당일 팀 순위, 승패무, 승률, 승차, 최근 10경기, 연속 기록을 `teamRecords`로 보강한다.
+- KBO game list raw field의 승/패/세이브 투수명을 `pitcherDecisions`로 정규화한다.
+- Swift DTO/domain/mapper가 `broadcastChannels`, `homepageLinks`, `pitcherDecisions`를 수신하고 Today/Game Detail 화면에서 중계 채널과 승패 투수를 간단히 노출한다.
+
+아직 남음:
+- 포털 보조 source는 아직 붙이지 않았다. 공식 KBO 원천에서 부족한 `boxScore`, `lineupPreview`, `analysis`, 상세 play-by-play 후보 source를 별도 조사/구현해야 한다.
+- `TeamRankDaily` HTML 구조 변경 시 parser 보정이 필요할 수 있다.

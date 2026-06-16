@@ -100,6 +100,11 @@ export function mapGame(raw: RawKboGame, scheduleInfo?: ScheduleGameInfo): Norma
       review: null,
       highlight: null
     },
+    pitcherDecisions: {
+      win: trimToNull(raw.W_PIT_P_NM),
+      loss: trimToNull(raw.L_PIT_P_NM),
+      save: trimToNull(raw.SV_PIT_P_NM)
+    },
     status,
     awayTeam: {
       id: raw.AWAY_ID ?? '',
@@ -156,6 +161,11 @@ export function mapScheduledGame(scheduleInfo: ScheduleGameInfo): NormalizedGame
     startTime: scheduleInfo.startTime,
     broadcastChannels: scheduleInfo.broadcastChannels,
     homepageLinks: scheduleInfo.links,
+    pitcherDecisions: {
+      win: null,
+      loss: null,
+      save: null
+    },
     status: 'scheduled',
     awayTeam: scheduleInfo.awayTeam,
     homeTeam: scheduleInfo.homeTeam,

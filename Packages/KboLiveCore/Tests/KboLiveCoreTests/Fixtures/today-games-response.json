@@ -6,6 +6,14 @@
       "date": "20260610",
       "venue": "잠실",
       "startTime": "20260610T18:30:00+09:00",
+      "broadcastChannels": ["SPO-2T"],
+      "homepageLinks": {
+        "gameCenter": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610SKLG0&section=START_PIT",
+        "preview": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610SKLG0&section=START_PIT",
+        "review": null,
+        "highlight": null
+      },
+      "pitcherDecisions": null,
       "status": "scheduled",
       "awayTeam": { "id": "SK", "name": "SSG" },
       "homeTeam": { "id": "LG", "name": "LG" },
@@ -27,6 +35,18 @@
       "date": "20260610",
       "venue": "대전",
       "startTime": "20260610T18:30:00+09:00",
+      "broadcastChannels": ["KBSN"],
+      "homepageLinks": {
+        "gameCenter": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610HTHH0&section=REVIEW",
+        "preview": null,
+        "review": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610HTHH0&section=REVIEW",
+        "highlight": "https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610HTHH0&section=HIGHLIGHT"
+      },
+      "pitcherDecisions": {
+        "win": "네일",
+        "loss": "류현진",
+        "save": "정해영"
+      },
       "status": "live",
       "awayTeam": { "id": "HT", "name": "KIA" },
       "homeTeam": { "id": "HH", "name": "한화" },

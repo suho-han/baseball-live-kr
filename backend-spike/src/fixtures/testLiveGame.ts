@@ -17,6 +17,11 @@ export function makeTestLiveGame(date: string, fetchedAt = new Date().toISOStrin
       review: null,
       highlight: null
     },
+    pitcherDecisions: {
+      win: null,
+      loss: null,
+      save: null
+    },
     status: 'live',
     awayTeam: {
       id: 'LT',

@@ -7,6 +7,9 @@ public enum GameDTOMapper {
             date: dto.date,
             venue: nilIfBlank(dto.venue),
             startTime: parseStartTime(dto.startTime),
+            broadcastChannels: (dto.broadcastChannels ?? []).compactMap(nilIfBlank),
+            homepageLinks: mapHomepageLinks(dto.homepageLinks),
+            pitcherDecisions: mapPitcherDecisions(dto.pitcherDecisions),
             status: GameStatus(rawValue: dto.status.rawValue) ?? .unknown,
             awayTeam: Team(id: dto.awayTeam.id, name: dto.awayTeam.name),
             homeTeam: Team(id: dto.homeTeam.id, name: dto.homeTeam.name),
@@ -38,6 +41,33 @@ public enum GameDTOMapper {
             away: dto.away.map(mapTeamRecordSummary),
             home: dto.home.map(mapTeamRecordSummary)
         )
+    }
+
+    static func mapHomepageLinks(_ dto: HomepageLinksDTO?) -> HomepageLinks? {
+        guard let dto else { return nil }
+        let links = HomepageLinks(
+            gameCenter: nilIfBlank(dto.gameCenter),
+            preview: nilIfBlank(dto.preview),
+            review: nilIfBlank(dto.review),
+            highlight: nilIfBlank(dto.highlight)
+        )
+        guard links.gameCenter != nil || links.preview != nil || links.review != nil || links.highlight != nil else {
+            return nil
+        }
+        return links
+    }
+
+    static func mapPitcherDecisions(_ dto: PitcherDecisionsDTO?) -> PitcherDecisions? {
+        guard let dto else { return nil }
+        let decisions = PitcherDecisions(
+            win: nilIfBlank(dto.win),
+            loss: nilIfBlank(dto.loss),
+            save: nilIfBlank(dto.save)
+        )
+        guard decisions.win != nil || decisions.loss != nil || decisions.save != nil else {
+            return nil
+        }
+        return decisions
     }
 
     static func mapTeamRecordSummary(_ dto: TeamRecordSummaryDTO) -> TeamRecordSummary {

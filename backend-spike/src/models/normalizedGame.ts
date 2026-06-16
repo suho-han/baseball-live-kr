@@ -10,6 +10,11 @@ export interface NormalizedGame {
     review: string | null
     highlight: string | null
   }
+  pitcherDecisions: {
+    win: string | null
+    loss: string | null
+    save: string | null
+  }
   status: 'scheduled' | 'live' | 'final' | 'delayed' | 'cancelled' | 'unknown'
   awayTeam: {
     id: string

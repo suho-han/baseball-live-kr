@@ -37,6 +37,9 @@ struct TodayGamesResponseDTOTests {
         #expect(mapped.status == .live)
         #expect(mapped.inning?.number == 7)
         #expect(mapped.inning?.half == .bottom)
+        #expect(mapped.broadcastChannels == ["KBSN"])
+        #expect(mapped.homepageLinks?.review?.contains("section=REVIEW") == true)
+        #expect(mapped.pitcherDecisions?.save == "정해영")
     }
 
     @Test func decodesBackendLiveContractFixture() throws {
@@ -91,6 +94,9 @@ struct TodayGamesResponseDTOTests {
             date: "20260610",
             venue: "잠실",
             startTime: "2026-06-10T18:30:00+09:00",
+            broadcastChannels: ["SPO-2T"],
+            homepageLinks: HomepageLinksDTO(gameCenter: "https://example.test/game", preview: nil, review: nil, highlight: nil),
+            pitcherDecisions: PitcherDecisionsDTO(win: "임찬규", loss: "원태인", save: "유영찬"),
             status: .live,
             awayTeam: TeamDTO(id: "SS", name: "삼성"),
             homeTeam: TeamDTO(id: "LG", name: "LG"),
@@ -118,6 +124,9 @@ struct TodayGamesResponseDTOTests {
         let mapped = GameDTOMapper.map(dto)
 
         #expect(mapped.teamRecords?.away?.rank == 4)
+        #expect(mapped.broadcastChannels == ["SPO-2T"])
+        #expect(mapped.homepageLinks?.gameCenter == "https://example.test/game")
+        #expect(mapped.pitcherDecisions?.win == "임찬규")
         #expect(mapped.boxScore?.away.hits == 8)
         #expect(mapped.boxScore?.linescore.first?.home == 0)
         #expect(mapped.lineupPreview?.home == ["홍창기"])

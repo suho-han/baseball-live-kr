@@ -3,7 +3,7 @@ import { rawKboGameDateResponseSchema } from '../dto/kboGameDate.dto.js'
 import { rawKboGameListResponseSchema } from '../dto/kboGameList.dto.js'
 import { rawKboScheduleListResponseSchema } from '../dto/kboScheduleList.dto.js'
 
-type KboEndpoint = 'GetKboGameDate' | 'GetKboGameList' | 'GetScheduleList'
+type KboEndpoint = 'GetKboGameDate' | 'GetKboGameList' | 'GetScheduleList' | 'TeamRankDaily'
 
 const BASE_URL = 'https://www.koreabaseball.com/ws'
 
@@ -88,4 +88,30 @@ export async function fetchKboScheduleList(seasonId: string, gameMonth: string) 
   } catch (error) {
     throw new KboSourceError('GetScheduleList', 'response did not match expected schema', { cause: error })
   }
+}
+
+export async function fetchKboTeamRankDailyPage(date: string) {
+  const url = new URL('https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx')
+  url.searchParams.set('date', date)
+
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      Referer: 'https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx'
+    }
+  })
+
+  if (!response.ok) {
+    throw new KboSourceError('TeamRankDaily', `HTTP ${response.status}`, {
+      statusCode: response.status
+    })
+  }
+
+  const text = await response.text()
+  if (text.trim().length === 0 || text.includes('<title>에러')) {
+    throw new KboSourceError('TeamRankDaily', 'returned invalid HTML')
+  }
+
+  return text
 }
