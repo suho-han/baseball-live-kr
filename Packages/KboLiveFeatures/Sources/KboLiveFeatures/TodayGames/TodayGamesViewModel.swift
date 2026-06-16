@@ -99,7 +99,10 @@ public final class TodayGamesViewModel: ObservableObject {
     }
 
     public var visibleGames: [Game] {
-        TodayGames(date: requestDate ?? "", games: games).orderedGames(filter: filter)
+        TodayGames(date: requestDate ?? "", games: games).orderedGames(
+            filter: filter,
+            preferredTeamID: selectedTeamID
+        )
     }
 
     public var isLoading: Bool {
@@ -118,12 +121,15 @@ public final class TodayGamesViewModel: ObservableObject {
     public var favoriteGame: Game? {
         guard let selectedTeamID else { return nil }
         return TodayGames(date: activeDateString, games: games)
-            .orderedGames(filter: .all)
+            .orderedGames(filter: .all, preferredTeamID: selectedTeamID)
             .first(where: { $0.involves(teamID: selectedTeamID) })
     }
 
     public var leagueGames: [Game] {
-        TodayGames(date: activeDateString, games: games).orderedGames(filter: filter)
+        TodayGames(date: activeDateString, games: games).orderedGames(
+            filter: filter,
+            preferredTeamID: selectedTeamID
+        )
     }
 
     public var standingsErrorMessage: String? {

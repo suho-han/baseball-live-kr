@@ -672,11 +672,7 @@ public struct GameDetailView: View {
     }
 
     private func formattedDate(_ value: String) -> String {
-        guard value.count == 8 else { return value }
-        let year = value.prefix(4)
-        let month = value.dropFirst(4).prefix(2)
-        let day = value.suffix(2)
-        return "\(year).\(month).\(day)"
+        KboDisplayDateFormatter.fullDate(value)
     }
 
     private func statusText(for game: Game) -> String {

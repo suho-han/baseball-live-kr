@@ -59,6 +59,39 @@ struct TodayGamesListTests {
         #expect(orderedIds == ["final", "cancelled"])
     }
 
+    @Test func orderedGamesPrioritizesPreferredTeamBeforeStatusOrder() {
+        let todayGames = TodayGames(
+            date: "20260610",
+            games: [
+                makeGame(
+                    id: "live-other",
+                    status: .live,
+                    startHour: 18,
+                    awayTeam: Team(id: "HH", name: "한화"),
+                    homeTeam: Team(id: "SS", name: "삼성")
+                ),
+                makeGame(
+                    id: "scheduled-favorite",
+                    status: .scheduled,
+                    startHour: 17,
+                    awayTeam: Team(id: "LG", name: "LG"),
+                    homeTeam: Team(id: "OB", name: "두산")
+                ),
+                makeGame(
+                    id: "final-other",
+                    status: .final,
+                    startHour: 16,
+                    awayTeam: Team(id: "KT", name: "KT"),
+                    homeTeam: Team(id: "NC", name: "NC")
+                )
+            ]
+        )
+
+        let orderedIds = todayGames.orderedGames(preferredTeamID: "LG").map(\.id)
+
+        #expect(orderedIds == ["scheduled-favorite", "live-other", "final-other"])
+    }
+
     @Test func teamOptionsUseActualStandingsRanksWhenAvailable() {
         let teams = [
             KboTeamOption(id: "LG", name: "LG"),

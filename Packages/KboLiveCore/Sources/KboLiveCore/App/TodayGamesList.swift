@@ -21,13 +21,21 @@ public enum GameListFilter: String, CaseIterable, Sendable {
 }
 
 public extension TodayGames {
-    func orderedGames(filter: GameListFilter = .all) -> [Game] {
+    func orderedGames(filter: GameListFilter = .all, preferredTeamID: String? = nil) -> [Game] {
         games
             .enumerated()
             .filter { filter.matches($0.element.status) }
             .sorted { lhs, rhs in
                 let lhsGame = lhs.element
                 let rhsGame = rhs.element
+
+                if let preferredTeamID, preferredTeamID.isEmpty == false {
+                    let lhsIncludesPreferred = lhsGame.involves(teamID: preferredTeamID)
+                    let rhsIncludesPreferred = rhsGame.involves(teamID: preferredTeamID)
+                    if lhsIncludesPreferred != rhsIncludesPreferred {
+                        return lhsIncludesPreferred
+                    }
+                }
 
                 let lhsPriority = lhsGame.status.listPriority
                 let rhsPriority = rhsGame.status.listPriority

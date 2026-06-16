@@ -102,6 +102,50 @@ struct TodayGamesViewModelTests {
         #expect(viewModel.visibleGames.map(\.id) == ["scheduled", "delayed"])
     }
 
+    @Test func selectedTeamGameAppearsFirstInLeagueList() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: MockGameRepository(
+                    todayGames: TodayGames(
+                        date: "20260612",
+                        games: [
+                            makeGame(
+                                id: "live-other",
+                                status: .live,
+                                startHour: 17,
+                                awayTeam: Team(id: "KT", name: "KT"),
+                                homeTeam: Team(id: "NC", name: "NC")
+                            ),
+                            makeGame(
+                                id: "scheduled-favorite",
+                                status: .scheduled,
+                                startHour: 19,
+                                awayTeam: Team(id: "LG", name: "LG"),
+                                homeTeam: Team(id: "OB", name: "두산")
+                            ),
+                            makeGame(
+                                id: "final-other",
+                                status: .final,
+                                startHour: 18,
+                                awayTeam: Team(id: "HH", name: "한화"),
+                                homeTeam: Team(id: "SS", name: "삼성")
+                            )
+                        ]
+                    )
+                )
+            ),
+            filter: .all,
+            selectedTeamID: "LG",
+            loadSelectedTeamID: { "LG" },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        #expect(viewModel.leagueGames.map { $0.id } == ["scheduled-favorite", "live-other", "final-other"])
+        #expect(viewModel.visibleGames.map { $0.id } == ["scheduled-favorite", "live-other", "final-other"])
+    }
+
     @Test func loadStoresFriendlyFailureMessage() async {
         let viewModel = TodayGamesViewModel(
             client: GameFeedClient(repository: FailingGameRepository()),
@@ -172,6 +216,36 @@ struct TodayGamesViewModelTests {
         #expect(viewModel.standingsState == .failed(message: "서버에 연결할 수 없습니다."))
     }
 
+    @Test func gamesFailureDoesNotBlockLoadedStandings() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: GamesFailingStandingsRepository(
+                    teamStandings: TeamStandings(
+                        date: "20260612",
+                        standings: [
+                            TeamStanding(
+                                team: Team(id: "LG", name: "LG"),
+                                wins: 41,
+                                losses: 24,
+                                draws: 0,
+                                rank: 1,
+                                streak: "2승"
+                            )
+                        ]
+                    )
+                )
+            ),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        #expect(viewModel.state == .failed(message: "서버에 연결할 수 없습니다."))
+        #expect(viewModel.standingsState == .loaded)
+        #expect(viewModel.standings.map(\.team.id) == ["LG"])
+    }
+
     @Test func standingsFailureUsesGameRecordFallback() async {
         let viewModel = TodayGamesViewModel(
             client: GameFeedClient(
@@ -232,6 +306,8 @@ private func makeGame(
     id: String,
     status: GameStatus,
     startHour: Int,
+    awayTeam: Team = Team(id: "LG", name: "LG"),
+    homeTeam: Team = Team(id: "OB", name: "두산"),
     teamRecords: TeamRecords? = nil
 ) -> Game {
     let calendar = Calendar(identifier: .gregorian)
@@ -250,8 +326,8 @@ private func makeGame(
         venue: "잠실",
         startTime: startTime,
         status: status,
-        awayTeam: Team(id: "LG", name: "LG"),
-        homeTeam: Team(id: "OB", name: "두산"),
+        awayTeam: awayTeam,
+        homeTeam: homeTeam,
         score: Score(away: 0, home: 0),
         inning: nil,
         count: nil,
@@ -313,6 +389,22 @@ private struct StandingsFailingRepository: GameRepository, Sendable {
 
     func fetchTeamStandings(date: String?) async throws -> TeamStandings {
         throw TestError.offline
+    }
+}
+
+private struct GamesFailingStandingsRepository: GameRepository, Sendable {
+    let teamStandings: TeamStandings
+
+    func fetchTodayGames(date: String?) async throws -> TodayGames {
+        throw TestError.offline
+    }
+
+    func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
+        throw TestError.offline
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        teamStandings
     }
 }
 

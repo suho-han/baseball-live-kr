@@ -55,6 +55,11 @@ struct MenuBarDashboardView: View {
                 }
                 .buttonStyle(.plain)
             }
+
+            Text(lastUpdatedStatusText)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
         .padding(16)
         .frame(width: 340)
@@ -189,6 +194,14 @@ struct MenuBarDashboardView: View {
 
     private var currentSummary: MenuBarGameSummary? {
         viewModel.visibleGames.first.map(MenuBarGameSummaryMapper.map)
+    }
+
+    private var lastUpdatedStatusText: String {
+        guard let lastUpdatedAt = viewModel.lastUpdatedAt else {
+            return "마지막 갱신 대기 중"
+        }
+
+        return "마지막 갱신 \(Self.lastUpdatedFormatter.string(from: lastUpdatedAt))"
     }
 
     private func teamScoreRow(team: Team, score: Int) -> some View {
@@ -494,6 +507,14 @@ struct MenuBarDashboardView: View {
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         formatter.dateFormat = "yyyyMMdd"
+        return formatter
+    }()
+
+    private static let lastUpdatedFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = "HH:mm:ss"
         return formatter
     }()
 }
