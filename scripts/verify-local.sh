@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-$ROOT_DIR/.xcode/DerivedData}"
+
+run() {
+  printf '\n==> %s\n' "$*"
+  "$@"
+}
+
+cd "$ROOT_DIR/backend-spike"
+run npm test
+run npm run build
+
+cd "$ROOT_DIR/Packages/KboLiveCore"
+run swift test
+
+cd "$ROOT_DIR/Packages/KboLiveDesignSystem"
+run swift build
+
+cd "$ROOT_DIR/Packages/KboLiveFeatures"
+run swift test
+
+if [[ "${SKIP_XCODE:-0}" == "1" ]]; then
+  printf '\nSKIP_XCODE=1, skipping Xcode target builds.\n'
+  exit 0
+fi
+
+cd "$ROOT_DIR"
+run xcodebuild \
+  -project KboLiveApp.xcodeproj \
+  -scheme KboLivemacOS \
+  -destination 'platform=macOS' \
+  -derivedDataPath "$DERIVED_DATA_PATH" \
+  build
+
+run xcodebuild \
+  -project KboLiveApp.xcodeproj \
+  -scheme KboLiveiOS \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath "$DERIVED_DATA_PATH" \
+  build
