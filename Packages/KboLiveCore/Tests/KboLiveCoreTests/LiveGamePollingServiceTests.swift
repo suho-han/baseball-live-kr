@@ -49,4 +49,8 @@ private actor CountingRepository: GameRepository {
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
         GameDetail(date: "20260610", game: nil)
     }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        TeamStandings(date: "20260610", standings: [])
+    }
 }

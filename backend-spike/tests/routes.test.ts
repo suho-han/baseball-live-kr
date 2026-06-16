@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getGameById, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
+import { getGameById, getTeamStandings, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
 import { KboDateInputError } from '../src/utils/date.js'
 import { buildServer } from '../src/server.js'
 import { TEST_DATE, TEST_GAME_ID, TEST_INPUT_DATE } from './testConfig.js'
@@ -8,11 +8,13 @@ import { TEST_DATE, TEST_GAME_ID, TEST_INPUT_DATE } from './testConfig.js'
 vi.mock('../src/services/gameService.js', () => ({
   getTodayGames: vi.fn(),
   getGameById: vi.fn(),
+  getTeamStandings: vi.fn(),
   getTodayGamesRaw: vi.fn()
 }))
 
 const mockTodayGames = vi.mocked(getTodayGames)
 const mockGameById = vi.mocked(getGameById)
+const mockTeamStandings = vi.mocked(getTeamStandings)
 const mockTodayGamesRaw = vi.mocked(getTodayGamesRaw)
 
 describe('games routes', () => {
@@ -20,6 +22,7 @@ describe('games routes', () => {
     vi.clearAllMocks()
     mockTodayGames.mockResolvedValue({ date: TEST_DATE, games: [] })
     mockGameById.mockResolvedValue({ date: TEST_DATE, game: null })
+    mockTeamStandings.mockResolvedValue({ date: TEST_DATE, standings: [] })
     mockTodayGamesRaw.mockResolvedValue({
       requestedDate: TEST_DATE,
       gameDate: {},
@@ -71,6 +74,17 @@ describe('games routes', () => {
     expect(response.statusCode).toBe(200)
     expect(JSON.parse(response.body)).toEqual({ date: TEST_DATE, game: null })
     expect(mockGameById).toHaveBeenCalledWith(TEST_GAME_ID, TEST_INPUT_DATE)
+    await server.close()
+  })
+
+  it('returns team standings through the v1 route', async () => {
+    const server = buildServer()
+
+    const response = await server.inject(`/v1/standings?date=${TEST_INPUT_DATE}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(JSON.parse(response.body)).toEqual({ date: TEST_DATE, standings: [] })
+    expect(mockTeamStandings).toHaveBeenCalledWith(TEST_INPUT_DATE)
     await server.close()
   })
 

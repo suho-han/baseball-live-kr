@@ -3,6 +3,7 @@ import type { TeamRecordSummary } from '../models/normalizedGame.js'
 export interface TeamRankEntry extends TeamRecordSummary {
   teamId: string
   teamName: string
+  winRate: string | null
   recentTen: string | null
   gamesBack: string | null
 }
@@ -43,7 +44,7 @@ export function parseKboTeamRankDaily(html: string): TeamRankEntry[] {
     const cells = [...rowMatch[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((cell) => stripTags(cell[1]))
     if (cells.length < 10) return []
 
-    const [rankText, teamName, , winsText, lossesText, drawsText, , gamesBack, recentTen, streak] = cells
+    const [rankText, teamName, , winsText, lossesText, drawsText, winRate, gamesBack, recentTen, streak] = cells
     const rank = toNumber(rankText)
     const wins = toNumber(winsText)
     const losses = toNumber(lossesText)
@@ -62,6 +63,7 @@ export function parseKboTeamRankDaily(html: string): TeamRankEntry[] {
       draws,
       rank,
       streak: streak || null,
+      winRate: winRate || null,
       recentTen: recentTen || null,
       gamesBack: gamesBack || null
     }]

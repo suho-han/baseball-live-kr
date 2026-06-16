@@ -70,6 +70,61 @@ struct TodayGamesViewModelTests {
         #expect(viewModel.lastUpdatedAt == nil)
     }
 
+    @Test func loadStoresTeamStandings() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: MockGameRepository(
+                    todayGames: TodayGames(date: "20260612", games: []),
+                    teamStandings: TeamStandings(
+                        date: "20260612",
+                        standings: [
+                            TeamStanding(
+                                team: Team(id: "LG", name: "LG"),
+                                wins: 41,
+                                losses: 24,
+                                draws: 0,
+                                rank: 1,
+                                streak: "2승",
+                                winRate: "0.631",
+                                recentTen: "7승0무3패",
+                                gamesBack: "0"
+                            )
+                        ]
+                    )
+                )
+            ),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        #expect(viewModel.standingsState == .loaded)
+        #expect(viewModel.standings.first?.team.id == "LG")
+        #expect(viewModel.standings.first?.recentTen == "7승0무3패")
+    }
+
+    @Test func standingsFailureDoesNotFailLoadedGames() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: StandingsFailingRepository(
+                    todayGames: TodayGames(
+                        date: "20260612",
+                        games: [makeGame(id: "live", status: .live, startHour: 17)]
+                    )
+                )
+            ),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        #expect(viewModel.state == .loaded)
+        #expect(viewModel.games.map(\.id) == ["live"])
+        #expect(viewModel.standingsState == .failed(message: "서버에 연결할 수 없습니다."))
+    }
+
     @Test func loadWithoutDatePreservesExplicitRequestDate() async {
         let repository = RecordingGameRepository(
             todayGames: TodayGames(
@@ -131,6 +186,10 @@ private struct FailingGameRepository: GameRepository, Sendable {
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
         throw TestError.offline
     }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        throw TestError.offline
+    }
 }
 
 private actor RecordingGameRepository: GameRepository {
@@ -148,6 +207,26 @@ private actor RecordingGameRepository: GameRepository {
 
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
         GameDetail(date: todayGames.date, game: todayGames.games.first(where: { $0.id == gameId }))
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        TeamStandings(date: todayGames.date, standings: [])
+    }
+}
+
+private struct StandingsFailingRepository: GameRepository, Sendable {
+    let todayGames: TodayGames
+
+    func fetchTodayGames(date: String?) async throws -> TodayGames {
+        todayGames
+    }
+
+    func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
+        GameDetail(date: todayGames.date, game: todayGames.games.first(where: { $0.id == gameId }))
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        throw TestError.offline
     }
 }
 

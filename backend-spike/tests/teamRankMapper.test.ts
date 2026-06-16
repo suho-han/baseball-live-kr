@@ -21,6 +21,7 @@ describe('parseKboTeamRankDaily', () => {
         draws: 0,
         rank: 1,
         streak: '2승',
+        winRate: '0.631',
         recentTen: '7승0무3패',
         gamesBack: '0'
       },
@@ -32,6 +33,7 @@ describe('parseKboTeamRankDaily', () => {
         draws: 1,
         rank: 4,
         streak: '1패',
+        winRate: '0.523',
         recentTen: '5승0무5패',
         gamesBack: '7'
       }

@@ -69,6 +69,10 @@ public struct GameFeedClient: Sendable {
         try await repository.fetchGameDetail(gameId: gameId, date: date)
     }
 
+    public func fetchTeamStandings(date: String? = nil) async throws -> TeamStandings {
+        try await repository.fetchTeamStandings(date: date)
+    }
+
     public func streamTodayGames(date: String? = nil) -> AsyncThrowingStream<TodayGames, Error> {
         LiveGamePollingService(
             repository: repository,

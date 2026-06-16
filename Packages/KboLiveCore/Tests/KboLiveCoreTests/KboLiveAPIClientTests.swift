@@ -133,6 +133,26 @@ struct KboLiveAPIClientTests {
         #expect(response.game?.gameId == "20260610SKLG0")
     }
 
+    @Test func fetchTeamStandingsUsesStandingsPath() async throws {
+        let session = TestHTTPSession { request in
+            #expect(request.url?.absoluteString == "http://localhost:3000/v1/standings?date=2026-06-10")
+
+            let data = try FixtureLoader.loadData(named: "team-standings-response")
+            let response = HTTPURLResponse(url: try #require(request.url), statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (data, response)
+        }
+
+        let client = URLSessionKboLiveAPIClient(
+            baseURL: try #require(URL(string: "http://localhost:3000")),
+            session: session
+        )
+
+        let response = try await client.fetchTeamStandings(date: "2026-06-10")
+
+        #expect(response.date == "20260610")
+        #expect(response.standings.first?.teamId == "LG")
+    }
+
     @Test func throwsOnUnexpectedStatusCode() async {
         let session = TestHTTPSession { request in
             let response = HTTPURLResponse(url: try #require(request.url), statusCode: 503, httpVersion: nil, headerFields: nil)!

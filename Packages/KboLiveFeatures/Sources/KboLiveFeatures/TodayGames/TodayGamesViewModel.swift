@@ -13,11 +13,20 @@ public final class TodayGamesViewModel: ObservableObject {
         case failed(message: String)
     }
 
+    public enum TeamStandingsState: Equatable {
+        case idle
+        case loading
+        case loaded
+        case failed(message: String)
+    }
+
     public let title: String
     @Published public var filter: GameListFilter
     @Published public private(set) var selectedTeamID: String?
     @Published public private(set) var state: State
     @Published public private(set) var games: [Game]
+    @Published public private(set) var standingsState: TeamStandingsState
+    @Published public private(set) var standings: [TeamStanding]
     @Published public private(set) var lastUpdatedAt: Date?
     @Published public private(set) var requestDate: String?
     @Published public private(set) var responseDate: String?
@@ -73,6 +82,8 @@ public final class TodayGamesViewModel: ObservableObject {
         self.selectedTeamID = selectedTeamID ?? loadSelectedTeamID()
         self.state = .idle
         self.games = []
+        self.standingsState = .idle
+        self.standings = []
         self.lastUpdatedAt = nil
         self.requestDate = nil
         self.responseDate = nil
@@ -113,6 +124,11 @@ public final class TodayGamesViewModel: ObservableObject {
         TodayGames(date: activeDateString, games: games).orderedGames(filter: filter)
     }
 
+    public var standingsErrorMessage: String? {
+        guard case let .failed(message) = standingsState else { return nil }
+        return message
+    }
+
     public var activeDateString: String {
         requestDate ?? responseDate ?? ""
     }
@@ -145,6 +161,9 @@ public final class TodayGamesViewModel: ObservableObject {
         if games.isEmpty {
             state = .loading
         }
+        if standings.isEmpty {
+            standingsState = .loading
+        }
 
         do {
             let response = try await client.fetchTodayGames(date: effectiveRequestDate)
@@ -156,6 +175,8 @@ public final class TodayGamesViewModel: ObservableObject {
         } catch {
             state = .failed(message: Self.message(for: error))
         }
+
+        await loadStandings(date: effectiveRequestDate)
     }
 
     public func refresh() async {
@@ -169,6 +190,8 @@ public final class TodayGamesViewModel: ObservableObject {
         self.client = client
         state = .idle
         games = []
+        standingsState = .idle
+        standings = []
         lastUpdatedAt = nil
         responseDate = nil
         await load(date: requestDate)
@@ -195,6 +218,20 @@ public final class TodayGamesViewModel: ObservableObject {
         }
 
         return "경기 데이터를 불러오지 못했습니다."
+    }
+
+    private func loadStandings(date: String?) async {
+        if standings.isEmpty {
+            standingsState = .loading
+        }
+
+        do {
+            let response = try await client.fetchTeamStandings(date: date)
+            standings = response.standings
+            standingsState = .loaded
+        } catch {
+            standingsState = .failed(message: Self.message(for: error))
+        }
     }
 
     private func restartPollingIfNeeded(date: String?) {

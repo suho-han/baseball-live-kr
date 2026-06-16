@@ -25,7 +25,24 @@ struct GameRepositoryTests {
         let repository = LiveGameRepository(
             apiClient: StubAPIClient(
                 todayGames: TodayGamesResponseDTO(date: "20260610", games: [dto]),
-                gameDetail: GameDetailResponseDTO(date: "20260610", game: dto)
+                gameDetail: GameDetailResponseDTO(date: "20260610", game: dto),
+                teamStandings: TeamStandingsResponseDTO(
+                    date: "20260610",
+                    standings: [
+                        TeamStandingDTO(
+                            teamId: "LG",
+                            teamName: "LG",
+                            wins: 41,
+                            losses: 24,
+                            draws: 0,
+                            rank: 1,
+                            streak: "2승",
+                            winRate: "0.631",
+                            recentTen: "7승0무3패",
+                            gamesBack: "0"
+                        )
+                    ]
+                )
             )
         )
 
@@ -37,11 +54,44 @@ struct GameRepositoryTests {
         #expect(result.games[0].current?.batter == "최원준")
     }
 
+    @Test func repositoryMapsTeamStandingsIntoDomain() async throws {
+        let repository = LiveGameRepository(
+            apiClient: StubAPIClient(
+                todayGames: TodayGamesResponseDTO(date: "20260610", games: []),
+                gameDetail: GameDetailResponseDTO(date: "20260610", game: nil),
+                teamStandings: TeamStandingsResponseDTO(
+                    date: "20260610",
+                    standings: [
+                        TeamStandingDTO(
+                            teamId: "LG",
+                            teamName: "LG",
+                            wins: 41,
+                            losses: 24,
+                            draws: 0,
+                            rank: 1,
+                            streak: "2승",
+                            winRate: "0.631",
+                            recentTen: "7승0무3패",
+                            gamesBack: "0"
+                        )
+                    ]
+                )
+            )
+        )
+
+        let result = try await repository.fetchTeamStandings(date: "2026-06-10")
+
+        #expect(result.date == "20260610")
+        #expect(result.standings.first?.team.id == "LG")
+        #expect(result.standings.first?.recentTen == "7승0무3패")
+    }
+
     @Test func repositoryMapsOptionalGameDetail() async throws {
         let repository = LiveGameRepository(
             apiClient: StubAPIClient(
                 todayGames: TodayGamesResponseDTO(date: "20260610", games: []),
-                gameDetail: GameDetailResponseDTO(date: "20260610", game: nil)
+                gameDetail: GameDetailResponseDTO(date: "20260610", game: nil),
+                teamStandings: TeamStandingsResponseDTO(date: "20260610", standings: [])
             )
         )
 
@@ -55,6 +105,7 @@ struct GameRepositoryTests {
 private struct StubAPIClient: KboLiveAPIClient, Sendable {
     let todayGames: TodayGamesResponseDTO
     let gameDetail: GameDetailResponseDTO
+    let teamStandings: TeamStandingsResponseDTO
 
     func fetchTodayGames(date: String?) async throws -> TodayGamesResponseDTO {
         todayGames
@@ -62,5 +113,9 @@ private struct StubAPIClient: KboLiveAPIClient, Sendable {
 
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetailResponseDTO {
         gameDetail
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandingsResponseDTO {
+        teamStandings
     }
 }

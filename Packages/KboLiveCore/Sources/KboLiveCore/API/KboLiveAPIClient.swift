@@ -12,6 +12,7 @@ extension URLSession: HTTPSession {}
 public protocol KboLiveAPIClient: Sendable {
     func fetchTodayGames(date: String?) async throws -> TodayGamesResponseDTO
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetailResponseDTO
+    func fetchTeamStandings(date: String?) async throws -> TeamStandingsResponseDTO
 }
 
 public enum KboLiveAPIError: Error, Sendable, Equatable {
@@ -78,6 +79,12 @@ public struct URLSessionKboLiveAPIClient: KboLiveAPIClient, Sendable {
         let request = try makeRequest(path: "/games/\(gameId)", date: date)
         let data = try await perform(request)
         return try decoder.decode(GameDetailResponseDTO.self, from: data)
+    }
+
+    public func fetchTeamStandings(date: String? = nil) async throws -> TeamStandingsResponseDTO {
+        let request = try makeRequest(path: "/standings", date: date)
+        let data = try await perform(request)
+        return try decoder.decode(TeamStandingsResponseDTO.self, from: data)
     }
 
     private func makeRequest(path: String, date: String?) throws -> URLRequest {

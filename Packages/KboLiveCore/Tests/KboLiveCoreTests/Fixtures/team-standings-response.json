@@ -1,0 +1,17 @@
+{
+  "date": "20260610",
+  "standings": [
+    {
+      "teamId": "LG",
+      "teamName": "LG",
+      "wins": 41,
+      "losses": 24,
+      "draws": 0,
+      "rank": 1,
+      "streak": "2승",
+      "winRate": "0.631",
+      "recentTen": "7승0무3패",
+      "gamesBack": "0"
+    }
+  ]
+}

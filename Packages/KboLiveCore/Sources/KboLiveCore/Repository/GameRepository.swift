@@ -3,6 +3,7 @@ import Foundation
 public protocol GameRepository: Sendable {
     func fetchTodayGames(date: String?) async throws -> TodayGames
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings
 }
 
 public struct LiveGameRepository: GameRepository, Sendable {
@@ -26,5 +27,10 @@ public struct LiveGameRepository: GameRepository, Sendable {
             date: response.date,
             game: response.game.map(GameDTOMapper.map)
         )
+    }
+
+    public func fetchTeamStandings(date: String? = nil) async throws -> TeamStandings {
+        let response = try await apiClient.fetchTeamStandings(date: date)
+        return TeamStandingsDTOMapper.map(response)
     }
 }

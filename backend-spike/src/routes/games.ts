@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 
-import { getGameById, getTodayGames, getTodayGamesRaw } from '../services/gameService.js'
+import { getGameById, getTeamStandings, getTodayGames, getTodayGamesRaw } from '../services/gameService.js'
 
 export function registerGamesRoutes(server: FastifyInstance) {
   const todayGamesHandler = async (request: { query: unknown }) => {
@@ -18,6 +18,14 @@ export function registerGamesRoutes(server: FastifyInstance) {
   server.get('/v1/games/today', todayGamesHandler)
   server.get('/games/:gameId', gameDetailHandler)
   server.get('/v1/games/:gameId', gameDetailHandler)
+
+  const standingsHandler = async (request: { query: unknown }) => {
+    const query = request.query as { date?: string }
+    return getTeamStandings(query.date)
+  }
+
+  server.get('/standings', standingsHandler)
+  server.get('/v1/standings', standingsHandler)
 
   server.get('/debug/source/today', async (request) => {
     const query = request.query as { date?: string }

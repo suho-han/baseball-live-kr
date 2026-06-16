@@ -60,6 +60,7 @@ public struct TodayGamesView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         commandBar
                         favoriteSection
+                        standingsSection
                         leagueSection
                     }
                     .padding(.horizontal, 20)
@@ -183,6 +184,38 @@ public struct TodayGamesView: View {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private var standingsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionHeader(title: "팀 순위", subtitle: "공식 KBO 시즌 순위와 최근 흐름입니다.")
+
+            switch viewModel.standingsState {
+            case .idle where viewModel.standings.isEmpty,
+                 .loading where viewModel.standings.isEmpty:
+                standingsLoadingView
+            case .failed(let message) where viewModel.standings.isEmpty:
+                standingsFailureView(message: message)
+            default:
+                KboGlassPanel(style: .card, cornerRadius: 20) {
+                    VStack(spacing: 0) {
+                        ForEach(Array(viewModel.standings.prefix(10).enumerated()), id: \.element.id) { index, standing in
+                            TeamStandingRowView(
+                                standing: standing,
+                                isFavorite: standing.team.id == viewModel.selectedTeamID
+                            )
+
+                            if index < min(viewModel.standings.count, 10) - 1 {
+                                Divider()
+                                    .overlay(KboTheme.mutedBorder.opacity(0.6))
+                                    .padding(.leading, 52)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
                 }
             }
         }
@@ -407,6 +440,31 @@ public struct TodayGamesView: View {
         )
     }
 
+    private var standingsLoadingView: some View {
+        HStack(spacing: 10) {
+            ProgressView()
+                .controlSize(.small)
+                .tint(KboColorToken.statusScheduled)
+
+            Text("팀 순위를 불러오는 중입니다.")
+                .font(KboTypographyToken.footnote)
+                .foregroundStyle(KboTheme.secondaryText)
+        }
+        .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+        .padding(.horizontal, 16)
+        .background(KboTheme.cardBackground.opacity(0.84))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func standingsFailureView(message: String) -> some View {
+        KboEmptyStateView(
+            title: "팀 순위를 불러오지 못했습니다.",
+            message: message,
+            systemImage: "list.number",
+            style: .card
+        )
+    }
+
     private var backgroundView: some View {
         LinearGradient(
             colors: [
@@ -502,6 +560,83 @@ private struct MyTeamSummaryCardView: View {
         }
 
         return values
+    }
+}
+
+private struct TeamStandingRowView: View {
+    let standing: TeamStanding
+    let isFavorite: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(rankText)
+                .font(.system(size: 16, weight: .black))
+                .monospacedDigit()
+                .foregroundStyle(isFavorite ? accentColor : KboTheme.primaryText)
+                .frame(width: 32, alignment: .center)
+
+            TeamBadgeView(
+                shortName: standing.team.name,
+                fullName: standing.team.id,
+                accentColor: accentColor,
+                emphasis: isFavorite ? .highlighted : .normal,
+                fixedWidth: 92,
+                logoSize: 18,
+                nameWidth: 38
+            )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(recordText)
+                    .font(KboTypographyToken.caption)
+                    .foregroundStyle(KboTheme.primaryText)
+                    .monospacedDigit()
+
+                Text(detailText)
+                    .font(KboTypographyToken.caption)
+                    .foregroundStyle(KboTheme.secondaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+
+            Spacer(minLength: 8)
+
+            if let streak = standing.streak, streak.isEmpty == false {
+                Text(streak)
+                    .font(KboTypographyToken.caption)
+                    .foregroundStyle(isFavorite ? accentColor : KboTheme.secondaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(isFavorite ? accentColor.opacity(0.12) : Color.clear)
+    }
+
+    private var accentColor: Color {
+        TeamColorResolver.color(forTeamID: standing.team.id)
+    }
+
+    private var rankText: String {
+        standing.rank.map { "\($0)" } ?? "-"
+    }
+
+    private var recordText: String {
+        "\(standing.wins)승 \(standing.losses)패 \(standing.draws)무"
+    }
+
+    private var detailText: String {
+        var parts: [String] = []
+        if let winRate = standing.winRate {
+            parts.append("승률 \(winRate)")
+        }
+        if let gamesBack = standing.gamesBack {
+            parts.append("승차 \(gamesBack)")
+        }
+        if let recentTen = standing.recentTen {
+            parts.append("최근 \(recentTen)")
+        }
+        return parts.isEmpty ? "시즌 기록 준비 중" : parts.joined(separator: " · ")
     }
 }
 
