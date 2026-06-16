@@ -11,6 +11,14 @@
 - Keep the mention at the very beginning of the final response so Discord can send a role notification.
 - Do not add the mention to intermediate progress updates.
 
+## Discord Response Splitting
+
+- When responding through the Discord connector, split long answers into multiple messages.
+- Keep each message short enough to avoid Discord truncation.
+- Start split responses with `(1/N)`, `(2/N)`, and so on.
+- Do not split code blocks across messages.
+- Split long lists by section or into groups of about five items.
+
 ## Recommended Codex Launch
 
 - For future sessions that need to commit, install project-local skills, or write `.git`/`.agents`, launch Codex from the project root with:

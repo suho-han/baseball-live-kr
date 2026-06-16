@@ -28,11 +28,14 @@ Packages/         # Swift shared package scaffold
 
 구현 완료:
 - `backend-spike/` 최소 실행 가능 scaffold
-- `/health`, `/games/today`, `/games/:gameId`, `/debug/source/today`
+- `/health`, `/ready`, `/v1/health`, `/v1/ready`, `/v1/games/today`, `/v1/games/:gameId`
+- MVP local 호환용 `/games/today`, `/games/:gameId`, `/debug/source/today`
 - polling / dump / fixture 저장 흐름
 - `Packages/KboLiveCore` 최소 DTO/domain/mapper/test scaffold
 - widget / live activity / menu bar projection 모델 및 mapper 초안
 - `Packages/KboLiveDesignSystem` token/theme/primitive scaffold
+- iOS/macOS app target, 설정 화면, 메뉴바 dashboard, 경기 상세 화면
+- macOS 앱 + packaged backend 로컬 실행 스크립트
 
 ## 빠른 시작
 
@@ -54,14 +57,61 @@ npm run dev
 tail -f backend-spike/logs/backend.log
 ```
 
-### Swift package
-이 Linux 호스트에는 Swift toolchain이 없어서 검증은 Mac/Xcode 환경에서 진행해야 합니다.
+Xcode 실행 전에 자동으로 백엔드를 켜고 싶으면 scheme의 `Run > Pre-actions`에 아래 스크립트를 넣습니다.
 
-예상 검증 명령:
+```bash
+/Users/suhohan/Projects/kbo-live/scripts/backend-start.sh
+```
+
+macOS 앱과 packaged backend를 같이 실행:
+
+```bash
+PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
+```
+
+이미 같은 포트에 backend가 떠 있는데 새 환경변수로 다시 실행해야 하면:
+
+```bash
+FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
+```
+
+진행 중 경기 UI를 테스트하기 위한 단일 live fixture 실행:
+
+```bash
+KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
+```
+
+Mac mini 테스트용 runtime 패키징:
+
+```bash
+./scripts/package-macmini-runtime.sh
+```
+
+Mac mini로 업로드하고 backend health smoke까지 실행:
+
+```bash
+SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/kbo-live ./scripts/deploy-macmini-runtime.sh
+```
+
+### Swift package
 ```bash
 cd Packages/KboLiveCore
 swift test
 ```
+
+전체 로컬 검증:
+
+```bash
+./scripts/verify-local.sh
+```
+
+Xcode target build를 제외하고 빠르게 확인:
+
+```bash
+SKIP_XCODE=1 ./scripts/verify-local.sh
+```
+
+MVP 안정화 체크리스트는 `PROJECT_CONTEXT/mvp-stability-checklist.md`를 기준으로 유지합니다.
 
 ### Xcode project
 프로젝트 파일은 `project.yml`에서 생성합니다.
@@ -81,16 +131,32 @@ open KboLiveApp.xcodeproj
 - `KboLiveWidgetExtension`
 
 macOS 앱 기본 동작:
-- `KBO_LIVE_BASE_URL`을 지정하지 않으면 `http://127.0.0.1:3000` 백엔드를 사용합니다.
-- 다른 백엔드에 연결하려면 예: `KBO_LIVE_BASE_URL=http://127.0.0.1:3000`
+- `KBO_LIVE_BASE_URL`을 지정하지 않으면 앱 설정 또는 `http://127.0.0.1:3000` 백엔드를 사용합니다.
+- 앱의 API client는 기본적으로 `/v1` endpoint를 호출합니다.
+- iOS/macOS 앱의 설정 화면에서 `Local`, `Staging`, `Production`, `Custom` backend preset을 선택하고 Backend URL을 저장할 수 있습니다.
+- `KBO_LIVE_BASE_URL` 환경변수가 있으면 앱 설정값보다 우선합니다.
+- `KBO_LIVE_STAGING_BASE_URL`, `KBO_LIVE_PRODUCTION_BASE_URL`을 지정하면 설정 화면의 Staging/Production preset 초기 URL로 사용합니다.
 
 로컬 검증에 사용한 명령:
 ```bash
-env HOME=$PWD/.xcode/home CFFIXED_USER_HOME=$PWD/.xcode/home XDG_CACHE_HOME=$PWD/.xcode/home/Library/Caches \
-  xcodebuild -scheme KboLivemacOS -project KboLiveApp.xcodeproj -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build
+xcodebuild -scheme KboLivemacOS -project KboLiveApp.xcodeproj -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build
 
-env HOME=$PWD/.xcode/home CFFIXED_USER_HOME=$PWD/.xcode/home XDG_CACHE_HOME=$PWD/.xcode/home/Library/Caches \
-  xcodebuild -scheme KboLiveiOS -project KboLiveApp.xcodeproj -destination 'generic/platform=iOS' -derivedDataPath .xcode/DerivedData CODE_SIGNING_ALLOWED=NO build
+xcodebuild -scheme KboLiveiOS -project KboLiveApp.xcodeproj -destination 'generic/platform=iOS Simulator' -derivedDataPath .xcode/DerivedData build
+```
+
+### Live fixture 수집
+
+경기 중 polling fixture를 수집:
+
+```bash
+./scripts/run-kbo-live-fixture-capture.sh 20260616
+```
+
+생성 경로:
+
+```text
+backend-spike/logs/polling/<YYYYMMDD>/
+backend-spike/fixtures/live-<YYYYMMDD>/
 ```
 
 ## 참고 문서
@@ -98,3 +164,4 @@ env HOME=$PWD/.xcode/home CFFIXED_USER_HOME=$PWD/.xcode/home XDG_CACHE_HOME=$PWD
 - `PROJECT_CONTEXT/xcode-project-structure.md`
 - `PROJECT_CONTEXT/forward-development-roadmap.md`
 - `PROJECT_CONTEXT/backend-spike-results.md`
+- `PROJECT_CONTEXT/production-backend-strategy.md`

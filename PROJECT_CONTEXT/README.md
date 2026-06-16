@@ -12,6 +12,14 @@
   - backend spike 목적과 접근 방식
 - `backend-spike-results.md`
   - backend spike 검증 결과
+- `production-backend-strategy.md`
+  - production backend 전환, 배포, cache/fallback 운영 전략
+- `live-activity-verification.md`
+  - iOS 실제 기기 Live Activity start/stop 검증 절차
+- `mvp-stability-checklist.md`
+  - backend, Swift package, Xcode target 로컬 검증 체크리스트
+- `liquid-glass-toss-design-plan.md`
+  - Apple Liquid Glass와 Toss식 디자인 원칙을 KBO Live에 적용하는 단계별 계획
 - `kbo-data-source-research.md`
   - KBO 데이터 소스 조사 메모
 - `shared-dto-draft.md`
