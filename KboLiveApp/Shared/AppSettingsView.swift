@@ -179,6 +179,15 @@ struct AppSettingsView: View {
                     updateChecker.openReleasePage()
                 }
             }
+        case .noPublishedRelease:
+            HStack(spacing: 8) {
+                Label("공개 릴리스 없음", systemImage: "info.circle.fill")
+                    .foregroundStyle(.secondary)
+
+                Button("열기") {
+                    updateChecker.openReleasePage()
+                }
+            }
         case .failed(let message):
             Label(message, systemImage: "xmark.circle.fill")
                 .foregroundStyle(.red)

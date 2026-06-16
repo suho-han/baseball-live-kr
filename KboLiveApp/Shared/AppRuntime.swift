@@ -32,10 +32,12 @@ final class AppUpdateCheckModel: ObservableObject {
         case checking
         case upToDate
         case updateAvailable(String)
+        case noPublishedRelease
         case failed(String)
     }
 
     private let latestReleaseURL = URL(string: "https://api.github.com/repos/suho-han/kbo-live/releases/latest")!
+    private let releasesPageURL = URL(string: "https://github.com/suho-han/kbo-live/releases")!
     private var releasePageURL: URL?
     private var hasCheckedThisLaunch = false
 
@@ -70,6 +72,10 @@ final class AppUpdateCheckModel: ObservableObject {
                 releasePageURL = release.htmlURL
                 state = .upToDate
             }
+        } catch UpdateCheckError.noPublishedRelease {
+            lastCheckedAt = Date()
+            releasePageURL = releasesPageURL
+            state = .noPublishedRelease
         } catch {
             lastCheckedAt = Date()
             state = .failed("업데이트 정보를 확인할 수 없습니다.")
@@ -95,6 +101,10 @@ final class AppUpdateCheckModel: ObservableObject {
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse,
               (200..<300).contains(httpResponse.statusCode) else {
+            if (response as? HTTPURLResponse)?.statusCode == 404 {
+                throw UpdateCheckError.noPublishedRelease
+            }
+
             throw URLError(.badServerResponse)
         }
 
@@ -136,6 +146,10 @@ final class AppUpdateCheckModel: ObservableObject {
         formatter.timeStyle = .short
         return formatter
     }()
+}
+
+private enum UpdateCheckError: Error {
+    case noPublishedRelease
 }
 
 private struct GitHubRelease: Decodable {
