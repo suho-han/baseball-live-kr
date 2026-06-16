@@ -17,55 +17,19 @@ public struct LiveBadgeView: View {
     }
 
     public var body: some View {
-        Text(text)
-            .font(KboTypographyToken.caption)
-            .foregroundStyle(foregroundColor)
-            .padding(.horizontal, KboSpacingToken.small)
-            .padding(.vertical, 5)
-            .background(backgroundColor)
-            .clipShape(Capsule())
-            .overlay {
-                Capsule()
-                    .stroke(borderColor, lineWidth: 1)
-            }
+        KboStatusPill(text: text, style: statusStyle, showsPulse: style == .live)
     }
 
-    private var foregroundColor: Color {
+    private var statusStyle: KboStatusPill.Style {
         switch style {
         case .live:
-            return .white
+            return .live
         case .final:
-            return KboColorToken.textPrimary
+            return .final
         case .delayed:
-            return .black.opacity(0.84)
+            return .delayed
         case .scheduled:
-            return KboColorToken.textPrimary
-        }
-    }
-
-    private var backgroundColor: Color {
-        switch style {
-        case .live:
-            return KboColorToken.statusLive
-        case .final:
-            return KboColorToken.statusFinal.opacity(0.22)
-        case .delayed:
-            return KboColorToken.statusDelayed
-        case .scheduled:
-            return KboColorToken.statusScheduled.opacity(0.18)
-        }
-    }
-
-    private var borderColor: Color {
-        switch style {
-        case .live:
-            return KboColorToken.statusLive.opacity(0.9)
-        case .final:
-            return KboColorToken.statusFinal.opacity(0.5)
-        case .delayed:
-            return KboColorToken.statusDelayed.opacity(0.8)
-        case .scheduled:
-            return KboColorToken.statusScheduled.opacity(0.5)
+            return .scheduled
         }
     }
 }

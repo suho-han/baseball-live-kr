@@ -20,6 +20,8 @@ public struct ScoreDigitsView: View {
             .font(font)
             .monospacedDigit()
             .foregroundStyle(KboTheme.primaryText)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .frame(minWidth: minWidth, alignment: .trailing)
     }
 
@@ -37,11 +39,11 @@ public struct ScoreDigitsView: View {
     private var minWidth: CGFloat {
         switch mode {
         case .scoreboardLarge:
-            return 44
+            return 64
         case .scoreboardCompact:
-            return 28
+            return 44
         case .menuBarCompact:
-            return 18
+            return 24
         }
     }
 }

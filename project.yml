@@ -20,6 +20,8 @@ targets:
       - path: Packages/KboLiveFeatures/Sources/KboLiveFeatures
       - path: KboLiveApp/Shared
       - path: KboLiveApp/iOS
+    dependencies:
+      - target: KboLiveWidgetExtension
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.suhohan.kbo-live.ios
@@ -60,6 +62,7 @@ targets:
     sources:
       - path: Packages/KboLiveCore/Sources/KboLiveCore
       - path: Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem
+      - path: KboLiveApp/Shared/LiveGameActivityAttributes.swift
       - path: KboLiveApp/Shared/SampleGameFactory.swift
       - path: KboLiveApp/Widget
     settings:
@@ -70,8 +73,6 @@ targets:
         INFOPLIST_KEY_NSExtensionPointIdentifier: com.apple.widgetkit-extension
         INFOPLIST_KEY_NSExtensionPrincipalClass: ""
         SKIP_INSTALL: YES
-    dependencies:
-      - target: KboLiveiOS
 schemes:
   KboLiveiOS:
     preActions:
@@ -85,6 +86,7 @@ schemes:
         KboLiveWidgetExtension: all
     run:
       config: Debug
+      executable: KboLiveiOS
   KboLivemacOS:
     preActions:
       - name: Clean Before Run
@@ -96,8 +98,6 @@ schemes:
         KboLivemacOS: all
     run:
       config: Debug
-      environmentVariables:
-        KBO_LIVE_BASE_URL: http://127.0.0.1:3000
   KboLiveWidgetExtension:
     build:
       targets:

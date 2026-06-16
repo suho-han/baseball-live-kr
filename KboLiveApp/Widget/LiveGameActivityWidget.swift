@@ -2,16 +2,6 @@ import ActivityKit
 import SwiftUI
 import WidgetKit
 
-struct LiveGameActivityAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        let state: ActivityGameState
-    }
-
-    let gameID: String
-    let awayTeamName: String
-    let homeTeamName: String
-}
-
 struct LiveGameActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: LiveGameActivityAttributes.self) { context in

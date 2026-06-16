@@ -67,6 +67,10 @@ public final class GameDetailViewModel: ObservableObject {
     }
 
     private static func message(for error: Error) -> String {
+        if error is URLError {
+            return "백엔드 서버에 연결할 수 없습니다. 설정에서 Backend URL을 확인해 주세요."
+        }
+
         if let localizedError = error as? LocalizedError,
            let description = localizedError.errorDescription,
            description.isEmpty == false {

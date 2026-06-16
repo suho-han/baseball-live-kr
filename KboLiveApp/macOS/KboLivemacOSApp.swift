@@ -9,10 +9,13 @@ struct KboLivemacOSApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 #endif
     @StateObject private var viewModel: TodayGamesViewModel
+    @StateObject private var settings = BackendSettingsModel()
     @StateObject private var navigationModel = AppNavigationModel()
 
     init() {
-        let viewModel = TodayGamesViewModel(client: AppRuntime.makeClient())
+        let settings = BackendSettingsModel()
+        let viewModel = TodayGamesViewModel(client: settings.makeClient())
+        _settings = StateObject(wrappedValue: settings)
         _viewModel = StateObject(wrappedValue: viewModel)
 
         Task {
@@ -24,6 +27,7 @@ struct KboLivemacOSApp: App {
         Window("KBO Live", id: "main-window") {
             KboLiveHomeRootView(
                 viewModel: viewModel,
+                settings: settings,
                 navigationModel: navigationModel
             )
                 .frame(minWidth: 420, minHeight: 720)
@@ -40,7 +44,17 @@ struct KboLivemacOSApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(viewModel: viewModel)
+            SettingsView(
+                viewModel: viewModel,
+                settings: settings,
+                onApplyBackendSettings: applyBackendSettings
+            )
+        }
+    }
+
+    private func applyBackendSettings() {
+        Task {
+            await viewModel.updateClient(settings.makeClient())
         }
     }
 

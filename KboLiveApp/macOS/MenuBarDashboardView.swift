@@ -166,14 +166,12 @@ struct MenuBarDashboardView: View {
     }
 
     private var emptySummary: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("오늘 표시할 경기가 없습니다.")
-                .font(.subheadline.weight(.semibold))
-
-            Text("설정에서 응원팀을 바꾸면 다른 경기를 바로 확인할 수 있습니다.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
+        KboEmptyStateView(
+            title: "오늘은 경기가 없습니다.",
+            message: "다른 날짜를 조회하거나 새로고침해 경기 편성 변경을 확인할 수 있습니다.",
+            systemImage: "calendar.badge.exclamationmark",
+            style: .control
+        )
     }
 
     private var headerSubtitle: String {
@@ -360,10 +358,6 @@ struct MenuBarDashboardView: View {
 
         if isPastGameDate(game.date) {
             return "종료"
-        }
-
-        if let startTime = game.startTime {
-            return startTime.formatted(.dateTime.hour().minute()) + " 시작 예정"
         }
 
         return nil

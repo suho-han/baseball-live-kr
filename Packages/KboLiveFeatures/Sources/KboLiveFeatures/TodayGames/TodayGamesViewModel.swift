@@ -22,7 +22,7 @@ public final class TodayGamesViewModel: ObservableObject {
     @Published public private(set) var requestDate: String?
     @Published public private(set) var responseDate: String?
 
-    private let client: GameFeedClient
+    private var client: GameFeedClient
     private let now: @Sendable () -> Date
     private let loadSelectedTeamID: @Sendable () -> String?
     private let saveSelectedTeamID: @Sendable (String?) -> Void
@@ -162,6 +162,18 @@ public final class TodayGamesViewModel: ObservableObject {
         await load(date: requestDate)
     }
 
+    public func updateClient(_ client: GameFeedClient) async {
+        pollingTask?.cancel()
+        pollingTask = nil
+        pollingDate = nil
+        self.client = client
+        state = .idle
+        games = []
+        lastUpdatedAt = nil
+        responseDate = nil
+        await load(date: requestDate)
+    }
+
     public func makeDetailViewModel(for game: Game) -> GameDetailViewModel {
         GameDetailViewModel(
             client: client,
@@ -172,6 +184,10 @@ public final class TodayGamesViewModel: ObservableObject {
     }
 
     private static func message(for error: Error) -> String {
+        if error is URLError {
+            return "백엔드 서버에 연결할 수 없습니다. 설정에서 Backend URL을 확인해 주세요."
+        }
+
         if let localizedError = error as? LocalizedError,
            let description = localizedError.errorDescription,
            description.isEmpty == false {

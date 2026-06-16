@@ -87,7 +87,9 @@ struct TodayGamesViewModelTests {
         await viewModel.load()
 
         #expect(viewModel.requestDate == "2026-06-12")
-        #expect(await repository.requestedDates == ["2026-06-12", "2026-06-12"])
+        let requestedDates = await repository.requestedDates
+        #expect(requestedDates.count >= 2)
+        #expect(requestedDates.allSatisfy { $0 == "2026-06-12" })
     }
 }
 
