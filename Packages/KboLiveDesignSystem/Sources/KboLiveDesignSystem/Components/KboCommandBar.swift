@@ -6,6 +6,7 @@ public struct KboCommandBar<LeadingAccessory: View, Actions: View>: View {
     private let subtitle: String?
     private let leadingAccessory: LeadingAccessory
     private let actions: Actions
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(
         eyebrow: String? = nil,
@@ -29,21 +30,21 @@ public struct KboCommandBar<LeadingAccessory: View, Actions: View>: View {
                 VStack(alignment: .leading, spacing: 4) {
                     if let eyebrow, eyebrow.isEmpty == false {
                         Text(eyebrow)
-                            .font(KboTypographyToken.caption)
+                            .font(KboTypographyToken.caption(scaledBy: fontScale))
                             .foregroundStyle(KboSemanticColorToken.accentMint)
                             .textCase(.uppercase)
                             .tracking(0.8)
                     }
 
                     Text(title)
-                        .font(.system(size: 24, weight: .black))
+                        .font(KboTypographyToken.system(size: 24, weight: .black, scaledBy: fontScale))
                         .foregroundStyle(KboTheme.primaryText)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
 
                     if let subtitle, subtitle.isEmpty == false {
                         Text(subtitle)
-                            .font(KboTypographyToken.footnote)
+                            .font(KboTypographyToken.footnote(scaledBy: fontScale))
                             .foregroundStyle(KboTheme.secondaryText)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)

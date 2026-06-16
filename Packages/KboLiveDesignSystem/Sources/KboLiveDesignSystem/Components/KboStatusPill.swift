@@ -14,6 +14,7 @@ public struct KboStatusPill: View {
     private let showsPulse: Bool
     @State private var isPulsing = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(text: String, style: Style, showsPulse: Bool = false) {
         self.text = text
@@ -32,7 +33,7 @@ public struct KboStatusPill: View {
             }
 
             Text(text)
-                .font(KboTypographyToken.caption)
+                .font(KboTypographyToken.caption(scaledBy: fontScale))
                 .lineLimit(1)
         }
         .foregroundStyle(foregroundColor)

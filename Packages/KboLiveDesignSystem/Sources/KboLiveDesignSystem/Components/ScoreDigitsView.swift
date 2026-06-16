@@ -9,6 +9,7 @@ public struct ScoreDigitsView: View {
 
     private let score: Int
     private let mode: Mode
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(score: Int, mode: Mode = .scoreboardCompact) {
         self.score = score
@@ -28,11 +29,11 @@ public struct ScoreDigitsView: View {
     private var font: Font {
         switch mode {
         case .scoreboardLarge:
-            return KboTypographyToken.scoreLarge
+            return KboTypographyToken.scoreLarge(scaledBy: fontScale)
         case .scoreboardCompact:
-            return KboTypographyToken.scoreCompact
+            return KboTypographyToken.scoreCompact(scaledBy: fontScale)
         case .menuBarCompact:
-            return KboTypographyToken.menuBarCompact
+            return KboTypographyToken.menuBarCompact(scaledBy: fontScale)
         }
     }
 

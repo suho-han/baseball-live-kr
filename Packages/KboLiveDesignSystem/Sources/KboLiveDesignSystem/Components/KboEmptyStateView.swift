@@ -5,6 +5,7 @@ public struct KboEmptyStateView: View {
     private let message: String
     private let systemImage: String
     private let style: KboGlassPanelStyle
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(
         title: String,
@@ -22,7 +23,7 @@ public struct KboEmptyStateView: View {
         KboGlassPanel(style: style, cornerRadius: 22) {
             HStack(alignment: .top, spacing: 14) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(KboTypographyToken.system(size: 18, weight: .semibold, scaledBy: fontScale))
                     .foregroundStyle(KboSemanticColorToken.accentBlue)
                     .frame(width: 34, height: 34)
                     .background(KboSemanticColorToken.accentBlue.opacity(0.14))
@@ -30,11 +31,11 @@ public struct KboEmptyStateView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title)
-                        .font(KboTypographyToken.headline)
+                        .font(KboTypographyToken.headline(scaledBy: fontScale))
                         .foregroundStyle(KboTheme.primaryText)
 
                     Text(message)
-                        .font(KboTypographyToken.body)
+                        .font(KboTypographyToken.body(scaledBy: fontScale))
                         .foregroundStyle(KboTheme.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }

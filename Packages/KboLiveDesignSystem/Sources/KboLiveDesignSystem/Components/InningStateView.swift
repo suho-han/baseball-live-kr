@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct InningStateView: View {
     private let text: String
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(text: String) {
         self.text = text
@@ -9,7 +10,7 @@ public struct InningStateView: View {
 
     public var body: some View {
         Text(text)
-            .font(KboTypographyToken.footnote)
+            .font(KboTypographyToken.footnote(scaledBy: fontScale))
             .foregroundStyle(KboTheme.secondaryText)
             .padding(.horizontal, KboSpacingToken.small)
             .padding(.vertical, 6)

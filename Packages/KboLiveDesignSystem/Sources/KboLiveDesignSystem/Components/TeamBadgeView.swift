@@ -18,6 +18,7 @@ public struct TeamBadgeView: View {
     private let fixedWidth: CGFloat?
     private let logoSize: CGFloat
     private let nameWidth: CGFloat?
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(
         shortName: String,
@@ -42,7 +43,7 @@ public struct TeamBadgeView: View {
             teamLogoView
 
             Text(shortName)
-                .font(KboTypographyToken.headline)
+                .font(KboTypographyToken.headline(scaledBy: fontScale))
                 .foregroundStyle(KboTheme.primaryText)
                 .frame(width: nameWidth, alignment: .leading)
         }

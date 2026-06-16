@@ -2,6 +2,9 @@ import SwiftUI
 #if canImport(AppKit)
 import AppKit
 #endif
+#if canImport(KboLiveDesignSystem)
+import KboLiveDesignSystem
+#endif
 
 @main
 struct KboLivemacOSApp: App {
@@ -12,6 +15,7 @@ struct KboLivemacOSApp: App {
     @StateObject private var settings = BackendSettingsModel()
     @StateObject private var navigationModel = AppNavigationModel()
     @StateObject private var updateChecker = AppUpdateCheckModel()
+    @AppStorage("kboLiveFontScale") private var fontScale = Double(KboFontScale.defaultValue)
 
     init() {
         let settings = BackendSettingsModel()
@@ -33,6 +37,7 @@ struct KboLivemacOSApp: App {
                 updateChecker: updateChecker
             )
                 .frame(minWidth: 420, minHeight: 720)
+                .environment(\.kboFontScale, CGFloat(fontScale))
                 .task {
                     await updateChecker.checkOnLaunch()
                 }
@@ -46,12 +51,28 @@ struct KboLivemacOSApp: App {
                     Text(updateChecker.alertMessage)
                 }
         }
+        .commands {
+            CommandMenu("보기") {
+                Button("글씨 크게") {
+                    adjustFontScale(by: KboFontScale.step)
+                }
+                .keyboardShortcut("+", modifiers: .command)
+                .disabled(CGFloat(fontScale) >= KboFontScale.maximum)
+
+                Button("글씨 작게") {
+                    adjustFontScale(by: -KboFontScale.step)
+                }
+                .keyboardShortcut("-", modifiers: .command)
+                .disabled(CGFloat(fontScale) <= KboFontScale.minimum)
+            }
+        }
 
         MenuBarExtra {
             MenuBarDashboardView(
                 viewModel: viewModel,
                 navigationModel: navigationModel
             )
+            .environment(\.kboFontScale, CGFloat(fontScale))
         } label: {
             Label(menuBarTitle, systemImage: "baseball.fill")
         }
@@ -64,7 +85,12 @@ struct KboLivemacOSApp: App {
                 updateChecker: updateChecker,
                 onApplyBackendSettings: applyBackendSettings
             )
+            .environment(\.kboFontScale, CGFloat(fontScale))
         }
+    }
+
+    private func adjustFontScale(by delta: CGFloat) {
+        fontScale = Double(KboFontScale.clamped(CGFloat(fontScale) + delta))
     }
 
     private func applyBackendSettings() {

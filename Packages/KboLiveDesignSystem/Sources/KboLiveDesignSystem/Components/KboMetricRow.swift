@@ -16,6 +16,7 @@ public struct KboMetricValue: Identifiable, Sendable {
 
 public struct KboMetricRow: View {
     private let metrics: [KboMetricValue]
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(_ metrics: [KboMetricValue]) {
         self.metrics = metrics
@@ -26,11 +27,11 @@ public struct KboMetricRow: View {
             ForEach(metrics) { metric in
                 VStack(alignment: .leading, spacing: 3) {
                     Text(metric.title)
-                        .font(KboTypographyToken.caption)
+                        .font(KboTypographyToken.caption(scaledBy: fontScale))
                         .foregroundStyle(KboTheme.secondaryText)
 
                     Text(metric.value)
-                        .font(.system(size: 13, weight: .bold))
+                        .font(KboTypographyToken.system(size: 13, weight: .bold, scaledBy: fontScale))
                         .foregroundStyle(metric.tint ?? KboTheme.primaryText)
                         .lineLimit(1)
                         .minimumScaleFactor(0.78)

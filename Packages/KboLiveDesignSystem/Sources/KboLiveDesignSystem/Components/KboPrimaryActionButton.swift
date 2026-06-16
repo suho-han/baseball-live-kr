@@ -6,6 +6,7 @@ public struct KboPrimaryActionButton: View {
     private let tint: Color
     private let isDisabled: Bool
     private let action: () -> Void
+    @Environment(\.kboFontScale) private var fontScale
 
     public init(
         title: String,
@@ -26,11 +27,11 @@ public struct KboPrimaryActionButton: View {
             HStack(spacing: 8) {
                 if let systemImage {
                     Image(systemName: systemImage)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(KboTypographyToken.system(size: 14, weight: .bold, scaledBy: fontScale))
                 }
 
                 Text(title)
-                    .font(KboTypographyToken.footnote.weight(.bold))
+                    .font(KboTypographyToken.system(size: 13, weight: .bold, scaledBy: fontScale))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
