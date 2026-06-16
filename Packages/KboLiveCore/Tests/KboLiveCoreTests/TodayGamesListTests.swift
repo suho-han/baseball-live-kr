@@ -58,9 +58,52 @@ struct TodayGamesListTests {
 
         #expect(orderedIds == ["final", "cancelled"])
     }
+
+    @Test func teamOptionsUseActualStandingsRanksWhenAvailable() {
+        let teams = [
+            KboTeamOption(id: "LG", name: "LG"),
+            KboTeamOption(id: "OB", name: "두산"),
+            KboTeamOption(id: "SK", name: "SSG")
+        ]
+        let game = makeGame(
+            id: "ranked",
+            status: .scheduled,
+            startHour: 18,
+            awayTeam: Team(id: "LG", name: "LG"),
+            homeTeam: Team(id: "OB", name: "두산"),
+            teamRecords: TeamRecords(
+                away: TeamRecordSummary(wins: 10, losses: 5, draws: 0, rank: 3),
+                home: TeamRecordSummary(wins: 12, losses: 4, draws: 0, rank: 1)
+            )
+        )
+
+        let sortedIds = KboTeamOption.sortedByStandings(teams, games: [game]).map(\.id)
+
+        #expect(sortedIds == ["OB", "LG", "SK"])
+    }
+
+    @Test func teamOptionsFallBackToTemporaryStandingsOrderWhenRanksAreMissing() {
+        let teams = [
+            KboTeamOption(id: "LT", name: "롯데"),
+            KboTeamOption(id: "HT", name: "KIA"),
+            KboTeamOption(id: "LG", name: "LG"),
+            KboTeamOption(id: "KT", name: "KT")
+        ]
+
+        let sortedIds = KboTeamOption.sortedByStandings(teams, games: []).map(\.id)
+
+        #expect(sortedIds == ["LG", "KT", "HT", "LT"])
+    }
 }
 
-private func makeGame(id: String, status: GameStatus, startHour: Int) -> Game {
+private func makeGame(
+    id: String,
+    status: GameStatus,
+    startHour: Int,
+    awayTeam: Team = Team(id: "LG", name: "LG"),
+    homeTeam: Team = Team(id: "OB", name: "두산"),
+    teamRecords: TeamRecords? = nil
+) -> Game {
     let calendar = Calendar(identifier: .gregorian)
     let startTime = calendar.date(from: DateComponents(
         timeZone: TimeZone(identifier: "Asia/Seoul"),
@@ -77,8 +120,8 @@ private func makeGame(id: String, status: GameStatus, startHour: Int) -> Game {
         venue: "잠실",
         startTime: startTime,
         status: status,
-        awayTeam: Team(id: "LG", name: "LG"),
-        homeTeam: Team(id: "OB", name: "두산"),
+        awayTeam: awayTeam,
+        homeTeam: homeTeam,
         score: Score(away: 0, home: 0),
         inning: nil,
         count: nil,
@@ -86,6 +129,7 @@ private func makeGame(id: String, status: GameStatus, startHour: Int) -> Game {
         current: nil,
         probablePitchers: ProbablePitchers(away: nil, home: nil),
         recentPlay: nil,
+        teamRecords: teamRecords,
         sourceMeta: SourceMeta(rawStatusCode: nil, rawTopBottomCode: nil, fetchedAt: "2026-06-10T10:05:00.000Z")
     )
 }
