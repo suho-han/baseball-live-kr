@@ -8,6 +8,13 @@ import KboLiveDesignSystem
 
 @main
 struct KboLivemacOSApp: App {
+    private enum MainWindowLayout {
+        static let minWidth: CGFloat = 980
+        static let minHeight: CGFloat = 720
+        static let defaultWidth: CGFloat = 1180
+        static let defaultHeight: CGFloat = 860
+    }
+
 #if canImport(AppKit)
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 #endif
@@ -36,7 +43,10 @@ struct KboLivemacOSApp: App {
                 navigationModel: navigationModel,
                 updateChecker: updateChecker
             )
-                .frame(minWidth: 420, minHeight: 720)
+                .frame(
+                    minWidth: MainWindowLayout.minWidth,
+                    minHeight: MainWindowLayout.minHeight
+                )
                 .environment(\.kboFontScale, CGFloat(fontScale))
                 .task {
                     await updateChecker.checkOnLaunch()
@@ -51,6 +61,11 @@ struct KboLivemacOSApp: App {
                     Text(updateChecker.alertMessage)
                 }
         }
+        .defaultSize(
+            width: MainWindowLayout.defaultWidth,
+            height: MainWindowLayout.defaultHeight
+        )
+        .windowResizability(.contentMinSize)
         .commands {
             CommandMenu("보기") {
                 Button("글씨 크게") {

@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKEND_DIR="${ROOT_DIR}/backend-spike"
 LOG_DIR="${BACKEND_DIR}/logs"
 PID_FILE="${LOG_DIR}/backend.pid"
-PORT="${PORT:-3000}"
+PORT="${PORT:-17361}"
 
 mkdir -p "${LOG_DIR}"
 

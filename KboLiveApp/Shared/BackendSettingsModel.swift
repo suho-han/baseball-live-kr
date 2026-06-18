@@ -44,17 +44,18 @@ final class BackendSettingsModel: ObservableObject {
     private let defaults: UserDefaults
     private let baseURLKey = KboLiveEnvironment.backendBaseURLDefaultsKey
     private let presetKey = "kbo-live.backend-preset"
+    private let localBaseURLKey = "kbo-live.backend-local-base-url"
     private let productionBaseURLKey = "kbo-live.backend-production-base-url"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        let storedPreset = defaults.string(forKey: presetKey).flatMap(BackendPreset.init(rawValue:)) ?? .production
+        let storedPreset = defaults.string(forKey: presetKey).flatMap(BackendPreset.init(rawValue:)) ?? Self.defaultPreset
         let resolvedPreset = Self.resolvedPreset(from: storedPreset, defaults: defaults)
         self.selectedPreset = resolvedPreset
         self.baseURLText = Self.resolvedBaseURLString(defaults: defaults)
     }
 
-    var isEnvironmentOverridden: Bool {
+    var hasEnvironmentBaseURL: Bool {
         Self.environmentBaseURLString != nil
     }
 
@@ -63,10 +64,6 @@ final class BackendSettingsModel: ObservableObject {
     }
 
     var selectedPresetTitle: String {
-        if isEnvironmentOverridden {
-            return "Environment"
-        }
-
         return selectedPreset.title
     }
 
@@ -83,10 +80,6 @@ final class BackendSettingsModel: ObservableObject {
     }
 
     func selectPreset(_ preset: BackendPreset) {
-        guard isEnvironmentOverridden == false else {
-            return
-        }
-
         selectedPreset = preset
         validationState = .idle
 
@@ -101,17 +94,12 @@ final class BackendSettingsModel: ObservableObject {
 
         baseURLText = url.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
 
-        if isEnvironmentOverridden {
-            validationState = .idle
-            return true
-        }
-
         defaults.set(baseURLText, forKey: baseURLKey)
         defaults.set(selectedPreset.rawValue, forKey: presetKey)
 
         switch selectedPreset {
         case .local:
-            break
+            defaults.set(baseURLText, forKey: localBaseURLKey)
         case .production:
             defaults.set(baseURLText, forKey: productionBaseURLKey)
         }
@@ -121,12 +109,12 @@ final class BackendSettingsModel: ObservableObject {
     }
 
     func reset() {
-        selectedPreset = .production
-        baseURLText = Self.environmentBaseURLString ?? Self.productionBaseURLString
-        if isEnvironmentOverridden == false {
-            defaults.removeObject(forKey: baseURLKey)
-            defaults.removeObject(forKey: presetKey)
-        }
+        defaults.removeObject(forKey: baseURLKey)
+        defaults.removeObject(forKey: presetKey)
+        defaults.removeObject(forKey: localBaseURLKey)
+        defaults.removeObject(forKey: productionBaseURLKey)
+        selectedPreset = Self.defaultPreset
+        baseURLText = Self.baseURLString(for: selectedPreset, defaults: defaults) ?? Self.productionBaseURLString
         validationState = .idle
     }
 
@@ -180,34 +168,27 @@ final class BackendSettingsModel: ObservableObject {
     }
 
     nonisolated private static func resolvedBaseURLString(defaults: UserDefaults) -> String {
-        if let environmentBaseURLString {
-            return environmentBaseURLString
-        }
-
-        if let storedBaseURL = defaults.string(forKey: KboLiveEnvironment.backendBaseURLDefaultsKey),
-           isLegacyLocalBaseURL(storedBaseURL) == false {
-            return storedBaseURL
-        }
-
         let storedPreset = defaults.string(forKey: "kbo-live.backend-preset")
-            .flatMap(BackendPreset.init(rawValue:)) ?? .production
+            .flatMap(BackendPreset.init(rawValue:)) ?? defaultPreset
         let preset = resolvedPreset(from: storedPreset, defaults: defaults)
-        return baseURLString(for: preset, defaults: defaults) ?? productionBaseURLString
+
+        if let presetURL = baseURLString(for: preset, defaults: defaults) {
+            return presetURL
+        }
+
+        return defaults.string(forKey: KboLiveEnvironment.backendBaseURLDefaultsKey) ?? productionBaseURLString
     }
 
     nonisolated private static func resolvedPreset(from storedPreset: BackendPreset, defaults: UserDefaults) -> BackendPreset {
-        if let storedBaseURL = defaults.string(forKey: KboLiveEnvironment.backendBaseURLDefaultsKey),
-           isLegacyLocalBaseURL(storedBaseURL) {
-            return .production
-        }
-
         return baseURLString(for: storedPreset, defaults: defaults) == nil ? .production : storedPreset
     }
 
     nonisolated private static func baseURLString(for preset: BackendPreset, defaults: UserDefaults) -> String? {
         switch preset {
         case .local:
-            return defaultBaseURLString
+            return environmentBaseURLString
+                ?? defaults.string(forKey: "kbo-live.backend-local-base-url")
+                ?? defaultBaseURLString
         case .production:
             return environmentBaseURLString(named: "KBO_LIVE_PRODUCTION_BASE_URL")
                 ?? defaults.string(forKey: "kbo-live.backend-production-base-url")
@@ -219,14 +200,17 @@ final class BackendSettingsModel: ObservableObject {
         KboLiveEnvironment.productionBaseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
+    nonisolated private static var defaultPreset: BackendPreset {
+        environmentBaseURLString == nil ? .production : .local
+    }
+
     nonisolated private static var environmentBaseURLString: String? {
         environmentBaseURLString(named: "KBO_LIVE_BASE_URL")
     }
 
     nonisolated private static func environmentBaseURLString(named name: String) -> String? {
         guard let configured = ProcessInfo.processInfo.environment[name],
-              normalizedURL(from: configured) != nil,
-              isLegacyLocalBaseURL(configured) == false else {
+              normalizedURL(from: configured) != nil else {
             return nil
         }
 
@@ -244,14 +228,6 @@ final class BackendSettingsModel: ObservableObject {
         }
 
         return url
-    }
-
-    nonisolated private static func isLegacyLocalBaseURL(_ text: String) -> Bool {
-        guard let url = normalizedURL(from: text) else {
-            return false
-        }
-
-        return ["127.0.0.1", "localhost"].contains(url.host ?? "") && url.port == 3000
     }
 
     nonisolated private static func backendURL(baseURL: URL, path: String, apiPathPrefix: String) -> URL? {

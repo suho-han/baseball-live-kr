@@ -58,8 +58,8 @@ struct BackendSettingsView: View {
                     presetButton(.production)
                 }
 
-                if settings.isEnvironmentOverridden {
-                    Label("KBO_LIVE_BASE_URL 환경변수가 우선 적용 중입니다.", systemImage: "lock.fill")
+                if settings.hasEnvironmentBaseURL {
+                    Label("Local 기본값은 KBO_LIVE_BASE_URL 환경변수를 사용합니다. 다른 환경을 선택해도 됩니다.", systemImage: "info.circle.fill")
                         .font(KboTypographyToken.caption)
                         .foregroundStyle(KboSemanticColorToken.warning)
                 }
@@ -84,7 +84,6 @@ struct BackendSettingsView: View {
                         RoundedRectangle(cornerRadius: KboRadiusToken.medium, style: .continuous)
                             .stroke(KboSurfaceToken.glassBorder.opacity(0.75), lineWidth: 1)
                     }
-                    .disabled(settings.isEnvironmentOverridden)
                     .onSubmit {
                         applySettings()
                     }
@@ -139,7 +138,7 @@ struct BackendSettingsView: View {
                         title: "적용",
                         systemImage: "checkmark.circle.fill",
                         tint: KboSemanticColorToken.accentBlue,
-                        isDisabled: settings.isEnvironmentOverridden
+                        isDisabled: false
                     ) {
                         applySettings()
                     }
@@ -151,6 +150,9 @@ struct BackendSettingsView: View {
     private func presetButton(_ preset: BackendSettingsModel.BackendPreset) -> some View {
         Button {
             settings.selectPreset(preset)
+            Task {
+                await settings.checkHealth()
+            }
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: settings.selectedPreset == preset ? "checkmark.circle.fill" : "circle")
@@ -193,7 +195,6 @@ struct BackendSettingsView: View {
             }
         }
         .buttonStyle(.plain)
-        .disabled(settings.isEnvironmentOverridden)
     }
 
     @ViewBuilder
@@ -312,6 +313,9 @@ struct BackendSettingsView: View {
     private func applySettings() {
         if settings.save() {
             onApply()
+            Task {
+                await settings.checkHealth()
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ fi
 
 export NODE_ENV="${NODE_ENV:-production}"
 export HOST="${HOST:-0.0.0.0}"
-export PORT="${PORT:-3000}"
+export PORT="${PORT:-17361}"
 
 exec node "${DIR}/dist/src/index.js"
 SCRIPT
@@ -50,11 +50,11 @@ Run:
   ./run-backend.command
 
 Options:
-  PORT=3000 ./run-backend.command
-  HOST=127.0.0.1 PORT=3000 ./run-backend.command
+  PORT=17361 ./run-backend.command
+  HOST=127.0.0.1 PORT=17361 ./run-backend.command
 
 Health check:
-  curl http://127.0.0.1:3000/health
+  curl http://127.0.0.1:17361/health
 
 Requirement:
   Node.js 22+
