@@ -1,11 +1,29 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fetchKboGameDate, fetchKboGameList, KboSourceError } from '../src/clients/kboClient.js'
+import { closeDatabase } from '../src/db/database.js'
+import { countRawSources } from '../src/repositories/rawSourceRepository.js'
 import { TEST_DATE } from './testConfig.js'
 
 describe('kboClient', () => {
+  const tempDirs: string[] = []
+
+  beforeEach(() => {
+    process.env.KBO_DB_DISABLED = '1'
+  })
+
   afterEach(() => {
     vi.unstubAllGlobals()
+    closeDatabase()
+    for (const dir of tempDirs.splice(0)) {
+      rmSync(dir, { recursive: true, force: true })
+    }
+    delete process.env.KBO_DB_DISABLED
+    delete process.env.KBO_DB_ENABLED
+    delete process.env.KBO_DB_PATH
   })
 
   it('posts form data and parses a valid game date response', async () => {
@@ -28,6 +46,26 @@ describe('kboClient', () => {
 
     expect(response.NOW_G_DT).toBe(TEST_DATE)
     expect(fetchMock).toHaveBeenCalledOnce()
+  })
+
+  it('stores successful source responses when DB persistence is enabled', async () => {
+    delete process.env.KBO_DB_DISABLED
+    process.env.KBO_DB_ENABLED = '1'
+    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-client-db-'))
+    tempDirs.push(dir)
+    process.env.KBO_DB_PATH = join(dir, 'test.sqlite')
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({
+      BEFORE_G_DT: '20260612',
+      NOW_G_DT: TEST_DATE,
+      NOW_G_DT_TEXT: '06.13(토)',
+      AFTER_G_DT: '20260614',
+      code: '100',
+      msg: 'OK'
+    }), { status: 200 })))
+
+    await fetchKboGameDate(TEST_DATE)
+
+    expect(countRawSources()).toBe(1)
   })
 
   it('wraps non-2xx source responses with endpoint context', async () => {

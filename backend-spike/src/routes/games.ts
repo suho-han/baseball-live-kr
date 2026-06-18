@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 
+import { getPlayerSeasonRecord, searchPlayers } from '../repositories/playerRecordRepository.js'
 import { getGameById, getTeamStandings, getTodayGames, getTodayGamesRaw } from '../services/gameService.js'
 
 export function registerGamesRoutes(server: FastifyInstance) {
@@ -26,9 +27,32 @@ export function registerGamesRoutes(server: FastifyInstance) {
 
   server.get('/standings', standingsHandler)
   server.get('/v1/standings', standingsHandler)
+  server.get('/v1/teams/standings', standingsHandler)
 
   server.get('/debug/source/today', async (request) => {
     const query = request.query as { date?: string }
     return getTodayGamesRaw(query.date)
+  })
+
+  server.get('/v1/players/search', async (request) => {
+    const query = request.query as { q?: string, season?: string }
+    const q = query.q?.trim() ?? ''
+    if (q.length === 0) {
+      return { players: [] }
+    }
+
+    return {
+      players: searchPlayers(q, query.season == null ? undefined : Number(query.season))
+    }
+  })
+
+  server.get('/v1/players/:playerId/season', async (request) => {
+    const params = request.params as { playerId: string }
+    const query = request.query as { season?: string, date?: string }
+    const season = query.season == null ? new Date().getFullYear() : Number(query.season)
+
+    return {
+      player: getPlayerSeasonRecord(params.playerId, season, query.date)
+    }
   })
 }

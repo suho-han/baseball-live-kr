@@ -33,6 +33,16 @@ KBO_CACHE_STALE_IF_ERROR_SEC=600
 
 `/games/today`와 `/v1/games/today`는 같은 날짜 요청을 짧게 cache하고, 동일 date에 대한 동시 요청은 하나의 KBO source 요청으로 deduplicate합니다. source 오류가 발생해도 stale window 안의 cache가 있으면 stale 응답을 반환합니다.
 
+DB foundation 환경변수:
+
+```bash
+KBO_DB_PATH=.data/kbo-live.sqlite
+KBO_DB_DISABLED=1
+KBO_DB_ENABLED=1
+```
+
+기본값은 `backend-spike/.data/kbo-live.sqlite`입니다. KBO source 응답은 `raw_sources` table에 checksum 기준으로 중복 저장을 방지하며 기록됩니다. 테스트 환경에서는 기본 비활성화되며, 임시 실행에서 DB 기록을 끄려면 `KBO_DB_DISABLED=1`, 테스트에서 명시적으로 켜려면 `KBO_DB_ENABLED=1`을 사용합니다.
+
 ## 검증
 
 ```bash
@@ -55,6 +65,11 @@ TEST_DATE=YYYYMMDD npm test
 - `GET /games/:gameId?date=YYYY-MM-DD`
 - `GET /v1/games/today?date=YYYY-MM-DD`
 - `GET /v1/games/:gameId?date=YYYY-MM-DD`
+- `GET /standings?date=YYYY-MM-DD`
+- `GET /v1/standings?date=YYYY-MM-DD`
+- `GET /v1/teams/standings?date=YYYY-MM-DD`
+- `GET /v1/players/search?q=NAME&season=YYYY`
+- `GET /v1/players/:playerId/season?season=YYYY&date=YYYYMMDD`
 - `GET /debug/source/today?date=YYYY-MM-DD`
 
 ## 스크립트
@@ -119,6 +134,21 @@ npm run dump -- --date 2026-06-13 --write --out-dir fixtures/202606-completed/20
 - 대상 날짜: 2026-06-02~2026-06-07, 2026-06-09~2026-06-13
 
 Swift 테스트 fixture(`Packages/KboLiveCore/Tests/.../today-games-response.json`)는 앱 DTO 안정성 검증용으로 유지합니다.
+
+### 4) 선수 기록 source HTML dump
+
+```bash
+npm run dump:players -- --kind all --write
+npm run dump:players -- --kind batting --write
+npm run dump:players -- --kind pitching --write
+```
+
+생성물:
+- `fixtures/player-records-source/batting-latest.html`
+- `fixtures/player-records-source/pitching-latest.html`
+- timestamp별 `.html` / metadata `.json`
+
+DB가 활성화된 일반 실행에서는 `raw_sources` table에도 `kbo-official-eng` source로 저장하고, leaders table을 parse해 `players`, `player_team_seasons`, batting/pitching season record table에 upsert합니다. 테스트 환경에서 DB 저장까지 확인하려면 `KBO_DB_ENABLED=1`을 명시합니다.
 
 ## 검증 팁
 - 경기 전 시간대에는 `changedGames: 0`이 정상일 수 있음

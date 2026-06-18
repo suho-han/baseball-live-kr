@@ -2,6 +2,7 @@ import { buildKboHeaders } from '../config/kboHeaders.js'
 import { rawKboGameDateResponseSchema } from '../dto/kboGameDate.dto.js'
 import { rawKboGameListResponseSchema } from '../dto/kboGameList.dto.js'
 import { rawKboScheduleListResponseSchema } from '../dto/kboScheduleList.dto.js'
+import { saveRawSource } from '../repositories/rawSourceRepository.js'
 
 type KboEndpoint = 'GetKboGameDate' | 'GetKboGameList' | 'GetScheduleList' | 'TeamRankDaily'
 
@@ -19,6 +20,32 @@ export class KboSourceError extends Error {
   }
 }
 
+function formRequestKey(payload: Record<string, string>): string {
+  return new URLSearchParams(
+    Object.entries(payload)
+      .sort(([lhs], [rhs]) => lhs.localeCompare(rhs))
+  ).toString()
+}
+
+function recordRawSource(input: {
+  endpoint: KboEndpoint
+  requestKey: string
+  statusCode?: number
+  body: string
+}): void {
+  try {
+    saveRawSource({
+      source: 'kbo-official',
+      endpoint: input.endpoint,
+      requestKey: input.requestKey,
+      statusCode: input.statusCode,
+      body: input.body
+    })
+  } catch {
+    // Raw source persistence is observability data. Source fetch behavior must stay independent.
+  }
+}
+
 async function postForm<T>(endpoint: KboEndpoint, path: string, payload: Record<string, string>, referer?: string): Promise<T> {
   const response = await fetch(`${BASE_URL}/${path}`, {
     method: 'POST',
@@ -28,6 +55,12 @@ async function postForm<T>(endpoint: KboEndpoint, path: string, payload: Record<
 
   const text = await response.text()
   const trimmed = text.trim()
+  recordRawSource({
+    endpoint,
+    requestKey: formRequestKey(payload),
+    statusCode: response.status,
+    body: text
+  })
 
   if (!response.ok) {
     throw new KboSourceError(endpoint, `HTTP ${response.status}`, {
@@ -102,13 +135,20 @@ export async function fetchKboTeamRankDailyPage(date: string) {
     }
   })
 
+  const text = await response.text()
+  recordRawSource({
+    endpoint: 'TeamRankDaily',
+    requestKey: url.searchParams.toString(),
+    statusCode: response.status,
+    body: text
+  })
+
   if (!response.ok) {
     throw new KboSourceError('TeamRankDaily', `HTTP ${response.status}`, {
       statusCode: response.status
     })
   }
 
-  const text = await response.text()
   if (text.trim().length === 0 || text.includes('<title>에러')) {
     throw new KboSourceError('TeamRankDaily', 'returned invalid HTML')
   }

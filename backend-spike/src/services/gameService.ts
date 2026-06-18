@@ -3,9 +3,11 @@ import { makeTestLiveGame } from '../fixtures/testLiveGame.js'
 import { mapGame, mapScheduledGame } from '../mappers/gameMapper.js'
 import { mapScheduleGames } from '../mappers/scheduleMapper.js'
 import { parseKboTeamRankDaily } from '../mappers/teamRankMapper.js'
+import { listTeamSeasonRecords, upsertTeamSeasonRecords } from '../repositories/teamRecordRepository.js'
 import { toKboDate } from '../utils/date.js'
 import type { TeamRankEntry } from '../mappers/teamRankMapper.js'
 import type { NormalizedGame, TeamRecordSummary } from '../models/normalizedGame.js'
+import type { TeamSeasonRecord } from '../repositories/teamRecordRepository.js'
 
 interface TodayGamesResult {
   date: string
@@ -66,6 +68,29 @@ function teamRecordsById(standings: TeamRankEntry[]): Map<string, TeamRecordSumm
   )
 }
 
+function teamRankEntriesFromDb(records: TeamSeasonRecord[]): TeamRankEntry[] {
+  return records.map((record) => ({
+    teamId: record.teamId,
+    teamName: record.teamName,
+    wins: record.wins ?? 0,
+    losses: record.losses ?? 0,
+    draws: record.draws ?? 0,
+    rank: record.rank,
+    streak: record.streak,
+    winRate: record.winningPercentage == null ? null : String(record.winningPercentage),
+    recentTen: record.recent10,
+    gamesBack: record.gamesBehind
+  }))
+}
+
+function loadTeamStandingsEntriesFromDb(kboDate: string): TeamRankEntry[] {
+  try {
+    return teamRankEntriesFromDb(listTeamSeasonRecords(kboDate))
+  } catch {
+    return []
+  }
+}
+
 async function loadTeamStandingsEntries(kboDate: string): Promise<TeamRankEntry[]> {
   const cached = teamRankCache.get(kboDate)
   const now = Date.now()
@@ -77,6 +102,11 @@ async function loadTeamStandingsEntries(kboDate: string): Promise<TeamRankEntry[
     const html = await fetchKboTeamRankDailyPage(kboDate)
     const standings = parseKboTeamRankDaily(html)
       .sort((lhs, rhs) => (lhs.rank ?? Number.MAX_SAFE_INTEGER) - (rhs.rank ?? Number.MAX_SAFE_INTEGER))
+    try {
+      upsertTeamSeasonRecords(kboDate, standings)
+    } catch {
+      // DB persistence must not break the live source response path.
+    }
 
     teamRankCache.set(kboDate, {
       value: standings,
@@ -85,7 +115,7 @@ async function loadTeamStandingsEntries(kboDate: string): Promise<TeamRankEntry[
 
     return standings
   } catch {
-    return cached?.value ?? []
+    return cached?.value ?? loadTeamStandingsEntriesFromDb(kboDate)
   }
 }
 

@@ -1,5 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { closeDatabase } from '../src/db/database.js'
+import { upsertBattingSeasonRecords } from '../src/repositories/playerRecordRepository.js'
 import { getGameById, getTeamStandings, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
 import { KboDateInputError } from '../src/utils/date.js'
 import { buildServer } from '../src/server.js'
@@ -16,6 +21,7 @@ const mockTodayGames = vi.mocked(getTodayGames)
 const mockGameById = vi.mocked(getGameById)
 const mockTeamStandings = vi.mocked(getTeamStandings)
 const mockTodayGamesRaw = vi.mocked(getTodayGamesRaw)
+const tempDirs: string[] = []
 
 describe('games routes', () => {
   beforeEach(() => {
@@ -31,6 +37,15 @@ describe('games routes', () => {
       scheduleGames: [],
       normalizedGames: []
     } as never)
+  })
+
+  afterEach(() => {
+    closeDatabase()
+    for (const dir of tempDirs.splice(0)) {
+      rmSync(dir, { recursive: true, force: true })
+    }
+    delete process.env.KBO_DB_ENABLED
+    delete process.env.KBO_DB_PATH
   })
 
   it('returns today games through Fastify injection', async () => {
@@ -81,6 +96,17 @@ describe('games routes', () => {
     const server = buildServer()
 
     const response = await server.inject(`/v1/standings?date=${TEST_INPUT_DATE}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(JSON.parse(response.body)).toEqual({ date: TEST_DATE, standings: [] })
+    expect(mockTeamStandings).toHaveBeenCalledWith(TEST_INPUT_DATE)
+    await server.close()
+  })
+
+  it('returns team standings through the explicit teams route', async () => {
+    const server = buildServer()
+
+    const response = await server.inject(`/v1/teams/standings?date=${TEST_INPUT_DATE}`)
 
     expect(response.statusCode).toBe(200)
     expect(JSON.parse(response.body)).toEqual({ date: TEST_DATE, standings: [] })
@@ -150,6 +176,52 @@ describe('games routes', () => {
         code: 'INTERNAL_ERROR',
         message: 'source unavailable',
         statusCode: 500
+      }
+    })
+    await server.close()
+  })
+
+  it('returns player search and season records through v1 player routes', async () => {
+    process.env.KBO_DB_ENABLED = '1'
+    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-player-routes-'))
+    tempDirs.push(dir)
+    process.env.KBO_DB_PATH = join(dir, 'test.sqlite')
+    upsertBattingSeasonRecords('20260618', [{
+      playerId: '66606',
+      playerName: 'CHOI Won Jun',
+      teamId: 'KT',
+      teamName: 'KT',
+      rank: 1,
+      games: 65,
+      plateAppearances: 312,
+      atBats: 265,
+      runs: 59,
+      hits: 101,
+      doubles: 20,
+      triples: 2,
+      homeRuns: 5,
+      totalBases: 140,
+      rbi: 37,
+      stolenBases: 15,
+      caughtStealing: 6,
+      sacrificeHits: 3,
+      sacrificeFlies: 3,
+      avg: 0.381
+    }])
+    const server = buildServer()
+
+    const search = await server.inject('/v1/players/search?q=won&season=2026')
+    const season = await server.inject('/v1/players/66606/season?season=2026&date=20260618')
+
+    expect(search.statusCode).toBe(200)
+    expect(JSON.parse(search.body).players).toMatchObject([{ playerId: '66606', playerName: 'CHOI Won Jun' }])
+    expect(season.statusCode).toBe(200)
+    expect(JSON.parse(season.body).player).toMatchObject({
+      playerId: '66606',
+      playerName: 'CHOI Won Jun',
+      batting: {
+        avg: 0.381,
+        hits: 101
       }
     })
     await server.close()

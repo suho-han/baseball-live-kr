@@ -1,0 +1,96 @@
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, describe, expect, it } from 'vitest'
+
+import { closeDatabase, openDatabase } from '../src/db/database.js'
+import {
+  getPlayerSeasonRecord,
+  searchPlayers,
+  upsertBattingSeasonRecords,
+  upsertPitchingSeasonRecords
+} from '../src/repositories/playerRecordRepository.js'
+
+describe('playerRecordRepository', () => {
+  const tempDirs: string[] = []
+
+  afterEach(() => {
+    closeDatabase()
+    for (const dir of tempDirs.splice(0)) {
+      rmSync(dir, { recursive: true, force: true })
+    }
+    delete process.env.KBO_DB_ENABLED
+  })
+
+  it('upserts batting and pitching records and reads player season summaries', () => {
+    process.env.KBO_DB_ENABLED = '1'
+    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-player-records-'))
+    tempDirs.push(dir)
+    const db = openDatabase(join(dir, 'test.sqlite'))
+
+    upsertBattingSeasonRecords('20260618', [{
+      playerId: '66606',
+      playerName: 'CHOI Won Jun',
+      teamId: 'KT',
+      teamName: 'KT',
+      rank: 1,
+      games: 65,
+      plateAppearances: 312,
+      atBats: 265,
+      runs: 59,
+      hits: 101,
+      doubles: 20,
+      triples: 2,
+      homeRuns: 5,
+      totalBases: 140,
+      rbi: 37,
+      stolenBases: 15,
+      caughtStealing: 6,
+      sacrificeHits: 3,
+      sacrificeFlies: 3,
+      avg: 0.381
+    }], db)
+    upsertPitchingSeasonRecords('20260618', [{
+      playerId: '55633',
+      playerName: 'OLLER Adam',
+      teamId: 'HT',
+      teamName: 'KIA',
+      rank: 1,
+      games: 14,
+      completeGames: 1,
+      shutouts: 1,
+      wins: 7,
+      losses: 5,
+      saves: 0,
+      holds: 0,
+      winningPercentage: 0.583,
+      plateAppearances: 344,
+      pitches: 1314,
+      inningsPitchedOuts: 262,
+      hitsAllowed: 56,
+      doublesAllowed: 6,
+      triplesAllowed: 2,
+      homeRunsAllowed: 6,
+      era: 2.58
+    }], db)
+
+    expect(searchPlayers('choi', 2026, db)).toMatchObject([{
+      playerId: '66606',
+      playerName: 'CHOI Won Jun',
+      teamId: 'KT',
+      season: 2026,
+      positionGroup: 'batter'
+    }])
+    expect(getPlayerSeasonRecord('55633', 2026, '20260618', db)).toMatchObject({
+      playerId: '55633',
+      playerName: 'OLLER Adam',
+      season: 2026,
+      teamId: 'HT',
+      pitching: {
+        era: 2.58,
+        innings_pitched_outs: 262
+      }
+    })
+  })
+})
+

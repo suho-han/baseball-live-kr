@@ -1,4 +1,5 @@
 import type { TeamRecordSummary } from '../models/normalizedGame.js'
+import { mapTeamNameToId } from './teamIdMapper.js'
 
 export interface TeamRankEntry extends TeamRecordSummary {
   teamId: string
@@ -6,19 +7,6 @@ export interface TeamRankEntry extends TeamRecordSummary {
   winRate: string | null
   recentTen: string | null
   gamesBack: string | null
-}
-
-const TEAM_NAME_TO_ID: Record<string, string> = {
-  LG: 'LG',
-  KT: 'KT',
-  삼성: 'SS',
-  KIA: 'HT',
-  두산: 'OB',
-  한화: 'HH',
-  NC: 'NC',
-  SSG: 'SK',
-  키움: 'WO',
-  롯데: 'LT'
 }
 
 function stripTags(value: string): string {
@@ -49,7 +37,7 @@ export function parseKboTeamRankDaily(html: string): TeamRankEntry[] {
     const wins = toNumber(winsText)
     const losses = toNumber(lossesText)
     const draws = toNumber(drawsText)
-    const teamId = TEAM_NAME_TO_ID[teamName]
+    const teamId = mapTeamNameToId(teamName)
 
     if (!teamId || rank == null || wins == null || losses == null || draws == null) {
       return []

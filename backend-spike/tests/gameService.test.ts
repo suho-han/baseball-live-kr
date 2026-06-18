@@ -1,7 +1,12 @@
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fetchKboGameDate, fetchKboGameList, fetchKboScheduleList, fetchKboTeamRankDailyPage } from '../src/clients/kboClient.js'
-import { clearGameServiceCacheForTests, getGameById, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
+import { closeDatabase } from '../src/db/database.js'
+import { upsertTeamSeasonRecords } from '../src/repositories/teamRecordRepository.js'
+import { clearGameServiceCacheForTests, getGameById, getTeamStandings, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
 import { TEST_DATE, TEST_GAME_ID, TEST_INPUT_DATE, TEST_MONTH, TEST_NEXT_DATE, TEST_SEASON, TEST_START_TIME } from './testConfig.js'
 
 vi.mock('../src/clients/kboClient.js', () => ({
@@ -15,6 +20,7 @@ const mockGameDate = vi.mocked(fetchKboGameDate)
 const mockGameList = vi.mocked(fetchKboGameList)
 const mockScheduleList = vi.mocked(fetchKboScheduleList)
 const mockTeamRankDailyPage = vi.mocked(fetchKboTeamRankDailyPage)
+const tempDirs: string[] = []
 
 const teamRankHtml = `
 <table summary="순위, 팀명,승,패,무,승률,승차,최근10경기,연속,홈,방문" class="tData">
@@ -32,6 +38,8 @@ describe('gameService', () => {
     delete process.env.KBO_CACHE_TTL_GAME_IDLE_SEC
     delete process.env.KBO_CACHE_TTL_GAME_LIVE_SEC
     delete process.env.KBO_CACHE_STALE_IF_ERROR_SEC
+    delete process.env.KBO_DB_ENABLED
+    delete process.env.KBO_DB_PATH
     mockGameDate.mockResolvedValue({
       BEFORE_G_DT: '20260612',
       NOW_G_DT: TEST_DATE,
@@ -79,6 +87,12 @@ describe('gameService', () => {
     delete process.env.KBO_CACHE_TTL_GAME_IDLE_SEC
     delete process.env.KBO_CACHE_TTL_GAME_LIVE_SEC
     delete process.env.KBO_CACHE_STALE_IF_ERROR_SEC
+    delete process.env.KBO_DB_ENABLED
+    delete process.env.KBO_DB_PATH
+    closeDatabase()
+    for (const dir of tempDirs.splice(0)) {
+      rmSync(dir, { recursive: true, force: true })
+    }
   })
 
   it('loads source endpoints in KBO date format and enriches games with schedule metadata', async () => {
@@ -180,6 +194,42 @@ describe('gameService', () => {
 
     expect(fallback).toEqual(cached)
     expect(mockGameDate).toHaveBeenCalledTimes(2)
+  })
+
+  it('falls back to DB-backed team standings when the source fails and cache is empty', async () => {
+    process.env.KBO_DB_ENABLED = '1'
+    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-standings-fallback-'))
+    tempDirs.push(dir)
+    process.env.KBO_DB_PATH = join(dir, 'test.sqlite')
+    upsertTeamSeasonRecords(TEST_DATE, [{
+      teamId: 'LG',
+      teamName: 'LG',
+      rank: 1,
+      wins: 41,
+      losses: 24,
+      draws: 0,
+      winRate: '0.631',
+      gamesBack: '0',
+      recentTen: '7승0무3패',
+      streak: '2승'
+    }])
+    clearGameServiceCacheForTests()
+    mockTeamRankDailyPage.mockRejectedValue(new Error('source down'))
+
+    const result = await getTeamStandings(TEST_INPUT_DATE)
+
+    expect(result).toMatchObject({
+      date: TEST_DATE,
+      standings: [{
+        teamId: 'LG',
+        teamName: 'LG',
+        rank: 1,
+        wins: 41,
+        losses: 24,
+        draws: 0,
+        streak: '2승'
+      }]
+    })
   })
 
   it('loads every scheduled date in the month instead of only the requested date', async () => {
