@@ -93,6 +93,8 @@ Mac mini로 업로드하고 backend health smoke까지 실행:
 SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/kbo-live ./scripts/deploy-macmini-runtime.sh
 ```
 
+macOS 배포/원격 테스트 체크리스트는 `PROJECT_CONTEXT/macos-release-operations.md`를 기준으로 유지합니다.
+
 ### Swift package
 ```bash
 cd Packages/KboLiveCore

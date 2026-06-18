@@ -14,6 +14,10 @@
   - backend spike 검증 결과
 - `production-backend-strategy.md`
   - production backend 전환, 배포, cache/fallback 운영 전략
+- `team-player-records-db-plan.md`
+  - 팀 기록/선수 기록 보강과 DB 구축 단계별 계획
+- `macos-release-operations.md`
+  - macOS 앱 + backend companion 패키징, 원격 테스트, 배포 전 체크리스트
 - `live-activity-verification.md`
   - iOS 실제 기기 Live Activity start/stop 검증 절차
 - `mvp-stability-checklist.md`
