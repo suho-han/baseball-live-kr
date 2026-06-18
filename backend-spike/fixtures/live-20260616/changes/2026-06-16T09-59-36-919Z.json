@@ -1,0 +1,176 @@
+{
+  "fetchedAt": "2026-06-16T09:59:36.919Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 3,
+  "changes": [
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "changes": [
+        "count {\"balls\":2,\"strikes\":2,\"outs\":0} -> {\"balls\":0,\"strikes\":0,\"outs\":1}",
+        "current {\"batter\":\"박수종\",\"pitcher\":\"원태인\"} -> {\"batter\":\"김동헌\",\"pitcher\":\"원태인\"}",
+        "recentPlay \"3회초 박수종 타석, 투수 원태인, 카운트 2-2, 0아웃, 주자 없음\" -> \"3회초 김동헌 타석, 투수 원태인, 카운트 0-0, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":1,\"outs\":1} -> {\"balls\":1,\"strikes\":2,\"outs\":1}",
+        "recentPlay \"2회초 홍창기 타석, 투수 시라카와, 카운트 1-1, 1아웃, 1,3루\" -> \"2회초 홍창기 타석, 투수 시라카와, 카운트 1-2, 1아웃, 1,3루\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "bases {\"first\":false,\"second\":false,\"third\":false} -> {\"first\":true,\"second\":false,\"third\":false}",
+        "current {\"batter\":\"화이트\",\"pitcher\":\"천재환\"} -> {\"batter\":\"화이트\",\"pitcher\":\"김형준\"}",
+        "recentPlay \"2회말 화이트 타석, 투수 천재환, 카운트 0-0, 1아웃, 주자 없음\" -> \"2회말 화이트 타석, 투수 김형준, 카운트 0-0, 1아웃, 1루\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 1
+      },
+      "inning": {
+        "number": 2,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "고영표",
+        "pitcher": "박찬호"
+      },
+      "recentPlay": "2회말 고영표 타석, 투수 박찬호, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 0
+      },
+      "inning": {
+        "number": 3,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김동헌",
+        "pitcher": "원태인"
+      },
+      "recentPlay": "3회초 김동헌 타석, 투수 원태인, 카운트 0-0, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 2
+      },
+      "inning": {
+        "number": 2,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진욱",
+        "pitcher": "김성욱"
+      },
+      "recentPlay": "2회말 김진욱 타석, 투수 김성욱, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 3,
+        "home": 1
+      },
+      "inning": {
+        "number": 2,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 2,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": true
+      },
+      "current": {
+        "batter": "홍창기",
+        "pitcher": "시라카와"
+      },
+      "recentPlay": "2회초 홍창기 타석, 투수 시라카와, 카운트 1-2, 1아웃, 1,3루"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 1
+      },
+      "inning": {
+        "number": 2,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "화이트",
+        "pitcher": "김형준"
+      },
+      "recentPlay": "2회말 화이트 타석, 투수 김형준, 카운트 0-0, 1아웃, 1루"
+    }
+  ]
+}

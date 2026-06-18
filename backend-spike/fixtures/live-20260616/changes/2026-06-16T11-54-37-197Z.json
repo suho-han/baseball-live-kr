@@ -1,0 +1,167 @@
+{
+  "fetchedAt": "2026-06-16T11:54:37.197Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 2,
+  "changes": [
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":2,\"outs\":0} -> {\"balls\":0,\"strikes\":0,\"outs\":1}",
+        "current {\"batter\":\"한동희\",\"pitcher\":\"김민\"} -> {\"batter\":\"나승엽\",\"pitcher\":\"김민\"}",
+        "recentPlay \"7회초 한동희 타석, 투수 김민, 카운트 0-2, 0아웃, 주자 없음\" -> \"7회초 나승엽 타석, 투수 김민, 카운트 0-0, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":0} -> {\"balls\":2,\"strikes\":0,\"outs\":0}",
+        "recentPlay \"7회초 허인서 타석, 투수 류진욱, 카운트 0-0, 0아웃, 주자 없음\" -> \"7회초 허인서 타석, 투수 류진욱, 카운트 2-0, 0아웃, 주자 없음\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 2
+      },
+      "inning": {
+        "number": 7,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "스기모토",
+        "pitcher": "양의지"
+      },
+      "recentPlay": "7회말 스기모토 타석, 투수 양의지, 카운트 0-0, 1아웃, 1루"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 4
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "히우라",
+        "pitcher": "최지광"
+      },
+      "recentPlay": "8회초 히우라 타석, 투수 최지광, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 5,
+        "home": 3
+      },
+      "inning": {
+        "number": 7,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "나승엽",
+        "pitcher": "김민"
+      },
+      "recentPlay": "7회초 나승엽 타석, 투수 김민, 카운트 0-0, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 8,
+        "home": 2
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 2,
+        "strikes": 2,
+        "outs": 0
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "홍창기",
+        "pitcher": "이형범"
+      },
+      "recentPlay": "8회초 홍창기 타석, 투수 이형범, 카운트 2-2, 0아웃, 1루"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 2,
+        "home": 6
+      },
+      "inning": {
+        "number": 7,
+        "half": "top"
+      },
+      "count": {
+        "balls": 2,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "허인서",
+        "pitcher": "류진욱"
+      },
+      "recentPlay": "7회초 허인서 타석, 투수 류진욱, 카운트 2-0, 0아웃, 주자 없음"
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "fetchedAt": "2026-06-16T12:00:37.295Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 4,
+  "changes": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":1,\"outs\":0} -> {\"balls\":2,\"strikes\":2,\"outs\":0}",
+        "recentPlay \"8회초 힐리어드 타석, 투수 박신지, 카운트 1-1, 0아웃, 주자 없음\" -> \"8회초 힐리어드 타석, 투수 박신지, 카운트 2-2, 0아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":2} -> {\"balls\":1,\"strikes\":1,\"outs\":2}",
+        "recentPlay \"7회초 손성빈 타석, 투수 김민, 카운트 0-0, 2아웃, 1루\" -> \"7회초 손성빈 타석, 투수 김민, 카운트 1-1, 2아웃, 1루\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":1,\"outs\":0} -> {\"balls\":0,\"strikes\":0,\"outs\":1}",
+        "current {\"batter\":\"우강훈\",\"pitcher\":\"김민규\"} -> {\"batter\":\"우강훈\",\"pitcher\":\"김호령\"}",
+        "recentPlay \"8회말 우강훈 타석, 투수 김민규, 카운트 1-1, 0아웃, 주자 없음\" -> \"8회말 우강훈 타석, 투수 김호령, 카운트 0-0, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "inning {\"number\":7,\"half\":\"top\"} -> {\"number\":7,\"half\":\"bottom\"}",
+        "count {\"balls\":2,\"strikes\":2,\"outs\":2} -> {\"balls\":0,\"strikes\":0,\"outs\":0}",
+        "current {\"batter\":\"심우준\",\"pitcher\":\"류진욱\"} -> {\"batter\":\"박준영\",\"pitcher\":\"박민우\"}",
+        "recentPlay \"7회초 심우준 타석, 투수 류진욱, 카운트 2-2, 2아웃, 주자 없음\" -> \"7회말 박준영 타석, 투수 박민우, 카운트 0-0, 0아웃, 주자 없음\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 2
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 2,
+        "strikes": 2,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "힐리어드",
+        "pitcher": "박신지"
+      },
+      "recentPlay": "8회초 힐리어드 타석, 투수 박신지, 카운트 2-2, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 1,
+        "home": 4
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "최주환",
+        "pitcher": "배찬승"
+      },
+      "recentPlay": "8회초 최주환 타석, 투수 배찬승, 카운트 0-0, 0아웃, 2루"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 3
+      },
+      "inning": {
+        "number": 7,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 1,
+        "outs": 2
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "손성빈",
+        "pitcher": "김민"
+      },
+      "recentPlay": "7회초 손성빈 타석, 투수 김민, 카운트 1-1, 2아웃, 1루"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 8,
+        "home": 2
+      },
+      "inning": {
+        "number": 8,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "우강훈",
+        "pitcher": "김호령"
+      },
+      "recentPlay": "8회말 우강훈 타석, 투수 김호령, 카운트 0-0, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 2,
+        "home": 6
+      },
+      "inning": {
+        "number": 7,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "박준영",
+        "pitcher": "박민우"
+      },
+      "recentPlay": "7회말 박준영 타석, 투수 박민우, 카운트 0-0, 0아웃, 주자 없음"
+    }
+  ]
+}

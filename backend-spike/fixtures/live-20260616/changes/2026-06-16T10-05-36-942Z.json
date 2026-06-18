@@ -1,0 +1,174 @@
+{
+  "fetchedAt": "2026-06-16T10:05:36.942Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 3,
+  "changes": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":1,\"outs\":2} -> {\"balls\":0,\"strikes\":2,\"outs\":2}",
+        "recentPlay \"2회말 고영표 타석, 투수 이유찬, 카운트 0-1, 2아웃, 2루\" -> \"2회말 고영표 타석, 투수 이유찬, 카운트 0-2, 2아웃, 2루\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":1} -> {\"balls\":0,\"strikes\":1,\"outs\":1}",
+        "recentPlay \"2회말 웰스 타석, 투수 박민, 카운트 0-0, 1아웃, 주자 없음\" -> \"2회말 웰스 타석, 투수 박민, 카운트 0-1, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":1,\"outs\":2} -> {\"balls\":0,\"strikes\":2,\"outs\":2}",
+        "recentPlay \"2회말 화이트 타석, 투수 박시원, 카운트 0-1, 2아웃, 1루\" -> \"2회말 화이트 타석, 투수 박시원, 카운트 0-2, 2아웃, 1루\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 1
+      },
+      "inning": {
+        "number": 2,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 2,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "고영표",
+        "pitcher": "이유찬"
+      },
+      "recentPlay": "2회말 고영표 타석, 투수 이유찬, 카운트 0-2, 2아웃, 2루"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 0
+      },
+      "inning": {
+        "number": 3,
+        "half": "top"
+      },
+      "count": {
+        "balls": 2,
+        "strikes": 2,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "안치홍",
+        "pitcher": "원태인"
+      },
+      "recentPlay": "3회초 안치홍 타석, 투수 원태인, 카운트 2-2, 1아웃, 1,2루"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 2
+      },
+      "inning": {
+        "number": 3,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "장두성",
+        "pitcher": "김민준"
+      },
+      "recentPlay": "3회초 장두성 타석, 투수 김민준, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 3,
+        "home": 1
+      },
+      "inning": {
+        "number": 2,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 1,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "웰스",
+        "pitcher": "박민"
+      },
+      "recentPlay": "2회말 웰스 타석, 투수 박민, 카운트 0-1, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 1
+      },
+      "inning": {
+        "number": 2,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 2,
+        "outs": 2
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "화이트",
+        "pitcher": "박시원"
+      },
+      "recentPlay": "2회말 화이트 타석, 투수 박시원, 카운트 0-2, 2아웃, 1루"
+    }
+  ]
+}

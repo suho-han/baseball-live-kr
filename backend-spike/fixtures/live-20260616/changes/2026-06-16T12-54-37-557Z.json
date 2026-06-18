@@ -1,0 +1,159 @@
+{
+  "fetchedAt": "2026-06-16T12:54:37.557Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 1,
+  "changes": [
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "bases {\"first\":true,\"second\":false,\"third\":false} -> {\"first\":true,\"second\":true,\"third\":false}",
+        "current {\"batter\":\"최준용\",\"pitcher\":\"오태곤\"} -> {\"batter\":\"최준용\",\"pitcher\":\"최지훈\"}",
+        "recentPlay \"9회말 최준용 타석, 투수 오태곤, 카운트 0-0, 1아웃, 1루\" -> \"9회말 최준용 타석, 투수 최지훈, 카운트 0-0, 1아웃, 1,2루\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "final",
+      "score": {
+        "away": 6,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 3,
+        "strikes": 3,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": true
+      },
+      "current": {
+        "batter": "박영현",
+        "pitcher": "카메론"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "final",
+      "score": {
+        "away": 1,
+        "home": 4
+      },
+      "inning": {
+        "number": 9,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 2,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "안치홍",
+        "pitcher": "김재윤"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 10,
+        "home": 5
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "최준용",
+        "pitcher": "최지훈"
+      },
+      "recentPlay": "9회말 최준용 타석, 투수 최지훈, 카운트 0-0, 1아웃, 1,2루"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "final",
+      "score": {
+        "away": 8,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 3,
+        "strikes": 2,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진수",
+        "pitcher": "변우혁"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "final",
+      "score": {
+        "away": 5,
+        "home": 6
+      },
+      "inning": {
+        "number": 9,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 0,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "이원석",
+        "pitcher": "전사민"
+      },
+      "recentPlay": null
+    }
+  ]
+}

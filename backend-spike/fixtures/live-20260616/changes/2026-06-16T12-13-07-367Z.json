@@ -1,0 +1,175 @@
+{
+  "fetchedAt": "2026-06-16T12:13:07.367Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 3,
+  "changes": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":0} -> {\"balls\":0,\"strikes\":1,\"outs\":0}",
+        "recentPlay \"9회초 류현인 타석, 투수 박신지, 카운트 0-0, 0아웃, 주자 없음\" -> \"9회초 류현인 타석, 투수 박신지, 카운트 0-1, 0아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "count {\"balls\":2,\"strikes\":2,\"outs\":0} -> {\"balls\":2,\"strikes\":3,\"outs\":1}",
+        "recentPlay \"9회말 김진수 타석, 투수 한준수, 카운트 2-2, 0아웃, 주자 없음\" -> \"9회말 김진수 타석, 투수 한준수, 카운트 2-3, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":1,\"outs\":0} -> {\"balls\":0,\"strikes\":0,\"outs\":1}",
+        "current {\"batter\":\"오재원\",\"pitcher\":\"김진호\"} -> {\"batter\":\"페라자\",\"pitcher\":\"김진호\"}",
+        "recentPlay \"8회초 오재원 타석, 투수 김진호, 카운트 1-1, 0아웃, 주자 없음\" -> \"8회초 페라자 타석, 투수 김진호, 카운트 0-0, 1아웃, 주자 없음\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 1,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "류현인",
+        "pitcher": "박신지"
+      },
+      "recentPlay": "9회초 류현인 타석, 투수 박신지, 카운트 0-1, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 1,
+        "home": 4
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 2,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": true,
+        "third": true
+      },
+      "current": {
+        "batter": "김건희",
+        "pitcher": "이승민"
+      },
+      "recentPlay": "8회초 김건희 타석, 투수 이승민, 카운트 1-2, 1아웃, 1,2,3루"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 3
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "장두성",
+        "pitcher": "최용준"
+      },
+      "recentPlay": "8회초 장두성 타석, 투수 최용준, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 8,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 2,
+        "strikes": 3,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진수",
+        "pitcher": "한준수"
+      },
+      "recentPlay": "9회말 김진수 타석, 투수 한준수, 카운트 2-3, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 2,
+        "home": 6
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "페라자",
+        "pitcher": "김진호"
+      },
+      "recentPlay": "8회초 페라자 타석, 투수 김진호, 카운트 0-0, 1아웃, 주자 없음"
+    }
+  ]
+}

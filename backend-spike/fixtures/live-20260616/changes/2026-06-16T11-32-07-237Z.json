@@ -1,0 +1,188 @@
+{
+  "fetchedAt": "2026-06-16T11:32:07.237Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 4,
+  "changes": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":2,\"outs\":0} -> {\"balls\":1,\"strikes\":0,\"outs\":2}",
+        "bases {\"first\":true,\"second\":false,\"third\":false} -> {\"first\":false,\"second\":false,\"third\":false}",
+        "current {\"batter\":\"고영표\",\"pitcher\":\"박지훈\"} -> {\"batter\":\"고영표\",\"pitcher\":\"류승민\"}",
+        "recentPlay \"6회말 고영표 타석, 투수 박지훈, 카운트 0-2, 0아웃, 1루\" -> \"6회말 고영표 타석, 투수 류승민, 카운트 1-0, 2아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "changes": [
+        "current {\"batter\":\"권혁빈\",\"pitcher\":\"이재희\"} -> {\"batter\":\"어준서\",\"pitcher\":\"이재희\"}",
+        "recentPlay \"7회초 권혁빈 타석, 투수 이재희, 카운트 0-0, 0아웃, 주자 없음\" -> \"7회초 어준서 타석, 투수 이재희, 카운트 0-0, 0아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "count {\"balls\":3,\"strikes\":2,\"outs\":1} -> {\"balls\":0,\"strikes\":0,\"outs\":2}",
+        "current {\"batter\":\"고승민\",\"pitcher\":\"이건욱\"} -> {\"batter\":\"레이예스\",\"pitcher\":\"이건욱\"}",
+        "recentPlay \"6회초 고승민 타석, 투수 이건욱, 카운트 3-2, 1아웃, 주자 없음\" -> \"6회초 레이예스 타석, 투수 이건욱, 카운트 0-0, 2아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "score LG 6:2 KIA -> LG 7:2 KIA",
+        "count {\"balls\":0,\"strikes\":0,\"outs\":1} -> {\"balls\":0,\"strikes\":1,\"outs\":1}",
+        "bases {\"first\":true,\"second\":false,\"third\":true} -> {\"first\":true,\"second\":true,\"third\":false}",
+        "current {\"batter\":\"문보경\",\"pitcher\":\"최지민\"} -> {\"batter\":\"문성주\",\"pitcher\":\"최지민\"}",
+        "recentPlay \"7회초 문보경 타석, 투수 최지민, 카운트 0-0, 1아웃, 1,3루\" -> \"7회초 문성주 타석, 투수 최지민, 카운트 0-1, 1아웃, 1,2루\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 1
+      },
+      "inning": {
+        "number": 6,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 0,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "고영표",
+        "pitcher": "류승민"
+      },
+      "recentPlay": "6회말 고영표 타석, 투수 류승민, 카운트 1-0, 2아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 4
+      },
+      "inning": {
+        "number": 7,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "어준서",
+        "pitcher": "이재희"
+      },
+      "recentPlay": "7회초 어준서 타석, 투수 이재희, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 5,
+        "home": 3
+      },
+      "inning": {
+        "number": 6,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "레이예스",
+        "pitcher": "이건욱"
+      },
+      "recentPlay": "6회초 레이예스 타석, 투수 이건욱, 카운트 0-0, 2아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 7,
+        "home": 2
+      },
+      "inning": {
+        "number": 7,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 1,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "문성주",
+        "pitcher": "최지민"
+      },
+      "recentPlay": "7회초 문성주 타석, 투수 최지민, 카운트 0-1, 1아웃, 1,2루"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 2,
+        "home": 6
+      },
+      "inning": {
+        "number": 5,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "장유호",
+        "pitcher": "천재환"
+      },
+      "recentPlay": "5회말 장유호 타석, 투수 천재환, 카운트 0-0, 1아웃, 1루"
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "fetchedAt": "2026-06-16T12:25:37.433Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 3,
+  "changes": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":2,\"outs\":2} -> {\"balls\":0,\"strikes\":0,\"outs\":2}",
+        "bases {\"first\":false,\"second\":false,\"third\":false} -> {\"first\":false,\"second\":false,\"third\":true}",
+        "current {\"batter\":\"박영현\",\"pitcher\":\"조수행\"} -> {\"batter\":\"박영현\",\"pitcher\":\"카메론\"}",
+        "recentPlay \"9회말 박영현 타석, 투수 조수행, 카운트 1-2, 2아웃, 주자 없음\" -> \"9회말 박영현 타석, 투수 카메론, 카운트 0-0, 2아웃, 3루\""
+      ]
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":2} -> {\"balls\":1,\"strikes\":0,\"outs\":2}",
+        "recentPlay \"9회초 안치홍 타석, 투수 김재윤, 카운트 0-0, 2아웃, 주자 없음\" -> \"9회초 안치홍 타석, 투수 김재윤, 카운트 1-0, 2아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":2} -> {\"balls\":1,\"strikes\":0,\"outs\":2}",
+        "recentPlay \"8회초 전민재 타석, 투수 최용준, 카운트 0-0, 2아웃, 주자 없음\" -> \"8회초 전민재 타석, 투수 최용준, 카운트 1-0, 2아웃, 주자 없음\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 6,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": true
+      },
+      "current": {
+        "batter": "박영현",
+        "pitcher": "카메론"
+      },
+      "recentPlay": "9회말 박영현 타석, 투수 카메론, 카운트 0-0, 2아웃, 3루"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 1,
+        "home": 4
+      },
+      "inning": {
+        "number": 9,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 0,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "안치홍",
+        "pitcher": "김재윤"
+      },
+      "recentPlay": "9회초 안치홍 타석, 투수 김재윤, 카운트 1-0, 2아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 10,
+        "home": 3
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 0,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "전민재",
+        "pitcher": "최용준"
+      },
+      "recentPlay": "8회초 전민재 타석, 투수 최용준, 카운트 1-0, 2아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "final",
+      "score": {
+        "away": 8,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 3,
+        "strikes": 2,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진수",
+        "pitcher": "변우혁"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 5,
+        "home": 6
+      },
+      "inning": {
+        "number": 8,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 2,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김태연",
+        "pitcher": "전사민"
+      },
+      "recentPlay": "8회초 김태연 타석, 투수 전사민, 카운트 0-2, 2아웃, 주자 없음"
+    }
+  ]
+}

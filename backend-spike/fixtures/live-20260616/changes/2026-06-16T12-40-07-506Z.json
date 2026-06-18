@@ -1,0 +1,169 @@
+{
+  "fetchedAt": "2026-06-16T12:40:07.506Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 2,
+  "changes": [
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "score 롯데 10:4 SSG -> 롯데 10:5 SSG",
+        "count {\"balls\":0,\"strikes\":0,\"outs\":1} -> {\"balls\":1,\"strikes\":0,\"outs\":2}",
+        "bases {\"first\":false,\"second\":true,\"third\":true} -> {\"first\":false,\"second\":false,\"third\":true}",
+        "current {\"batter\":\"현도훈\",\"pitcher\":\"박성한\"} -> {\"batter\":\"현도훈\",\"pitcher\":\"정준재\"}",
+        "recentPlay \"8회말 현도훈 타석, 투수 박성한, 카운트 0-0, 1아웃, 2,3루\" -> \"8회말 현도훈 타석, 투수 정준재, 카운트 1-0, 2아웃, 3루\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":1,\"outs\":2} -> {\"balls\":3,\"strikes\":1,\"outs\":2}",
+        "recentPlay \"8회말 이민우 타석, 투수 권희동, 카운트 1-1, 2아웃, 주자 없음\" -> \"8회말 이민우 타석, 투수 권희동, 카운트 3-1, 2아웃, 주자 없음\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "final",
+      "score": {
+        "away": 6,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 3,
+        "strikes": 3,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": true
+      },
+      "current": {
+        "batter": "박영현",
+        "pitcher": "카메론"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "final",
+      "score": {
+        "away": 1,
+        "home": 4
+      },
+      "inning": {
+        "number": 9,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 2,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "안치홍",
+        "pitcher": "김재윤"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 10,
+        "home": 5
+      },
+      "inning": {
+        "number": 8,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 0,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": true
+      },
+      "current": {
+        "batter": "현도훈",
+        "pitcher": "정준재"
+      },
+      "recentPlay": "8회말 현도훈 타석, 투수 정준재, 카운트 1-0, 2아웃, 3루"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "final",
+      "score": {
+        "away": 8,
+        "home": 2
+      },
+      "inning": {
+        "number": 9,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 3,
+        "strikes": 2,
+        "outs": 3
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진수",
+        "pitcher": "변우혁"
+      },
+      "recentPlay": null
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 5,
+        "home": 6
+      },
+      "inning": {
+        "number": 8,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 3,
+        "strikes": 1,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "이민우",
+        "pitcher": "권희동"
+      },
+      "recentPlay": "8회말 이민우 타석, 투수 권희동, 카운트 3-1, 2아웃, 주자 없음"
+    }
+  ]
+}

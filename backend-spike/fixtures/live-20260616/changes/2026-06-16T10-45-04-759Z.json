@@ -1,0 +1,174 @@
+{
+  "fetchedAt": "2026-06-16T10:45:04.759Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 3,
+  "changes": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":2,\"outs\":0} -> {\"balls\":1,\"strikes\":2,\"outs\":0}",
+        "recentPlay \"4회말 고영표 타석, 투수 박지훈, 카운트 0-2, 0아웃, 2루\" -> \"4회말 고영표 타석, 투수 박지훈, 카운트 1-2, 0아웃, 2루\""
+      ]
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":1,\"outs\":1} -> {\"balls\":0,\"strikes\":2,\"outs\":1}",
+        "recentPlay \"4회말 김진욱 타석, 투수 최지훈, 카운트 0-1, 1아웃, 1루\" -> \"4회말 김진욱 타석, 투수 최지훈, 카운트 0-2, 1아웃, 1루\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":0,\"outs\":0} -> {\"balls\":0,\"strikes\":1,\"outs\":0}",
+        "recentPlay \"5회초 박해민 타석, 투수 시라카와, 카운트 0-0, 0아웃, 주자 없음\" -> \"5회초 박해민 타석, 투수 시라카와, 카운트 0-1, 0아웃, 주자 없음\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 4,
+        "home": 1
+      },
+      "inning": {
+        "number": 4,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 2,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "고영표",
+        "pitcher": "박지훈"
+      },
+      "recentPlay": "4회말 고영표 타석, 투수 박지훈, 카운트 1-2, 0아웃, 2루"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 0
+      },
+      "inning": {
+        "number": 5,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": true,
+        "second": true,
+        "third": false
+      },
+      "current": {
+        "batter": "하영민",
+        "pitcher": "김도환"
+      },
+      "recentPlay": "5회말 하영민 타석, 투수 김도환, 카운트 0-0, 0아웃, 1,2루"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 2
+      },
+      "inning": {
+        "number": 4,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 2,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진욱",
+        "pitcher": "최지훈"
+      },
+      "recentPlay": "4회말 김진욱 타석, 투수 최지훈, 카운트 0-2, 1아웃, 1루"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 4,
+        "home": 1
+      },
+      "inning": {
+        "number": 5,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 1,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "박해민",
+        "pitcher": "시라카와"
+      },
+      "recentPlay": "5회초 박해민 타석, 투수 시라카와, 카운트 0-1, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 2,
+        "home": 2
+      },
+      "inning": {
+        "number": 4,
+        "half": "top"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 2,
+        "outs": 2
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김태연",
+        "pitcher": "구창모"
+      },
+      "recentPlay": "4회초 김태연 타석, 투수 구창모, 카운트 1-2, 2아웃, 주자 없음"
+    }
+  ]
+}

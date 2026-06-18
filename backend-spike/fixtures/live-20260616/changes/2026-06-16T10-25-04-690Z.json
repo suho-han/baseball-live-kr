@@ -1,0 +1,178 @@
+{
+  "fetchedAt": "2026-06-16T10:25:04.690Z",
+  "date": "20260616",
+  "gameCount": 5,
+  "changedGames": 3,
+  "changes": [
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "changes": [
+        "count {\"balls\":1,\"strikes\":0,\"outs\":1} -> {\"balls\":1,\"strikes\":1,\"outs\":1}",
+        "recentPlay \"3회말 김진욱 타석, 투수 정준재, 카운트 1-0, 1아웃, 주자 없음\" -> \"3회말 김진욱 타석, 투수 정준재, 카운트 1-1, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "changes": [
+        "count {\"balls\":0,\"strikes\":2,\"outs\":0} -> {\"balls\":0,\"strikes\":0,\"outs\":1}",
+        "current {\"batter\":\"웰스\",\"pitcher\":\"박재현\"} -> {\"batter\":\"웰스\",\"pitcher\":\"김민규\"}",
+        "recentPlay \"3회말 웰스 타석, 투수 박재현, 카운트 0-2, 0아웃, 주자 없음\" -> \"3회말 웰스 타석, 투수 김민규, 카운트 0-0, 1아웃, 주자 없음\""
+      ]
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "changes": [
+        "score 한화 0:1 NC -> 한화 1:1 NC",
+        "count {\"balls\":1,\"strikes\":0,\"outs\":1} -> {\"balls\":0,\"strikes\":0,\"outs\":1}",
+        "bases {\"first\":true,\"second\":true,\"third\":false} -> {\"first\":true,\"second\":false,\"third\":true}",
+        "current {\"batter\":\"오재원\",\"pitcher\":\"구창모\"} -> {\"batter\":\"페라자\",\"pitcher\":\"구창모\"}",
+        "recentPlay \"3회초 오재원 타석, 투수 구창모, 카운트 1-0, 1아웃, 1,2루\" -> \"3회초 페라자 타석, 투수 구창모, 카운트 0-0, 1아웃, 1,3루\""
+      ]
+    }
+  ],
+  "games": [
+    {
+      "gameId": "20260616KTOB0",
+      "matchup": "KT @ 두산",
+      "status": "live",
+      "score": {
+        "away": 4,
+        "home": 1
+      },
+      "inning": {
+        "number": 3,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "고영표",
+        "pitcher": "조수행"
+      },
+      "recentPlay": "3회말 고영표 타석, 투수 조수행, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616WOSS0",
+      "matchup": "키움 @ 삼성",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 0
+      },
+      "inning": {
+        "number": 4,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 0
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "하영민",
+        "pitcher": "김성윤"
+      },
+      "recentPlay": "4회말 하영민 타석, 투수 김성윤, 카운트 0-0, 0아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LTSK0",
+      "matchup": "롯데 @ SSG",
+      "status": "live",
+      "score": {
+        "away": 0,
+        "home": 2
+      },
+      "inning": {
+        "number": 3,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 1,
+        "strikes": 1,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "김진욱",
+        "pitcher": "정준재"
+      },
+      "recentPlay": "3회말 김진욱 타석, 투수 정준재, 카운트 1-1, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616LGHT0",
+      "matchup": "LG @ KIA",
+      "status": "live",
+      "score": {
+        "away": 4,
+        "home": 1
+      },
+      "inning": {
+        "number": 3,
+        "half": "bottom"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": false,
+        "second": false,
+        "third": false
+      },
+      "current": {
+        "batter": "웰스",
+        "pitcher": "김민규"
+      },
+      "recentPlay": "3회말 웰스 타석, 투수 김민규, 카운트 0-0, 1아웃, 주자 없음"
+    },
+    {
+      "gameId": "20260616HHNC0",
+      "matchup": "한화 @ NC",
+      "status": "live",
+      "score": {
+        "away": 1,
+        "home": 1
+      },
+      "inning": {
+        "number": 3,
+        "half": "top"
+      },
+      "count": {
+        "balls": 0,
+        "strikes": 0,
+        "outs": 1
+      },
+      "bases": {
+        "first": true,
+        "second": false,
+        "third": true
+      },
+      "current": {
+        "batter": "페라자",
+        "pitcher": "구창모"
+      },
+      "recentPlay": "3회초 페라자 타석, 투수 구창모, 카운트 0-0, 1아웃, 1,3루"
+    }
+  ]
+}
