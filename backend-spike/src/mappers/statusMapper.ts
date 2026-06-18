@@ -1,15 +1,27 @@
 import { RawKboGame } from '../dto/kboGameList.dto.js'
 
-export function mapStatus(raw: RawKboGame): 'scheduled' | 'live' | 'final' | 'delayed' | 'cancelled' | 'unknown' {
+interface MapStatusOptions {
+  now?: Date
+  scheduledStartTime?: string | null
+}
+
+export function mapStatus(
+  raw: RawKboGame,
+  options: MapStatusOptions = {}
+): 'scheduled' | 'live' | 'final' | 'delayed' | 'cancelled' | 'unknown' {
   const state = String(raw.GAME_STATE_SC ?? '').trim()
   const inning = raw.GAME_INN_NO
   const hasInning = inning !== null && inning !== undefined && inning !== '' && Number(inning) > 0
   const hasScore = Number(raw.T_SCORE_CN ?? 0) > 0 || Number(raw.B_SCORE_CN ?? 0) > 0
-  const hasCount = raw.BALL_CN !== null && raw.BALL_CN !== undefined
-    || raw.STRIKE_CN !== null && raw.STRIKE_CN !== undefined
-    || raw.OUT_CN !== null && raw.OUT_CN !== undefined
+  const hasCount = hasMeaningfulValue(raw.BALL_CN)
+    || hasMeaningfulValue(raw.STRIKE_CN)
+    || hasMeaningfulValue(raw.OUT_CN)
   const hasTopBottom = raw.GAME_TB_SC === 'T' || raw.GAME_TB_SC === 'B'
   const hasLiveSignal = hasInning || hasScore || hasCount || hasTopBottom
+
+  if (state === '1' && isBeforeScheduledStart(raw, options.now ?? new Date(), options.scheduledStartTime)) {
+    return 'scheduled'
+  }
 
   if (state === '1' && hasLiveSignal === false) {
     return 'scheduled'
@@ -32,4 +44,44 @@ export function mapStatus(raw: RawKboGame): 'scheduled' | 'live' | 'final' | 'de
   }
 
   return 'unknown'
+}
+
+function hasMeaningfulValue(value: string | number | null | undefined): boolean {
+  if (value === null || value === undefined) {
+    return false
+  }
+
+  if (typeof value === 'string') {
+    return value.trim().length > 0
+  }
+
+  return Number.isFinite(value)
+}
+
+function isBeforeScheduledStart(raw: RawKboGame, now: Date, scheduledStartTime?: string | null): boolean {
+  const start = scheduledStart(scheduledStartTime) ?? rawScheduledStart(raw)
+  return start !== null && now.getTime() < start.getTime()
+}
+
+function rawScheduledStart(raw: RawKboGame): Date | null {
+  const date = String(raw.G_DT ?? '').trim()
+  const time = String(raw.G_TM ?? '').trim()
+  return scheduledStart(date && time ? `${date}T${time}:00+09:00` : null)
+}
+
+function scheduledStart(value: string | null | undefined): Date | null {
+  const trimmed = value?.trim()
+  if (!trimmed) {
+    return null
+  }
+
+  const compactMatch = /^(\d{4})(\d{2})(\d{2})T(\d{2}:\d{2}:\d{2})([+-]\d{2}:\d{2})$/.exec(trimmed)
+  if (compactMatch) {
+    const [, year, month, day, time, offset] = compactMatch
+    const timestamp = Date.parse(`${year}-${month}-${day}T${time}${offset}`)
+    return Number.isNaN(timestamp) ? null : new Date(timestamp)
+  }
+
+  const timestamp = Date.parse(trimmed)
+  return Number.isNaN(timestamp) ? null : new Date(timestamp)
 }

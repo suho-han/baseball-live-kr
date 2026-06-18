@@ -1,28 +1,51 @@
 import Foundation
 
 public enum GameDTOMapper {
-    public static func map(_ dto: GameDTO) -> Game {
-        Game(
+    public static func map(_ dto: GameDTO, now: Date = Date()) -> Game {
+        let startTime = parseStartTime(dto.startTime)
+        let status = normalizedStatus(dto.status, startTime: startTime, now: now)
+        let suppressPregameLiveState = dto.status == .live && status == .scheduled
+        let inning = suppressPregameLiveState ? nil : dto.inning.map { InningState(number: $0.number, half: InningHalf(rawValue: $0.half.rawValue) ?? .top) }
+        let count = suppressPregameLiveState ? nil : dto.count.map { CountState(balls: $0.balls, strikes: $0.strikes, outs: $0.outs) }
+        let bases = suppressPregameLiveState ? nil : dto.bases.map { BasesState(first: $0.first, second: $0.second, third: $0.third) }
+        let probablePitchers = ProbablePitchers(
+            away: nilIfBlank(dto.probablePitchers.away),
+            home: nilIfBlank(dto.probablePitchers.home)
+        )
+        let matchupCorrection = suppressPregameLiveState
+            ? MatchupCorrection(current: nil, wasSwapped: false)
+            : correctedCurrentMatchup(
+                dto.current,
+                inning: inning,
+                probablePitchers: probablePitchers
+            )
+        let recentPlay = suppressPregameLiveState
+            ? nil
+            : correctedRecentPlay(
+                nilIfBlank(dto.recentPlay),
+                originalCurrent: dto.current,
+                correctedCurrent: matchupCorrection.current,
+                wasSwapped: matchupCorrection.wasSwapped
+            )
+
+        return Game(
             id: dto.gameId,
             date: dto.date,
             venue: nilIfBlank(dto.venue),
-            startTime: parseStartTime(dto.startTime),
+            startTime: startTime,
             broadcastChannels: (dto.broadcastChannels ?? []).compactMap(nilIfBlank),
             homepageLinks: mapHomepageLinks(dto.homepageLinks),
             pitcherDecisions: mapPitcherDecisions(dto.pitcherDecisions),
-            status: GameStatus(rawValue: dto.status.rawValue) ?? .unknown,
+            status: status,
             awayTeam: Team(id: dto.awayTeam.id, name: dto.awayTeam.name),
             homeTeam: Team(id: dto.homeTeam.id, name: dto.homeTeam.name),
             score: Score(away: dto.score.away, home: dto.score.home),
-            inning: dto.inning.map { InningState(number: $0.number, half: InningHalf(rawValue: $0.half.rawValue) ?? .top) },
-            count: dto.count.map { CountState(balls: $0.balls, strikes: $0.strikes, outs: $0.outs) },
-            bases: dto.bases.map { BasesState(first: $0.first, second: $0.second, third: $0.third) },
-            current: dto.current.map { CurrentMatchup(batter: nilIfBlank($0.batter), pitcher: nilIfBlank($0.pitcher)) },
-            probablePitchers: ProbablePitchers(
-                away: nilIfBlank(dto.probablePitchers.away),
-                home: nilIfBlank(dto.probablePitchers.home)
-            ),
-            recentPlay: nilIfBlank(dto.recentPlay),
+            inning: inning,
+            count: count,
+            bases: bases,
+            current: matchupCorrection.current,
+            probablePitchers: probablePitchers,
+            recentPlay: recentPlay,
             teamRecords: mapTeamRecords(dto.teamRecords),
             boxScore: mapBoxScore(dto.boxScore),
             lineupPreview: mapLineupPreview(dto.lineupPreview),
@@ -33,6 +56,93 @@ public enum GameDTOMapper {
                 fetchedAt: dto.sourceMeta.fetchedAt
             )
         )
+    }
+
+    struct MatchupCorrection {
+        let current: CurrentMatchup?
+        let wasSwapped: Bool
+    }
+
+    static func correctedCurrentMatchup(
+        _ dto: CurrentMatchupDTO?,
+        inning: InningState?,
+        probablePitchers: ProbablePitchers
+    ) -> MatchupCorrection {
+        guard let dto else {
+            return MatchupCorrection(current: nil, wasSwapped: false)
+        }
+
+        let current = CurrentMatchup(
+            batter: nilIfBlank(dto.batter),
+            pitcher: nilIfBlank(dto.pitcher)
+        )
+
+        guard shouldSwapCurrentMatchup(current, inning: inning, probablePitchers: probablePitchers) else {
+            return MatchupCorrection(current: current, wasSwapped: false)
+        }
+
+        return MatchupCorrection(
+            current: CurrentMatchup(batter: current.pitcher, pitcher: current.batter),
+            wasSwapped: true
+        )
+    }
+
+    static func shouldSwapCurrentMatchup(
+        _ current: CurrentMatchup,
+        inning: InningState?,
+        probablePitchers: ProbablePitchers
+    ) -> Bool {
+        guard let inning,
+              let batter = current.batter,
+              let pitcher = current.pitcher else {
+            return false
+        }
+
+        switch inning.half {
+        case .top:
+            return namesMatch(batter, probablePitchers.home) || namesMatch(pitcher, probablePitchers.away)
+        case .bottom:
+            return namesMatch(batter, probablePitchers.away) || namesMatch(pitcher, probablePitchers.home)
+        }
+    }
+
+    static func correctedRecentPlay(
+        _ recentPlay: String?,
+        originalCurrent: CurrentMatchupDTO?,
+        correctedCurrent: CurrentMatchup?,
+        wasSwapped: Bool
+    ) -> String? {
+        guard wasSwapped,
+              var text = recentPlay,
+              let originalBatter = nilIfBlank(originalCurrent?.batter),
+              let originalPitcher = nilIfBlank(originalCurrent?.pitcher),
+              let correctedBatter = correctedCurrent?.batter,
+              let correctedPitcher = correctedCurrent?.pitcher else {
+            return recentPlay
+        }
+
+        text = text.replacingOccurrences(of: "\(originalBatter) 타석", with: "\(correctedBatter) 타석")
+        text = text.replacingOccurrences(of: "투수 \(originalPitcher)", with: "투수 \(correctedPitcher)")
+        return text
+    }
+
+    static func namesMatch(_ lhs: String?, _ rhs: String?) -> Bool {
+        guard let lhs = nilIfBlank(lhs), let rhs = nilIfBlank(rhs) else {
+            return false
+        }
+
+        return lhs.replacingOccurrences(of: " ", with: "") == rhs.replacingOccurrences(of: " ", with: "")
+    }
+
+    static func normalizedStatus(_ dtoStatus: GameStatusDTO, startTime: Date?, now: Date) -> GameStatus {
+        let status = GameStatus(rawValue: dtoStatus.rawValue) ?? .unknown
+        guard status == .live,
+              let startTime,
+              now < startTime else {
+            return status
+        }
+
+        return .scheduled
     }
 
     static func mapTeamRecords(_ dto: TeamRecordsDTO?) -> TeamRecords? {

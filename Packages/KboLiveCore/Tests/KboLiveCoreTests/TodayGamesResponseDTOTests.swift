@@ -88,6 +88,88 @@ struct TodayGamesResponseDTOTests {
         #expect(mapped.startTime != nil)
     }
 
+    @Test func mapsPregameLiveLikeResponseToScheduledBeforeStartTime() {
+        let dto = GameDTO(
+            gameId: "20260618LGHT0",
+            date: "20260618",
+            venue: "광주",
+            startTime: "20260618T18:30:00+09:00",
+            status: .live,
+            awayTeam: TeamDTO(id: "LG", name: "LG"),
+            homeTeam: TeamDTO(id: "HT", name: "KIA"),
+            score: ScoreDTO(away: 0, home: 0),
+            inning: InningDTO(number: 1, half: .top),
+            count: CountDTO(balls: 0, strikes: 0, outs: 0),
+            bases: BasesDTO(first: false, second: false, third: false),
+            current: CurrentMatchupDTO(batter: "홍창기", pitcher: "양현종"),
+            probablePitchers: ProbablePitchersDTO(away: "톨허스트", home: "양현종"),
+            recentPlay: "1회초 홍창기 타석, 투수 양현종, 카운트 0-0, 0아웃, 주자 없음",
+            sourceMeta: SourceMetaDTO(rawStatusCode: "1", rawTopBottomCode: "T", fetchedAt: "2026-06-18T08:56:50.000Z")
+        )
+
+        let mapped = GameDTOMapper.map(dto, now: Date(timeIntervalSince1970: 1_781_773_010))
+
+        #expect(mapped.status == .scheduled)
+        #expect(mapped.inning == nil)
+        #expect(mapped.count == nil)
+        #expect(mapped.bases == nil)
+        #expect(mapped.current == nil)
+        #expect(mapped.recentPlay == nil)
+        #expect(mapped.probablePitchers.home == "양현종")
+    }
+
+    @Test func correctsBottomHalfSwappedCurrentMatchupFromBackend() {
+        let dto = GameDTO(
+            gameId: "20260618LGHT0",
+            date: "20260618",
+            venue: "광주",
+            startTime: "20260618T18:30:00+09:00",
+            status: .live,
+            awayTeam: TeamDTO(id: "LG", name: "LG"),
+            homeTeam: TeamDTO(id: "HT", name: "KIA"),
+            score: ScoreDTO(away: 1, home: 0),
+            inning: InningDTO(number: 2, half: .bottom),
+            count: CountDTO(balls: 0, strikes: 0, outs: 2),
+            bases: BasesDTO(first: false, second: false, third: false),
+            current: CurrentMatchupDTO(batter: "톨허스트", pitcher: "김규성"),
+            probablePitchers: ProbablePitchersDTO(away: "톨허스트", home: "양현종"),
+            recentPlay: "2회말 톨허스트 타석, 투수 김규성, 카운트 0-0, 2아웃, 주자 없음",
+            sourceMeta: SourceMetaDTO(rawStatusCode: "1", rawTopBottomCode: "B", fetchedAt: "2026-06-18T10:09:28.000Z")
+        )
+
+        let mapped = GameDTOMapper.map(dto)
+
+        #expect(mapped.current?.batter == "김규성")
+        #expect(mapped.current?.pitcher == "톨허스트")
+        #expect(mapped.recentPlay == "2회말 김규성 타석, 투수 톨허스트, 카운트 0-0, 2아웃, 주자 없음")
+    }
+
+    @Test func keepsTopHalfCurrentMatchupWhenPitcherAndBatterAreAlreadyCorrect() {
+        let dto = GameDTO(
+            gameId: "20260618KTWO0",
+            date: "20260618",
+            venue: "잠실",
+            startTime: "20260618T18:30:00+09:00",
+            status: .live,
+            awayTeam: TeamDTO(id: "KT", name: "KT"),
+            homeTeam: TeamDTO(id: "OB", name: "두산"),
+            score: ScoreDTO(away: 0, home: 0),
+            inning: InningDTO(number: 3, half: .top),
+            count: CountDTO(balls: 0, strikes: 2, outs: 2),
+            bases: BasesDTO(first: false, second: true, third: true),
+            current: CurrentMatchupDTO(batter: "힐리어드", pitcher: "최민석"),
+            probablePitchers: ProbablePitchersDTO(away: "소형준", home: "최민석"),
+            recentPlay: "3회초 힐리어드 타석, 투수 최민석, 카운트 0-2, 2아웃, 2,3루",
+            sourceMeta: SourceMetaDTO(rawStatusCode: "1", rawTopBottomCode: "T", fetchedAt: "2026-06-18T10:09:28.000Z")
+        )
+
+        let mapped = GameDTOMapper.map(dto)
+
+        #expect(mapped.current?.batter == "힐리어드")
+        #expect(mapped.current?.pitcher == "최민석")
+        #expect(mapped.recentPlay == "3회초 힐리어드 타석, 투수 최민석, 카운트 0-2, 2아웃, 2,3루")
+    }
+
     @Test func mapsOptionalDetailFieldsIntoDomain() {
         let dto = GameDTO(
             gameId: "detail-rich",

@@ -17,7 +17,7 @@ public struct LiveGameRepository: GameRepository, Sendable {
         let response = try await apiClient.fetchTodayGames(date: date)
         return TodayGames(
             date: response.date,
-            games: response.games.map(GameDTOMapper.map)
+            games: response.games.map { GameDTOMapper.map($0) }
         )
     }
 
@@ -25,7 +25,7 @@ public struct LiveGameRepository: GameRepository, Sendable {
         let response = try await apiClient.fetchGameDetail(gameId: gameId, date: date)
         return GameDetail(
             date: response.date,
-            game: response.game.map(GameDTOMapper.map)
+            game: response.game.map { GameDTOMapper.map($0) }
         )
     }
 

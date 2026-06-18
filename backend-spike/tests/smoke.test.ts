@@ -22,8 +22,38 @@ describe('backend-spike smoke', () => {
     expect(mapStatus({ GAME_STATE_SC: '1', GAME_INN_NO: null } as never)).toBe('scheduled')
   })
 
+  it('keeps status code 1 scheduled when only blank live fields are present', () => {
+    expect(mapStatus({
+      GAME_STATE_SC: '1',
+      GAME_INN_NO: '',
+      GAME_TB_SC: '',
+      T_SCORE_CN: '',
+      B_SCORE_CN: '',
+      BALL_CN: '',
+      STRIKE_CN: '   ',
+      OUT_CN: ''
+    } as never)).toBe('scheduled')
+  })
+
+  it('keeps status code 1 scheduled before first pitch even when KBO preloads live-looking fields', () => {
+    expect(mapStatus({
+      G_DT: '20260618',
+      G_TM: '18:30',
+      GAME_STATE_SC: '1',
+      GAME_INN_NO: 1,
+      GAME_TB_SC: 'T',
+      T_SCORE_CN: '0',
+      B_SCORE_CN: '0',
+      BALL_CN: 0,
+      STRIKE_CN: 0,
+      OUT_CN: 0
+    } as never, { now: new Date('2026-06-18T08:34:55Z') })).toBe('scheduled')
+  })
+
   it('maps status code 1 as live when live-only fields are present', () => {
     expect(mapStatus({
+      G_DT: '20260618',
+      G_TM: '18:30',
       GAME_STATE_SC: '1',
       GAME_INN_NO: null,
       GAME_TB_SC: 'T',
@@ -32,7 +62,7 @@ describe('backend-spike smoke', () => {
       BALL_CN: 0,
       STRIKE_CN: 0,
       OUT_CN: 0
-    } as never)).toBe('live')
+    } as never, { now: new Date('2026-06-18T09:30:00Z') })).toBe('live')
   })
 
   it('maps cancelled and delayed status codes explicitly', () => {

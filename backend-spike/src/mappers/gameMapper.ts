@@ -4,6 +4,10 @@ import type { RawKboGame } from '../dto/kboGameList.dto.js'
 import type { NormalizedGame } from '../models/normalizedGame.js'
 import type { ScheduleGameInfo } from './scheduleMapper.js'
 
+interface MapGameOptions {
+  now?: Date
+}
+
 function toNumber(value: string | number | null | undefined): number {
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
@@ -18,6 +22,18 @@ function mapHalf(value: string | null | undefined): 'top' | 'bottom' | null {
 function trimToNull(value: string | null | undefined): string | null {
   const trimmed = value?.trim()
   return trimmed ? trimmed : null
+}
+
+function hasMeaningfulValue(value: string | number | null | undefined): boolean {
+  if (value === null || value === undefined) {
+    return false
+  }
+
+  if (typeof value === 'string') {
+    return value.trim().length > 0
+  }
+
+  return Number.isFinite(value)
 }
 
 function mapInningText(number: number, half: 'top' | 'bottom' | null): string | null {
@@ -35,6 +51,20 @@ function mapBaseText(bases: NormalizedGame['bases']): string | null {
   ].filter(Boolean)
 
   return occupied.length > 0 ? `${occupied.join(',')}루` : '주자 없음'
+}
+
+function mapCurrentMatchup(raw: RawKboGame, half: 'top' | 'bottom' | null): NonNullable<NormalizedGame['current']> {
+  if (half === 'bottom') {
+    return {
+      batter: trimToNull(raw.B_P_NM),
+      pitcher: trimToNull(raw.T_P_NM)
+    }
+  }
+
+  return {
+    batter: trimToNull(raw.T_P_NM),
+    pitcher: trimToNull(raw.B_P_NM)
+  }
 }
 
 function mapRecentPlay(raw: RawKboGame, game: {
@@ -70,29 +100,31 @@ function mapRecentPlay(raw: RawKboGame, game: {
   return parts.length > 0 ? parts.join(', ') : null
 }
 
-export function mapGame(raw: RawKboGame, scheduleInfo?: ScheduleGameInfo): NormalizedGame {
+export function mapGame(raw: RawKboGame, scheduleInfo?: ScheduleGameInfo, options: MapGameOptions = {}): NormalizedGame {
   const half = mapHalf(raw.GAME_TB_SC)
   const inningNumber = toNumber(raw.GAME_INN_NO)
-  const status = mapStatus(raw)
-  const inning: NormalizedGame['inning'] = half && inningNumber > 0 ? { number: inningNumber, half } : null
-  const count: NormalizedGame['count'] = raw.BALL_CN != null || raw.STRIKE_CN != null || raw.OUT_CN != null
+  const startTime = raw.G_DT && raw.G_TM ? `${raw.G_DT}T${raw.G_TM}:00+09:00` : scheduleInfo?.startTime ?? null
+  const status = mapStatus(raw, {
+    now: options.now,
+    scheduledStartTime: startTime
+  })
+  const inning: NormalizedGame['inning'] = status === 'live' && half && inningNumber > 0 ? { number: inningNumber, half } : null
+  const hasCount = hasMeaningfulValue(raw.BALL_CN) || hasMeaningfulValue(raw.STRIKE_CN) || hasMeaningfulValue(raw.OUT_CN)
+  const count: NormalizedGame['count'] = status === 'live' && hasCount
     ? {
         balls: toNumber(raw.BALL_CN),
         strikes: toNumber(raw.STRIKE_CN),
         outs: toNumber(raw.OUT_CN)
       }
     : null
-  const bases = mapBases(raw)
-  const current: NonNullable<NormalizedGame['current']> = {
-    batter: trimToNull(raw.T_P_NM),
-    pitcher: trimToNull(raw.B_P_NM)
-  }
+  const bases = status === 'live' ? mapBases(raw) : null
+  const current = mapCurrentMatchup(raw, half)
 
   return {
     gameId: raw.G_ID,
     date: String(raw.G_DT ?? ''),
     venue: trimToNull(raw.S_NM) ?? scheduleInfo?.venue ?? null,
-    startTime: raw.G_DT && raw.G_TM ? `${raw.G_DT}T${raw.G_TM}:00+09:00` : scheduleInfo?.startTime ?? null,
+    startTime,
     broadcastChannels: scheduleInfo?.broadcastChannels ?? [],
     homepageLinks: scheduleInfo?.links ?? {
       gameCenter: null,
@@ -121,7 +153,7 @@ export function mapGame(raw: RawKboGame, scheduleInfo?: ScheduleGameInfo): Norma
     inning,
     count,
     bases,
-    current,
+    current: status === 'live' ? current : null,
     probablePitchers: {
       away: trimToNull(raw.T_PIT_P_NM),
       home: trimToNull(raw.B_PIT_P_NM)
