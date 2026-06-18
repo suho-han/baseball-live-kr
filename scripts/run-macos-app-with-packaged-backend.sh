@@ -3,28 +3,25 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKEND_DIR="${ROOT_DIR}/.build/kbo-live-backend-macos"
-APP_PATH="${APP_PATH:-${ROOT_DIR}/.xcode/DerivedData/Build/Products/Debug/KboLive.app}"
+APP_PATH="${APP_PATH:-${ROOT_DIR}/.xcode/DerivedData/Build/Products/Debug/KboLiveApp.app}"
+LEGACY_APP_PATH="${ROOT_DIR}/.xcode/DerivedData/Build/Products/Debug/KboLive.app"
 FALLBACK_APP_PATH="${ROOT_DIR}/build/XcodeDerivedData/Build/Products/Debug/KboLive.app"
 PORT="${PORT:-3000}"
 FORCE_RESTART="${FORCE_RESTART:-0}"
 PID_FILE="${BACKEND_DIR}/backend.pid"
 LOG_FILE="${BACKEND_DIR}/backend.log"
 
-if [[ "${APP_PATH}" == "${ROOT_DIR}/.xcode/DerivedData/Build/Products/Debug/KboLive.app" && ! -d "${APP_PATH}" && -d "${FALLBACK_APP_PATH}" ]]; then
-  APP_PATH="${FALLBACK_APP_PATH}"
+if [[ "${APP_PATH}" == "${ROOT_DIR}/.xcode/DerivedData/Build/Products/Debug/KboLiveApp.app" && ! -d "${APP_PATH}" ]]; then
+  if [[ -d "${LEGACY_APP_PATH}" ]]; then
+    APP_PATH="${LEGACY_APP_PATH}"
+  elif [[ -d "${FALLBACK_APP_PATH}" ]]; then
+    APP_PATH="${FALLBACK_APP_PATH}"
+  fi
 fi
 
-if lsof -ti "tcp:${PORT}" >/dev/null; then
-  for pid in $(lsof -ti "tcp:${PORT}"); do
-    command="$(ps -p "${pid}" -o command= 2>/dev/null || true)"
-    if [[ "${FORCE_RESTART}" == "1" || "${command}" == *"${BACKEND_DIR}"* ]]; then
-      kill "${pid}" 2>/dev/null || true
-    fi
-  done
-  sleep 0.3
+if [[ ! -x "${BACKEND_DIR}/run-backend.command" ]]; then
+  "${ROOT_DIR}/scripts/package-backend-macos.sh"
 fi
-
-"${ROOT_DIR}/scripts/package-backend-macos.sh"
 
 if [[ ! -d "${APP_PATH}" ]]; then
   echo "macOS app bundle not found: ${APP_PATH}" >&2
