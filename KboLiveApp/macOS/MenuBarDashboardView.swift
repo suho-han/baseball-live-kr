@@ -14,13 +14,24 @@ import KboLiveFeatures
 #endif
 
 struct MenuBarDashboardView: View {
+    private enum Layout {
+        static let popoverWidth: CGFloat = 340
+        static let contentPadding = KboSpacingToken.large
+        static let sectionSpacing: CGFloat = 14
+        static let controlSpacing = KboSpacingToken.small
+        static let cardPadding: CGFloat = 14
+        static let cardCornerRadius = KboRadiusToken.large
+        static let controlCornerRadius = KboRadiusToken.medium
+        static let compactControlHeight: CGFloat = 54
+    }
+
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var navigationModel: AppNavigationModel
     @Environment(\.openWindow) private var openWindow
     @State private var backendStatus: BackendServerStatus = .checking
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
             headerSection
 
             if let game = viewModel.favoriteGame {
@@ -32,8 +43,9 @@ struct MenuBarDashboardView: View {
             }
 
             Divider()
+                .overlay(KboTheme.mutedBorder.opacity(0.65))
 
-            HStack(spacing: 8) {
+            HStack(spacing: Layout.controlSpacing) {
                 SettingsLink {
                     compactActionButton(title: "설정", systemImage: "gearshape")
                 }
@@ -58,11 +70,12 @@ struct MenuBarDashboardView: View {
 
             Text(lastUpdatedStatusText)
                 .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(KboTheme.secondaryText)
                 .lineLimit(1)
         }
-        .padding(16)
-        .frame(width: 340)
+        .padding(Layout.contentPadding)
+        .frame(width: Layout.popoverWidth)
+        .background(KboSurfaceToken.contentBackground.opacity(0.94))
         .task {
             await viewModel.loadIfNeeded()
             await monitorBackendStatus()
@@ -74,11 +87,11 @@ struct MenuBarDashboardView: View {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text("크보 라이브")
                     .font(.headline.weight(.bold))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(KboTheme.primaryText)
 
                 Text("/")
                     .font(.headline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(KboTheme.secondaryText)
 
                 Text(headerSubtitle)
                     .font(.headline.weight(.regular))
@@ -100,7 +113,7 @@ struct MenuBarDashboardView: View {
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: Layout.controlSpacing) {
                         teamScoreRow(team: game.awayTeam, score: game.score.away)
                         teamScoreRow(team: game.homeTeam, score: game.score.home)
                     }
@@ -109,23 +122,23 @@ struct MenuBarDashboardView: View {
 
                     Image(systemName: "chevron.right")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(KboTheme.secondaryText)
                         .padding(.top, 2)
                 }
 
                 Text(primaryMetaText(for: game))
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(KboTheme.secondaryText)
 
                 if let secondaryMetaText = secondaryMetaText(for: game) {
                     Text(secondaryMetaText)
                         .font(.caption)
-                        .foregroundStyle(.primary.opacity(0.88))
+                        .foregroundStyle(KboTheme.primaryText.opacity(0.88))
                         .lineLimit(2)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(14)
+            .padding(Layout.cardPadding)
             .background(
                 LinearGradient(
                     colors: [
@@ -137,11 +150,17 @@ struct MenuBarDashboardView: View {
                     endPoint: .bottomTrailing
                 )
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
                     .stroke(featuredCardAccentColor(for: game).opacity(0.35), lineWidth: 1)
             }
+            .shadow(
+                color: KboShadowToken.glowColor.opacity(0.75),
+                radius: KboShadowToken.glowRadius,
+                x: 0,
+                y: KboShadowToken.glowYOffset
+            )
         }
         .buttonStyle(.plain)
     }
@@ -155,17 +174,22 @@ struct MenuBarDashboardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(summary.primaryText)
                     .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(KboTheme.primaryText)
 
                 if let secondaryText = summary.secondaryText {
                     Text(secondaryText)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(KboTheme.secondaryText)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(12)
-            .background(Color.primary.opacity(0.04))
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .padding(KboSpacingToken.medium)
+            .background(KboSurfaceToken.glassControl)
+            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
+                    .stroke(KboSurfaceToken.glassBorder.opacity(0.7), lineWidth: 1)
+            }
         }
         .buttonStyle(.plain)
     }
@@ -236,13 +260,17 @@ struct MenuBarDashboardView: View {
 
             Text(title)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(KboTheme.primaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
         }
-        .frame(maxWidth: .infinity, minHeight: 54)
-        .background(Color.primary.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .frame(maxWidth: .infinity, minHeight: Layout.compactControlHeight)
+        .background(KboSurfaceToken.glassControl)
+        .clipShape(RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous)
+                .stroke(KboSurfaceToken.glassBorder.opacity(0.68), lineWidth: 1)
+        }
     }
 
     private var compactStatusButton: some View {
@@ -254,15 +282,15 @@ struct MenuBarDashboardView: View {
 
             Text(backendStatus.title)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(KboTheme.primaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
         }
-        .frame(maxWidth: .infinity, minHeight: 54)
+        .frame(maxWidth: .infinity, minHeight: Layout.compactControlHeight)
         .background(backendStatus.color.opacity(0.12))
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous)
                 .stroke(backendStatus.color.opacity(0.35), lineWidth: 1)
         }
         .help(backendStatus.helpText)
@@ -319,12 +347,12 @@ struct MenuBarDashboardView: View {
                 .lineLimit(1)
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.vertical, KboSpacingToken.small)
         .frame(width: 112, alignment: .leading)
         .background(teamColor(for: team.id).opacity(0.12))
-        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: KboRadiusToken.small, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 9, style: .continuous)
+            RoundedRectangle(cornerRadius: KboRadiusToken.small, style: .continuous)
                 .stroke(teamColor(for: team.id).opacity(0.55), lineWidth: 1)
         }
     }

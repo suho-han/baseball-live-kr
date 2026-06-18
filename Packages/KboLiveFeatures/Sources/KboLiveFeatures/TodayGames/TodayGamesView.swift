@@ -19,7 +19,11 @@ public enum LiveActivityControlState: Equatable {
 
 public struct TodayGamesView: View {
     private enum Layout {
-        static let featuredGameMaxWidth: CGFloat = 760
+        static let contentHorizontalPadding: CGFloat = 20
+        static let standingsTableWidth: CGFloat = 774
+        static let favoriteInfoWidth: CGFloat = 236
+        static let favoriteColumnSpacing: CGFloat = 14
+        static let featuredGameWidth: CGFloat = standingsTableWidth - favoriteInfoWidth - favoriteColumnSpacing
     }
 
     @ObservedObject private var viewModel: TodayGamesViewModel
@@ -66,19 +70,24 @@ public struct TodayGamesView: View {
             case .failed(let message) where viewModel.games.isEmpty && viewModel.standings.isEmpty:
                 failureView(message: message)
             default:
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        commandBar
-                        gamesFailureBanner
-                        favoriteSection
-                        standingsSection
-                        leagueSection
+                GeometryReader { proxy in
+                    let availableWidth = contentWidth(for: proxy.size.width)
+
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 24) {
+                            commandBar
+                            gamesFailureBanner
+                            favoriteSection(availableWidth: availableWidth)
+                            standingsSection(availableWidth: availableWidth)
+                            leagueSection
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, Layout.contentHorizontalPadding)
+                        .padding(.vertical, 24)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 24)
-                }
-                .refreshable {
-                    await viewModel.refresh()
+                    .refreshable {
+                        await viewModel.refresh()
+                    }
                 }
             }
         }
@@ -119,25 +128,30 @@ public struct TodayGamesView: View {
         }
     }
 
-    private var favoriteSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
+    private func favoriteSection(availableWidth: CGFloat) -> some View {
+        let sectionWidth = min(Layout.standingsTableWidth, availableWidth)
+
+        return VStack(alignment: .leading, spacing: 14) {
             favoriteSectionHeader
 
             if viewModel.selectedTeam != nil || viewModel.favoriteGame != nil {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .top, spacing: 14) {
                         favoriteInfoColumn
-                            .frame(minWidth: 236, maxWidth: 280, alignment: .topLeading)
+                            .frame(width: Layout.favoriteInfoWidth, alignment: .topLeading)
 
                         favoriteGameColumn
-                            .frame(maxWidth: Layout.featuredGameMaxWidth, alignment: .topLeading)
-                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .frame(width: Layout.featuredGameWidth, alignment: .topLeading)
                     }
+                    .frame(width: Layout.standingsTableWidth, alignment: .leading)
 
                     VStack(alignment: .leading, spacing: 14) {
                         favoriteInfoColumn
+                            .frame(maxWidth: sectionWidth, alignment: .leading)
                         favoriteGameColumn
+                            .frame(maxWidth: sectionWidth, alignment: .leading)
                     }
+                    .frame(maxWidth: sectionWidth, alignment: .leading)
                 }
             } else {
                 emptyFavoriteView
@@ -235,8 +249,10 @@ public struct TodayGamesView: View {
         }
     }
 
-    private var standingsSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
+    private func standingsSection(availableWidth: CGFloat) -> some View {
+        let sectionWidth = min(Layout.standingsTableWidth, availableWidth)
+
+        return VStack(alignment: .leading, spacing: 14) {
             sectionHeader(title: "팀 순위", subtitle: "공식 KBO 시즌 순위와 최근 흐름입니다.")
 
             switch viewModel.standingsState {
@@ -269,9 +285,10 @@ public struct TodayGamesView: View {
                         .fixedSize(horizontal: true, vertical: false)
                         .padding(.horizontal, 12)
                     }
-                    .fixedSize(horizontal: true, vertical: false)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 4)
                 }
+                .frame(width: sectionWidth, alignment: .leading)
             }
         }
     }
@@ -306,6 +323,10 @@ public struct TodayGamesView: View {
         }
 
         return "\(teamFocusText)\(dateText) · \(gameCount)경기 · 진행 중 경기를 먼저 보여줍니다.\(updatedText)"
+    }
+
+    private func contentWidth(for containerWidth: CGFloat) -> CGFloat {
+        max(0, containerWidth - Layout.contentHorizontalPadding * 2)
     }
 
     private func commandIcon(systemImage: String, title: String) -> some View {
@@ -612,7 +633,7 @@ private struct MyTeamSummaryCardView: View {
     var body: some View {
         KboGlassPanel(style: .elevated, cornerRadius: 24) {
             VStack(alignment: .leading, spacing: 9) {
-                KboMetricRow(metrics)
+                KboMetricRow(metrics, layout: .vertical)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

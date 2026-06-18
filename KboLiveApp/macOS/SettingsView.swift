@@ -13,6 +13,6 @@ struct SettingsView: View {
             updateChecker: updateChecker,
             onApplyBackendSettings: onApplyBackendSettings
         )
-        .frame(width: 520, height: 470)
+        .frame(width: 560, height: 620)
     }
 }
