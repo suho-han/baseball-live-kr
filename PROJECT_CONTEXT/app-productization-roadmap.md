@@ -109,9 +109,20 @@ delayed/cancelled/unknown:
 - backend 상태 실패 시 설정 진입 CTA 강조.
 - 마지막 갱신 시각과 수동 새로고침 affordance 강화.
 
-## 7. 알림 정책 후보
+## 7. 알림 설정 UI와 dedupe 정책
 
-MVP 이후 후보:
+P1 목표는 push/APNs 구현 전에 응원팀 기반 local/app-level 알림 범위를 고정하는 것이다. 알림은 기본 opt-in이며, 응원팀이 없으면 설정 화면에서 비활성 상태와 응원팀 선택 CTA를 먼저 보여준다.
+
+설정 UI 초안:
+
+- 설정 > 응원팀 아래에 "알림" 섹션을 둔다.
+- 상단 summary는 "응원팀 경기만 알림"을 기본 설명으로 사용한다.
+- master toggle: "응원팀 경기 알림".
+- 세부 toggle: "경기 시작", "득점", "실점", "경기 종료", "지연/취소".
+- 경기 시작 offset은 첫 버전에서 고정 10분 전으로 두고, 사용자 선택 UI는 추가하지 않는다.
+- backend 연결이 불안정하면 "상태 갱신이 늦을 수 있습니다" 보조 문구를 표시한다.
+
+알림 후보:
 
 - 경기 시작 10분 전.
 - 응원팀 경기 시작.
@@ -120,12 +131,28 @@ MVP 이후 후보:
 - 경기 종료.
 - 선발 변경 또는 지연/취소.
 
-초기 원칙:
+초기 범위:
 
 - 응원팀 선택 없이는 알림을 기본 비활성화한다.
-- 득점 알림은 중복 방지를 위해 gameId + score tuple 기준으로 dedupe한다.
-- polling 기반에서는 실시간성을 과장하지 않고 "상태 갱신" 수준 copy를 쓴다.
-- push/APNs 전환 전에는 local notification 또는 앱 내 badge 수준으로 제한한다.
+- push/APNs 전환 전에는 앱 실행 중 local notification 또는 앱 내 badge 수준으로 제한한다.
+- 앱이 종료된 상태에서 background delivery를 보장하지 않는다.
+- polling 기반에서는 실시간성을 과장하지 않고 "상태 갱신" 또는 "확인됨" 수준 copy를 쓴다.
+- 선발 변경 알림은 source 안정성이 확인될 때까지 후보로만 유지한다.
+
+Dedupe 기준:
+
+- 경기 시작: `gameId + scheduledStartTime + notificationType`.
+- 득점/실점: `gameId + awayScore + homeScore + halfInning + notificationType`.
+- 경기 종료: `gameId + finalScore + notificationType`.
+- 지연/취소: `gameId + status.rawValue + notificationType`.
+- 같은 dedupe key는 같은 앱 실행 세션과 persisted notification ledger에서 한 번만 발송한다.
+
+문구 원칙:
+
+- 경기 시작: "곧 시작합니다"처럼 예정성을 유지한다.
+- 득점/실점: "상태가 갱신됐습니다"를 보조 문구로 사용해 polling 지연 가능성을 드러낸다.
+- 종료: "경기가 종료됐습니다"와 최종 score를 함께 표시한다.
+- 지연/취소: 원천 상태 문구가 불확실하면 "경기 상태가 변경됐습니다"로 fallback한다.
 
 ## 8. Accessibility와 상태 점검
 
@@ -166,4 +193,3 @@ KBO-15는 다음 기준을 만족하면 완료로 본다.
 - 상태별 화면 fallback 규칙이 문서화되어 있다.
 - 알림 정책 후보와 초기 제한사항이 정리되어 있다.
 - MVP 이후 1차 제품화 milestone이 P0/P1/P2로 분해되어 있다.
-
