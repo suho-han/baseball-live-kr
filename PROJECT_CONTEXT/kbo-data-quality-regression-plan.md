@@ -15,14 +15,21 @@ KBO 공식 웹 원천은 공개 개발자 API가 아니므로 필드명, 상태 
 이미 구현된 기준:
 
 - `scripts/run-kbo-live-fixture-capture.sh`로 live polling fixture를 수집한다.
+- `backend-spike/fixtures/catalog/`에 장기 보관 edge-case fixture를 raw + normalized 쌍으로 승격한다.
 - backend contract test가 `makeTestLiveGame` 결과와 Swift DTO fixture `live-test-game-response.json`의 JSON shape 일치를 검증한다.
 - Swift Core DTO test가 live fixture의 score/count/base/current/teamRecords/boxScore/recentPlay decode와 mapping을 검증한다.
 - backend mapper test가 `recentPlay` 원천 필드와 live context fallback을 검증한다.
 - backend service test가 source 실패 시 cache 또는 DB-backed standings fallback을 검증한다.
 
+현재 catalog coverage:
+
+- `cancelled`: `backend-spike/fixtures/catalog/cancelled/20260614-NCKT0-*`에 실제 KBO `우천취소` schedule row를 보관한다.
+- `delayed`: 아직 실제 raw fixture가 없다.
+- `doubleheader`: 아직 실제 raw fixture가 없다.
+
 아직 운영 절차로 남겨야 하는 기준:
 
-- 대표 상태별 fixture catalog를 지속적으로 채운다.
+- delayed/doubleheader fixture catalog를 지속적으로 채운다.
 - 원천 schema drift 감지 테스트를 fixture catalog 기준으로 확장한다.
 - backend fixture와 Swift DTO fixture 변경은 같은 PR 또는 같은 작업 단위로 검증한다.
 
@@ -47,7 +54,7 @@ backend-spike/fixtures/202606-completed/<YYYYMMDD>/
 backend-spike/fixtures/catalog/<status>/<YYYYMMDD>-<gameId>.json
 ```
 
-`catalog/`는 원천 raw와 normalized snapshot을 같이 남기는 장기 보관용이다. live polling 산출물 중 회귀 가치가 있는 snapshot만 catalog로 승격한다.
+`catalog/`는 원천 raw와 normalized snapshot을 같이 남기는 장기 보관용이다. live polling 산출물 중 회귀 가치가 있는 snapshot만 catalog로 승격한다. 실제 fixture를 확보하지 못한 상태는 `catalog/README.md`에 재시도 조건을 기록한다.
 
 ## 4. 수집 절차
 
@@ -115,4 +122,3 @@ KBO-16은 다음 기준을 만족하면 완료로 본다.
 - backend normalized contract fixture와 Swift DTO fixture가 동기화되어 있다.
 - source 실패 시 cache 또는 DB-backed fallback test가 있다.
 - delayed/cancelled/doubleheader는 catalog 확보 후 mapper test를 추가하는 후속 작업으로 분리되어 있다.
-

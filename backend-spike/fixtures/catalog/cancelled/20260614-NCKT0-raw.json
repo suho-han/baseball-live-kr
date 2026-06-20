@@ -1,0 +1,86 @@
+{
+  "catalogVersion": 1,
+  "source": "backend-spike/fixtures/live-20260616/latest-raw.json",
+  "sourcePath": "scheduleList.rows[59]",
+  "contextDate": "20260614",
+  "capturedAt": "2026-06-16",
+  "edgeCase": "cancelled",
+  "notes": [
+    "KBO schedule row contains 우천취소.",
+    "The row has no GameCenter link, so the mapper must infer gameId from previous schedule date and team names."
+  ],
+  "row": [
+    {
+      "Text": "<b>17:00</b>",
+      "Class": "time",
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "<span>NC</span><em><span>vs</span></em><span>KT</span>",
+      "Class": "play",
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "",
+      "Class": "relay",
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "",
+      "Class": null,
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "SPO-T<br />SS-T",
+      "Class": null,
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "",
+      "Class": null,
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "수원",
+      "Class": null,
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    },
+    {
+      "Text": "우천취소",
+      "Class": null,
+      "Scope": null,
+      "RowSpan": null,
+      "ColSpan": null,
+      "Width": null,
+      "TypeObj": null
+    }
+  ]
+}

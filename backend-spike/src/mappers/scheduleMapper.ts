@@ -1,4 +1,5 @@
 import type { RawKboScheduleListResponse } from '../dto/kboScheduleList.dto.js'
+import { mapTeamNameToId } from './teamIdMapper.js'
 
 const KBO_HOME = 'https://www.koreabaseball.com'
 
@@ -23,6 +24,7 @@ export interface ScheduleGameInfo {
     review: string | null
     highlight: string | null
   }
+  statusHint: 'scheduled' | 'cancelled' | 'delayed' | null
 }
 
 interface GameCenterLink {
@@ -135,16 +137,48 @@ function parseTeamNames(value: string | null | undefined): { away: string, home:
   }
 }
 
-function parseScheduleRow(cells: RawKboScheduleListResponse['rows'][number]['row']): ScheduleGameInfo | null {
+function statusHint(note: string | null): ScheduleGameInfo['statusHint'] {
+  if (!note) {
+    return null
+  }
+
+  if (note.includes('취소')) {
+    return 'cancelled'
+  }
+
+  if (note.includes('지연') || note.includes('중단')) {
+    return 'delayed'
+  }
+
+  return null
+}
+
+function inferGameId(
+  date: string | null,
+  teams: { away: string, home: string }
+): string | null {
+  if (!date) {
+    return null
+  }
+
+  const awayId = mapTeamNameToId(teams.away)
+  const homeId = mapTeamNameToId(teams.home)
+  if (!awayId || !homeId) {
+    return null
+  }
+
+  return `${date}${awayId}${homeId}0`
+}
+
+function parseScheduleRow(
+  cells: RawKboScheduleListResponse['rows'][number]['row'],
+  fallbackDate: string | null
+): ScheduleGameInfo | null {
   const linkCells = cells
     .map((cell, index) => ({ index, links: parseGameCenterLinks(cell.Text) }))
     .filter((cell) => cell.links.length > 0)
 
   const primaryLink = linkCells[0]?.links[0]
-  if (!primaryLink) {
-    return null
-  }
-
   const timeCell = cells.find((cell) => cell.Class === 'time')
   const playIndex = cells.findIndex((cell) => cell.Class === 'play')
   const playCell = playIndex >= 0 ? cells[playIndex] : undefined
@@ -153,12 +187,20 @@ function parseScheduleRow(cells: RawKboScheduleListResponse['rows'][number]['row
   const infoTexts = nonEmptyCellTexts(afterLinks)
   const links = linkCells.flatMap((cell) => cell.links)
   const linkBySection = new Map(links.map((link) => [link.section, link.href]))
-  const teamIDs = parseTeamIDs(primaryLink.gameId)
+  const note = emptyToNull(afterLinks.at(-1)?.Text)
   const teamNames = parseTeamNames(playCell?.Text)
+  const gameId = primaryLink?.gameId ?? inferGameId(fallbackDate, teamNames)
+  const date = primaryLink?.gameDate ?? fallbackDate
+
+  if (!gameId || !date) {
+    return null
+  }
+
+  const teamIDs = parseTeamIDs(gameId)
 
   return {
-    gameId: primaryLink.gameId,
-    date: primaryLink.gameDate,
+    gameId,
+    date,
     awayTeam: {
       id: teamIDs.away,
       name: teamNames.away
@@ -167,24 +209,33 @@ function parseScheduleRow(cells: RawKboScheduleListResponse['rows'][number]['row
       id: teamIDs.home,
       name: teamNames.home
     },
-    startTime: normalizeStartTime(primaryLink.gameDate, timeCell?.Text),
+    startTime: normalizeStartTime(date, timeCell?.Text),
     venue: firstNonEmpty([infoTexts.length >= 3 ? infoTexts.at(-2) : infoTexts.at(-1), afterLinks.at(-2)?.Text]),
     broadcastChannels: parseBroadcastChannels(infoTexts[0]),
-    note: emptyToNull(afterLinks.at(-1)?.Text),
+    note,
     links: {
-      gameCenter: primaryLink.href,
+      gameCenter: primaryLink?.href ?? null,
       preview: linkBySection.get('START_PIT') ?? null,
       review: linkBySection.get('REVIEW') ?? null,
       highlight: linkBySection.get('HIGHLIGHT') ?? null
-    }
+    },
+    statusHint: statusHint(note)
   }
 }
 
 export function mapScheduleGames(scheduleList: RawKboScheduleListResponse): ScheduleGameInfo[] {
-  return scheduleList.rows.flatMap((row) => {
-    const game = parseScheduleRow(row.row)
-    return game ? [game] : []
-  })
+  const games: ScheduleGameInfo[] = []
+  let currentDate: string | null = null
+
+  for (const row of scheduleList.rows) {
+    const game = parseScheduleRow(row.row, currentDate)
+    if (game) {
+      currentDate = game.date
+      games.push(game)
+    }
+  }
+
+  return games
 }
 
 export function indexScheduleGames(scheduleList: RawKboScheduleListResponse): Map<string, ScheduleGameInfo> {

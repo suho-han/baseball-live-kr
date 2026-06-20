@@ -186,6 +186,8 @@ export function mapGame(raw: RawKboGame, scheduleInfo?: ScheduleGameInfo, option
 }
 
 export function mapScheduledGame(scheduleInfo: ScheduleGameInfo): NormalizedGame {
+  const status = scheduleInfo.statusHint ?? 'scheduled'
+
   return {
     gameId: scheduleInfo.gameId,
     date: scheduleInfo.date,
@@ -198,7 +200,7 @@ export function mapScheduledGame(scheduleInfo: ScheduleGameInfo): NormalizedGame
       loss: null,
       save: null
     },
-    status: 'scheduled',
+    status,
     awayTeam: scheduleInfo.awayTeam,
     homeTeam: scheduleInfo.homeTeam,
     score: {

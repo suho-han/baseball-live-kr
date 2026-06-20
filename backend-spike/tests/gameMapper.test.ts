@@ -176,6 +176,7 @@ describe('mapGame recentPlay', () => {
       venue: '광주',
       broadcastChannels: ['S-T'],
       note: null,
+      statusHint: null,
       links: {
         gameCenter: null,
         preview: null,

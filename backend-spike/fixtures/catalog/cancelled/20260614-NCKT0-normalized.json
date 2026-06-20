@@ -1,0 +1,65 @@
+{
+  "gameId": "20260614NCKT0",
+  "date": "20260614",
+  "venue": "수원",
+  "startTime": "20260614T17:00:00+09:00",
+  "broadcastChannels": [
+    "SPO-T",
+    "SS-T"
+  ],
+  "homepageLinks": {
+    "gameCenter": null,
+    "preview": null,
+    "review": null,
+    "highlight": null
+  },
+  "pitcherDecisions": {
+    "win": null,
+    "loss": null,
+    "save": null
+  },
+  "status": "cancelled",
+  "awayTeam": {
+    "id": "NC",
+    "name": "NC"
+  },
+  "homeTeam": {
+    "id": "KT",
+    "name": "KT"
+  },
+  "score": {
+    "away": 0,
+    "home": 0
+  },
+  "inning": null,
+  "count": null,
+  "bases": null,
+  "current": null,
+  "probablePitchers": {
+    "away": null,
+    "home": null
+  },
+  "recentPlay": null,
+  "teamRecords": null,
+  "boxScore": {
+    "away": {
+      "runs": 0,
+      "hits": null,
+      "errors": null,
+      "walks": null
+    },
+    "home": {
+      "runs": 0,
+      "hits": null,
+      "errors": null,
+      "walks": null
+    },
+    "linescore": []
+  },
+  "lineupPreview": null,
+  "analysis": null,
+  "sourceMeta": {
+    "rawStatusCode": null,
+    "rawTopBottomCode": null
+  }
+}

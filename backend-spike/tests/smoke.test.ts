@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { mapBases } from '../src/mappers/baseMapper.js'
-import { mapGame } from '../src/mappers/gameMapper.js'
+import { mapGame, mapScheduledGame } from '../src/mappers/gameMapper.js'
 import { mapScheduleGames } from '../src/mappers/scheduleMapper.js'
 import { mapStatus } from '../src/mappers/statusMapper.js'
 import { summarizeGameChanges } from '../src/utils/gameSnapshot.js'
@@ -128,6 +128,7 @@ describe('backend-spike smoke', () => {
       venue: '잠실',
       broadcastChannels: ['SPO-2T'],
       note: null,
+      statusHint: null,
       links: {
         gameCenter: 'https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610SKLG0&section=START_PIT',
         preview: 'https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610SKLG0&section=START_PIT',
@@ -135,6 +136,63 @@ describe('backend-spike smoke', () => {
         highlight: null
       }
     }])
+  })
+
+  it('recovers linkless cancelled schedule rows from date and team names', () => {
+    const games = mapScheduleGames({
+      rows: [
+        {
+          row: [
+            { Text: '06.14(일)', Class: 'day' },
+            { Text: '<b>14:00</b>', Class: 'time' },
+            { Text: '<span>한화</span><em><span class="lose">2</span><span>vs</span><span class="win">3</span></em><span>키움</span>', Class: 'play' },
+            { Text: "<a href='/Schedule/GameCenter/Main.aspx?gameDate=20260614&gameId=20260614HHWO0&section=REVIEW'>리뷰</a>", Class: 'relay' },
+            { Text: '', Class: null },
+            { Text: 'S-T', Class: null },
+            { Text: '', Class: null },
+            { Text: '고척', Class: null },
+            { Text: '-', Class: null }
+          ]
+        },
+        {
+          row: [
+            { Text: '<b>17:00</b>', Class: 'time' },
+            { Text: '<span>NC</span><em><span>vs</span></em><span>KT</span>', Class: 'play' },
+            { Text: '', Class: 'relay' },
+            { Text: '', Class: null },
+            { Text: 'SPO-T<br />SS-T', Class: null },
+            { Text: '', Class: null },
+            { Text: '수원', Class: null },
+            { Text: '우천취소', Class: null }
+          ]
+        }
+      ]
+    })
+
+    expect(games.at(-1)).toMatchObject({
+      gameId: '20260614NCKT0',
+      date: '20260614',
+      awayTeam: {
+        id: 'NC',
+        name: 'NC'
+      },
+      homeTeam: {
+        id: 'KT',
+        name: 'KT'
+      },
+      startTime: '20260614T17:00:00+09:00',
+      venue: '수원',
+      broadcastChannels: ['SPO-T', 'SS-T'],
+      note: '우천취소',
+      statusHint: 'cancelled',
+      links: {
+        gameCenter: null,
+        preview: null,
+        review: null,
+        highlight: null
+      }
+    })
+    expect(mapScheduledGame(games.at(-1)!).status).toBe('cancelled')
   })
 
   it('enriches normalized games with schedule metadata', () => {
@@ -163,6 +221,7 @@ describe('backend-spike smoke', () => {
       venue: '잠실',
       broadcastChannels: ['SPO-2T'],
       note: null,
+      statusHint: null,
       links: {
         gameCenter: 'https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610SKLG0&section=START_PIT',
         preview: 'https://www.koreabaseball.com/Schedule/GameCenter/Main.aspx?gameDate=20260610&gameId=20260610SKLG0&section=START_PIT',
