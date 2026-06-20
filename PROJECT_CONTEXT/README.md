@@ -16,6 +16,10 @@
   - production backend 전환, 배포, cache/fallback 운영 전략
 - `team-player-records-db-plan.md`
   - 팀 기록/선수 기록 보강과 DB 구축 단계별 계획
+- `kbo-data-quality-regression-plan.md`
+  - KBO 원천 데이터 fixture catalog, contract test, schema drift 회귀 기준
+- `app-productization-roadmap.md`
+  - 나의 팀 중심 UX, 상태별 fallback, 알림/개인화 제품화 로드맵
 - `macos-release-operations.md`
   - macOS 앱 + backend companion 패키징, 원격 테스트, 배포 전 체크리스트
 - `live-activity-verification.md`
