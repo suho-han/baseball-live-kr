@@ -4,6 +4,15 @@ import Combine
 import KboLiveCore
 #endif
 
+public struct TodayDashboardSummary: Equatable, Sendable {
+    public let totalGames: Int
+    public let liveGames: Int
+    public let scheduledGames: Int
+    public let finalGames: Int
+    public let headline: String
+    public let detail: String
+}
+
 @MainActor
 public final class TodayGamesViewModel: ObservableObject {
     public enum State: Equatable {
@@ -132,6 +141,36 @@ public final class TodayGamesViewModel: ObservableObject {
         )
     }
 
+    public var dashboardSummary: TodayDashboardSummary {
+        let liveGames = games.filter { $0.status == .live }.count
+        let scheduledGames = games.filter { $0.status == .scheduled || $0.status == .delayed }.count
+        let finalGames = games.filter { $0.status == .final || $0.status == .cancelled }.count
+        let headline: String
+
+        if let selectedTeam, let favoriteGame {
+            headline = "\(selectedTeam.name) 경기 \(Self.shortStatusText(for: favoriteGame.status))"
+        } else if let selectedTeam {
+            headline = "오늘은 \(selectedTeam.name) 경기가 없습니다"
+        } else if liveGames > 0 {
+            headline = "\(liveGames)경기 진행 중"
+        } else if scheduledGames > 0 {
+            headline = "\(scheduledGames)경기 예정"
+        } else if finalGames > 0 {
+            headline = "오늘 경기 종료"
+        } else {
+            headline = "오늘 편성된 경기가 없습니다"
+        }
+
+        return TodayDashboardSummary(
+            totalGames: games.count,
+            liveGames: liveGames,
+            scheduledGames: scheduledGames,
+            finalGames: finalGames,
+            headline: headline,
+            detail: "전체 \(games.count)경기 · 진행 \(liveGames) · 예정 \(scheduledGames) · 종료 \(finalGames)"
+        )
+    }
+
     public var standingsErrorMessage: String? {
         guard case let .failed(message) = standingsState else { return nil }
         return message
@@ -229,6 +268,23 @@ public final class TodayGamesViewModel: ObservableObject {
         }
 
         return "경기 데이터를 불러오지 못했습니다."
+    }
+
+    private static func shortStatusText(for status: GameStatus) -> String {
+        switch status {
+        case .scheduled:
+            return "예정"
+        case .live:
+            return "진행 중"
+        case .final:
+            return "종료"
+        case .delayed:
+            return "지연"
+        case .cancelled:
+            return "취소"
+        case .unknown:
+            return "확인 중"
+        }
     }
 
     private func loadStandings(date: String?) async {

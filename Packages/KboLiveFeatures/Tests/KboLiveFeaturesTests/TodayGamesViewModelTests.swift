@@ -146,6 +146,74 @@ struct TodayGamesViewModelTests {
         #expect(viewModel.visibleGames.map { $0.id } == ["scheduled-favorite", "live-other", "final-other"])
     }
 
+    @Test func dashboardSummaryCountsGameStates() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: MockGameRepository(
+                    todayGames: TodayGames(
+                        date: "20260612",
+                        games: [
+                            makeGame(id: "live", status: .live, startHour: 17),
+                            makeGame(id: "scheduled", status: .scheduled, startHour: 18),
+                            makeGame(id: "delayed", status: .delayed, startHour: 19),
+                            makeGame(id: "final", status: .final, startHour: 20),
+                            makeGame(id: "cancelled", status: .cancelled, startHour: 21)
+                        ]
+                    )
+                )
+            ),
+            filter: .all,
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        let summary = viewModel.dashboardSummary
+        #expect(summary.totalGames == 5)
+        #expect(summary.liveGames == 1)
+        #expect(summary.scheduledGames == 2)
+        #expect(summary.finalGames == 2)
+        #expect(summary.headline == "1경기 진행 중")
+        #expect(summary.detail == "전체 5경기 · 진행 1 · 예정 2 · 종료 2")
+    }
+
+    @Test func dashboardSummaryFocusesSelectedTeamGame() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: MockGameRepository(
+                    todayGames: TodayGames(
+                        date: "20260612",
+                        games: [
+                            makeGame(
+                                id: "favorite",
+                                status: .scheduled,
+                                startHour: 19,
+                                awayTeam: Team(id: "LG", name: "LG"),
+                                homeTeam: Team(id: "OB", name: "두산")
+                            ),
+                            makeGame(
+                                id: "other-live",
+                                status: .live,
+                                startHour: 17,
+                                awayTeam: Team(id: "KT", name: "KT"),
+                                homeTeam: Team(id: "NC", name: "NC")
+                            )
+                        ]
+                    )
+                )
+            ),
+            filter: .all,
+            selectedTeamID: "LG",
+            loadSelectedTeamID: { "LG" },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        #expect(viewModel.dashboardSummary.headline == "LG 경기 예정")
+    }
+
     @Test func loadStoresFriendlyFailureMessage() async {
         let viewModel = TodayGamesViewModel(
             client: GameFeedClient(repository: FailingGameRepository()),

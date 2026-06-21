@@ -77,6 +77,7 @@ public struct TodayGamesView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 24) {
                             commandBar
+                            dashboardSummaryStrip
                             gamesFailureBanner
                             favoriteSection(availableWidth: availableWidth)
                             standingsSection(availableWidth: availableWidth)
@@ -127,6 +128,51 @@ public struct TodayGamesView: View {
                 }
             }
         }
+    }
+
+
+    private var dashboardSummaryStrip: some View {
+        let summary = viewModel.dashboardSummary
+
+        return KboGlassPanel(style: .elevated, cornerRadius: 22) {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .center, spacing: 18) {
+                    dashboardSummaryCopy(summary)
+                    dashboardMetricRow(summary)
+                        .frame(width: 360)
+                }
+
+                VStack(alignment: .leading, spacing: 14) {
+                    dashboardSummaryCopy(summary)
+                    dashboardMetricRow(summary)
+                }
+            }
+            .padding(16)
+        }
+    }
+
+    private func dashboardSummaryCopy(_ summary: TodayDashboardSummary) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(summary.headline)
+                .font(KboTypographyToken.system(size: 24, weight: .black, scaledBy: fontScale))
+                .foregroundStyle(KboTheme.primaryText)
+                .lineLimit(2)
+                .minimumScaleFactor(0.78)
+
+            Text(summary.detail)
+                .font(KboTypographyToken.footnote(scaledBy: fontScale))
+                .foregroundStyle(KboTheme.secondaryText)
+                .lineLimit(2)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func dashboardMetricRow(_ summary: TodayDashboardSummary) -> some View {
+        KboMetricRow([
+            KboMetricValue(title: "진행", value: "\(summary.liveGames)", tint: KboColorToken.statusLive),
+            KboMetricValue(title: "예정", value: "\(summary.scheduledGames)", tint: KboColorToken.statusScheduled),
+            KboMetricValue(title: "종료", value: "\(summary.finalGames)", tint: KboTheme.secondaryText)
+        ])
     }
 
     private func favoriteSection(availableWidth: CGFloat) -> some View {
