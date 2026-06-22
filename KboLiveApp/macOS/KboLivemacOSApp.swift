@@ -137,7 +137,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             self.captureMainWindow(to: screenshotPath)
         }
     }
@@ -149,25 +149,8 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let bounds = contentView.bounds
-        guard bounds.width > 0, bounds.height > 0 else {
-            return
-        }
-
-        contentView.layoutSubtreeIfNeeded()
-        contentView.displayIfNeeded()
-
-        let pdfData = contentView.dataWithPDF(inside: bounds)
-        if let representation = NSBitmapImageRep(data: pdfData),
-           let pngData = representation.representation(using: .png, properties: [:]) {
-            do {
-                try pngData.write(to: URL(fileURLWithPath: path), options: .atomic)
-            } catch {
-                assertionFailure("Failed to write debug screenshot: \(error)")
-            }
-            return
-        }
-
-        guard let representation = contentView.bitmapImageRepForCachingDisplay(in: bounds) else {
+        guard bounds.width > 0, bounds.height > 0,
+              let representation = contentView.bitmapImageRepForCachingDisplay(in: bounds) else {
             return
         }
 
