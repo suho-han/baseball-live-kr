@@ -51,10 +51,15 @@ public struct TodayGamesView: View {
             content
                 .background(backgroundView)
                 .navigationTitle("크보 라이브")
+#if os(iOS)
+                .toolbarColorScheme(.dark, for: .navigationBar)
+                .toolbarBackground(.hidden, for: .navigationBar)
+#endif
                 .navigationDestination(item: $selectedGame) { game in
                     GameDetailScreen(parentViewModel: viewModel, game: game)
                 }
         }
+        .preferredColorScheme(.dark)
         .task {
             await viewModel.loadIfNeeded()
         }
