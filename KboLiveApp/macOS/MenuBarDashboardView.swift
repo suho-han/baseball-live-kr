@@ -23,12 +23,18 @@ struct MenuBarDashboardView: View {
         static let cardCornerRadius = KboRadiusToken.large
         static let controlCornerRadius = KboRadiusToken.medium
         static let compactControlHeight: CGFloat = 54
+        static let teamShortcutHeight: CGFloat = 46
+        static let controlColumns = [
+            GridItem(.flexible(), spacing: KboSpacingToken.small),
+            GridItem(.flexible(), spacing: KboSpacingToken.small)
+        ]
     }
 
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var navigationModel: AppNavigationModel
     @Environment(\.openWindow) private var openWindow
     @State private var backendStatus: BackendServerStatus = .checking
+    @State private var isRefreshing = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
@@ -42,12 +48,25 @@ struct MenuBarDashboardView: View {
                 emptySummary
             }
 
+            teamShortcutSection
+
             Divider()
                 .overlay(KboTheme.mutedBorder.opacity(0.65))
 
             backendIssueCallout
 
-            HStack(spacing: Layout.controlSpacing) {
+            LazyVGrid(columns: Layout.controlColumns, spacing: Layout.controlSpacing) {
+                Button {
+                    refreshAll()
+                } label: {
+                    compactActionButton(
+                        title: isRefreshing ? "갱신 중" : "새로고침",
+                        systemImage: isRefreshing ? "arrow.triangle.2.circlepath" : "arrow.clockwise"
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(isRefreshing)
+
                 SettingsLink {
                     compactActionButton(title: "설정", systemImage: "gearshape")
                 }
@@ -102,10 +121,65 @@ struct MenuBarDashboardView: View {
 
             Spacer(minLength: 12)
 
-            if viewModel.isLoading {
+            if viewModel.isLoading || isRefreshing {
                 ProgressView()
                     .controlSize(.small)
             }
+        }
+    }
+
+    private var teamShortcutSection: some View {
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("응원팀")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(KboTheme.secondaryText)
+
+                Text(headerSubtitle)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(KboTheme.primaryText)
+                    .lineLimit(1)
+            }
+
+            Spacer(minLength: 8)
+
+            Menu {
+                Button("선택 안 함") {
+                    viewModel.selectTeam(nil)
+                }
+
+                Divider()
+
+                ForEach(KboTeamOption.sortedByStandings(games: viewModel.games)) { team in
+                    Button {
+                        viewModel.selectTeam(team.id)
+                    } label: {
+                        if viewModel.selectedTeamID == team.id {
+                            Label(team.koreanFullName, systemImage: "checkmark")
+                        } else {
+                            Text(team.koreanFullName)
+                        }
+                    }
+                }
+            } label: {
+                Label("변경", systemImage: "star.circle")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(headerAccentColor)
+                    .padding(.horizontal, 10)
+                    .frame(height: 30)
+                    .background(headerAccentColor.opacity(0.14))
+                    .clipShape(Capsule())
+            }
+            .menuStyle(.button)
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 12)
+        .frame(height: Layout.teamShortcutHeight)
+        .background(KboSurfaceToken.glassControl.opacity(0.85))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous)
+                .stroke(KboSurfaceToken.glassBorder.opacity(0.68), lineWidth: 1)
         }
     }
 
@@ -267,6 +341,17 @@ struct MenuBarDashboardView: View {
                 .stroke(backendStatus.color.opacity(0.35), lineWidth: 1)
         }
         .help(backendStatus.helpText)
+    }
+
+    private func refreshAll() {
+        guard isRefreshing == false else { return }
+        isRefreshing = true
+
+        Task {
+            await viewModel.refresh()
+            await refreshBackendStatus()
+            isRefreshing = false
+        }
     }
 
     private func refreshBackendStatus() async {
