@@ -115,7 +115,7 @@ public struct CountState: Sendable, Equatable, Hashable {
     }
 }
 
-public struct BasesState: Sendable, Equatable, Hashable {
+public struct BasesState: Codable, Sendable, Equatable, Hashable {
     public let first: Bool
     public let second: Bool
     public let third: Bool
@@ -273,7 +273,7 @@ public struct SourceMeta: Sendable, Equatable, Hashable {
     }
 }
 
-public enum GameStatus: String, Sendable, Equatable, Hashable {
+public enum GameStatus: String, Codable, Sendable, Equatable, Hashable {
     case scheduled
     case live
     case final

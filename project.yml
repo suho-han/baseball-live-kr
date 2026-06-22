@@ -19,6 +19,9 @@ targets:
       - path: Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem
       - path: Packages/KboLiveFeatures/Sources/KboLiveFeatures
       - path: KboLiveApp/Shared
+        excludes:
+          - TeamWordmarks/**
+          - TeamBrandAssets/**
       - path: KboLiveApp/iOS
     dependencies:
       - target: KboLiveWidgetExtension
@@ -26,6 +29,7 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: KboLiveApp/iOS/Info.plist
+        CODE_SIGN_ENTITLEMENTS: KboLiveApp/iOS/KboLiveiOS.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: com.suhohan.kbo-live.ios
         PRODUCT_NAME: KboLiveiOS
   KboLivemacOS:
@@ -36,6 +40,9 @@ targets:
       - path: Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem
       - path: Packages/KboLiveFeatures/Sources/KboLiveFeatures
       - path: KboLiveApp/Shared
+        excludes:
+          - TeamWordmarks/**
+          - TeamBrandAssets/**
       - path: KboLiveApp/macOS
     settings:
       base:
@@ -51,11 +58,13 @@ targets:
       - path: Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem
       - path: KboLiveApp/Shared/LiveGameActivityAttributes.swift
       - path: KboLiveApp/Shared/SampleGameFactory.swift
+      - path: KboLiveApp/Shared/WidgetGameSnapshotStore.swift
       - path: KboLiveApp/Widget
     settings:
       base:
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: KboLiveApp/Widget/Info.plist
+        CODE_SIGN_ENTITLEMENTS: KboLiveApp/Widget/KboLiveWidget.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: com.suhohan.kbo-live.ios.widget
         PRODUCT_NAME: KboLiveWidget
         SKIP_INSTALL: YES

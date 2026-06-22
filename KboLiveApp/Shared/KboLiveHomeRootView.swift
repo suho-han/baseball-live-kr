@@ -1,4 +1,10 @@
 import SwiftUI
+#if os(iOS)
+import WidgetKit
+#endif
+#if canImport(KboLiveCore)
+import KboLiveCore
+#endif
 #if canImport(KboLiveFeatures)
 import KboLiveFeatures
 #endif
@@ -49,9 +55,13 @@ struct KboLiveHomeRootView: View {
             }
         )
             .onReceive(viewModel.$games) { games in
+                updateWidgetSnapshot(games: games)
                 Task {
                     await liveActivityController.update(with: games)
                 }
+            }
+            .onReceive(viewModel.$selectedTeamID) { _ in
+                updateWidgetSnapshot(games: viewModel.games)
             }
             .sheet(item: $navigationModel.selectedGame) { game in
                 NavigationStack {
@@ -94,5 +104,19 @@ struct KboLiveHomeRootView: View {
         Task {
             await viewModel.updateClient(settings.makeClient())
         }
+    }
+
+    private func updateWidgetSnapshot(games: [Game]) {
+#if os(iOS)
+        guard let snapshot = WidgetGameSnapshotMapper.map(
+            todayGames: TodayGames(date: viewModel.activeDateString, games: games),
+            favoriteTeamID: viewModel.selectedTeamID
+        ) else {
+            return
+        }
+
+        WidgetGameSnapshotStore().save(snapshot)
+        WidgetCenter.shared.reloadTimelines(ofKind: "TodayGameWidget")
+#endif
     }
 }

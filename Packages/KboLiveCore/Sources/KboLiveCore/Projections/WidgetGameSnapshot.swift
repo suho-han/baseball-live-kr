@@ -1,6 +1,6 @@
 import Foundation
 
-public struct WidgetGameSnapshot: Sendable, Equatable {
+public struct WidgetGameSnapshot: Codable, Sendable, Equatable {
     public let gameId: String
     public let awayTeamName: String
     public let homeTeamName: String
@@ -46,7 +46,7 @@ public struct WidgetGameSnapshot: Sendable, Equatable {
     }
 }
 
-public enum WidgetGameSnapshotFallbackKind: String, Sendable, Equatable {
+public enum WidgetGameSnapshotFallbackKind: String, Codable, Sendable, Equatable {
     case none
     case favoriteTeamNoGame
     case favoriteTeamNotSelected

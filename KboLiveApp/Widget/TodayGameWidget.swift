@@ -7,18 +7,24 @@ struct TodayGameEntry: TimelineEntry {
 }
 
 struct TodayGameProvider: TimelineProvider {
+    private let store = WidgetGameSnapshotStore()
+
     func placeholder(in context: Context) -> TodayGameEntry {
         TodayGameEntry(date: .now, snapshot: SampleGameFactory.favoriteTeamWidgetSnapshot)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (TodayGameEntry) -> Void) {
-        completion(TodayGameEntry(date: .now, snapshot: SampleGameFactory.favoriteTeamWidgetSnapshot))
+        completion(TodayGameEntry(date: .now, snapshot: snapshot()))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<TodayGameEntry>) -> Void) {
-        let entry = TodayGameEntry(date: .now, snapshot: SampleGameFactory.favoriteTeamWidgetSnapshot)
+        let entry = TodayGameEntry(date: .now, snapshot: snapshot())
         let timeline = Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(15 * 60)))
         completion(timeline)
+    }
+
+    private func snapshot() -> WidgetGameSnapshot {
+        store.snapshot ?? SampleGameFactory.favoriteTeamWidgetSnapshot
     }
 }
 

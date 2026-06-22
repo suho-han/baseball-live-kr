@@ -31,6 +31,27 @@ public enum WidgetGameSnapshotMapper {
         )
     }
 
+    public static func map(
+        todayGames: TodayGames,
+        favoriteTeamID: String?
+    ) -> WidgetGameSnapshot? {
+        let orderedGames = todayGames.orderedGames(filter: .all, preferredTeamID: favoriteTeamID)
+
+        if let favoriteTeamID {
+            if let favoriteGame = orderedGames.first(where: { $0.involves(teamID: favoriteTeamID) }) {
+                return map(favoriteGame, favoriteTeamID: favoriteTeamID)
+            }
+
+            return orderedGames.first.map {
+                map($0, favoriteTeamID: favoriteTeamID, fallbackKind: .favoriteTeamNoGame)
+            }
+        }
+
+        return orderedGames.first.map {
+            map($0, fallbackKind: .favoriteTeamNotSelected)
+        }
+    }
+
     private static func displayMetadata(
         for game: Game,
         favoriteTeamID: String?,

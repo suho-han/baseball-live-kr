@@ -58,6 +58,48 @@ struct ProjectionMapperTests {
         #expect(snapshot.fallbackKind == .favoriteTeamNotSelected)
     }
 
+    @Test func mapsTodayGamesToFavoriteTeamWidgetSnapshot() throws {
+        let response = try loadFixtureResponse()
+        let todayGames = TodayGames(
+            date: response.date,
+            games: response.games.map { GameDTOMapper.map($0) }
+        )
+
+        let snapshot: WidgetGameSnapshot = try #require(
+            WidgetGameSnapshotMapper.map(todayGames: todayGames, favoriteTeamID: "HH")
+        )
+
+        #expect(snapshot.gameId == "20260610HTHH0")
+        #expect(snapshot.headline == "나의 팀 경기")
+        #expect(snapshot.isFavoriteTeamGame == true)
+    }
+
+    @Test func mapsTodayGamesToNoFavoriteSelectedFallback() throws {
+        let response = try loadFixtureResponse()
+        let todayGames = TodayGames(
+            date: response.date,
+            games: response.games.map { GameDTOMapper.map($0) }
+        )
+
+        let snapshot: WidgetGameSnapshot = try #require(
+            WidgetGameSnapshotMapper.map(todayGames: todayGames, favoriteTeamID: nil)
+        )
+
+        #expect(snapshot.headline == "응원팀을 선택하세요")
+        #expect(snapshot.fallbackKind == .favoriteTeamNotSelected)
+    }
+
+    @Test func widgetSnapshotRoundTripsThroughJSON() throws {
+        let response = try loadFixtureResponse()
+        let game = GameDTOMapper.map(response.games[1])
+        let snapshot = WidgetGameSnapshotMapper.map(game, favoriteTeamID: "HH")
+
+        let data = try JSONEncoder().encode(snapshot)
+        let decoded = try JSONDecoder().decode(WidgetGameSnapshot.self, from: data)
+
+        #expect(decoded == snapshot)
+    }
+
     @Test func mapsLiveGameToActivityState() throws {
         let response = try loadFixtureResponse()
         let game = GameDTOMapper.map(response.games[1])
