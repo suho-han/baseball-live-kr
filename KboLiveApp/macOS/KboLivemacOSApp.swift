@@ -124,7 +124,6 @@ struct KboLivemacOSApp: App {
 }
 
 #if canImport(AppKit)
-@MainActor
 private final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
