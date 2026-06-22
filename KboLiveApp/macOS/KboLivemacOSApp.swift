@@ -127,6 +127,42 @@ struct KboLivemacOSApp: App {
 private final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
+        scheduleDebugScreenshotIfNeeded()
+    }
+
+    private func scheduleDebugScreenshotIfNeeded() {
+        guard let screenshotPath = ProcessInfo.processInfo.environment["KBO_LIVE_DEBUG_SCREENSHOT_PATH"],
+              screenshotPath.isEmpty == false else {
+            return
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.captureMainWindow(to: screenshotPath)
+        }
+    }
+
+    private func captureMainWindow(to path: String) {
+        guard let window = NSApp.windows.first(where: { $0.isVisible }),
+              let contentView = window.contentView else {
+            return
+        }
+
+        let bounds = contentView.bounds
+        guard bounds.width > 0, bounds.height > 0,
+              let representation = contentView.bitmapImageRepForCachingDisplay(in: bounds) else {
+            return
+        }
+
+        contentView.cacheDisplay(in: bounds, to: representation)
+        guard let pngData = representation.representation(using: .png, properties: [:]) else {
+            return
+        }
+
+        do {
+            try pngData.write(to: URL(fileURLWithPath: path), options: .atomic)
+        } catch {
+            assertionFailure("Failed to write debug screenshot: \(error)")
+        }
     }
 }
 #endif
