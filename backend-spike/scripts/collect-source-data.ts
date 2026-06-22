@@ -18,6 +18,7 @@ interface CollectedDateSummary {
   standings: number
   statuses: Record<string, number>
   file?: string
+  teamRecordsFile?: string
 }
 
 interface PlayerSourceSummary {
@@ -28,6 +29,7 @@ interface PlayerSourceSummary {
   parsedRecords: number
   htmlFile?: string
   metadataFile?: string
+  recordsFile?: string
 }
 
 const PLAYER_URLS: Record<PlayerRecordKind, string> = {
@@ -110,14 +112,23 @@ async function collectDate(date: string, outDir: string, shouldWrite: boolean): 
   }
 
   if (shouldWrite) {
-    const file = path.join(outDir, 'dates', date, 'source-normalized.json')
+    const dateDir = path.join(outDir, 'dates', date)
+    const file = path.join(dateDir, 'source-normalized.json')
+    const teamRecordsFile = path.join(dateDir, 'team-records.json')
     await writeJson(file, {
       collectedAt: new Date().toISOString(),
       date,
       raw,
       standings
     })
+    await writeJson(teamRecordsFile, {
+      collectedAt: new Date().toISOString(),
+      date,
+      source: 'kbo-official-team-rank-daily',
+      records: standings.standings
+    })
     summary.file = path.relative(process.cwd(), file)
+    summary.teamRecordsFile = path.relative(process.cwd(), teamRecordsFile)
   }
 
   return summary
@@ -163,15 +174,18 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
 
   for (const dump of dumps) {
     let parsedRecords = 0
+    let records: unknown[] = []
 
     if (dump.kind === 'batting') {
       const parsed = parseBattingLeaders(dump.body)
       upsertBattingSeasonRecords(date, parsed)
       parsedRecords = parsed.length
+      records = parsed
     } else {
       const parsed = parsePitchingLeaders(dump.body)
       upsertPitchingSeasonRecords(date, parsed)
       parsedRecords = parsed.length
+      records = parsed
     }
 
     const summary: PlayerSourceSummary = {
@@ -186,6 +200,7 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       const baseDir = path.join(outDir, 'player-records')
       const htmlFile = path.join(baseDir, `${dump.kind}-latest.html`)
       const metadataFile = path.join(baseDir, `${dump.kind}-latest.json`)
+      const recordsFile = path.join(baseDir, `${dump.kind}-records-latest.json`)
       await mkdir(baseDir, { recursive: true })
       await writeFile(htmlFile, dump.body, 'utf8')
       await writeJson(metadataFile, {
@@ -196,8 +211,16 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
         bodyLength: dump.body.length,
         parsedRecords
       })
+      await writeJson(recordsFile, {
+        kind: dump.kind,
+        url: dump.url,
+        fetchedAt: dump.fetchedAt,
+        source: dump.kind === 'batting' ? 'kbo-official-eng-batting-leaders' : 'kbo-official-eng-pitching-leaders',
+        records
+      })
       summary.htmlFile = path.relative(process.cwd(), htmlFile)
       summary.metadataFile = path.relative(process.cwd(), metadataFile)
+      summary.recordsFile = path.relative(process.cwd(), recordsFile)
     }
 
     summaries.push(summary)

@@ -29,8 +29,11 @@ npm run collect:source -- --dates 20260614,20260621,20260622,20260623 --include-
 ```text
 backend-spike/artifacts/source-collection/<run-id>/manifest.json
 backend-spike/artifacts/source-collection/<run-id>/dates/<YYYYMMDD>/source-normalized.json
+backend-spike/artifacts/source-collection/<run-id>/dates/<YYYYMMDD>/team-records.json
 backend-spike/artifacts/source-collection/<run-id>/player-records/batting-latest.html
+backend-spike/artifacts/source-collection/<run-id>/player-records/batting-records-latest.json
 backend-spike/artifacts/source-collection/<run-id>/player-records/pitching-latest.html
+backend-spike/artifacts/source-collection/<run-id>/player-records/pitching-records-latest.json
 ```
 
 ## 3. 수집 내용
@@ -43,12 +46,15 @@ backend-spike/artifacts/source-collection/<run-id>/player-records/pitching-lates
 - normalized month games
 - requested-date normalized games
 - `TeamRankDaily` standings
+- parsed team record JSON: rank, wins, losses, draws, win rate, games back, recent 10, streak
 
 선수 기록 수집:
 
 - `eng.koreabaseball.com/stats/battingLeaders.aspx`
 - `eng.koreabaseball.com/stats/pitchingLeaders.aspx`
-- parser 결과 record count
+- raw HTML
+- parsed batting record JSON: rank, games, PA, AB, R, H, 2B, 3B, HR, TB, RBI, SB, CS, SAC, SF, AVG
+- parsed pitching record JSON: rank, games, CG, SHO, W, L, SV, HLD, PCT, PA, NP, IP outs, hits/extra-base allowed, HR, ERA
 - local DB upsert 결과 검증용 raw source 저장
 
 ## 4. 날짜 선정 기준
