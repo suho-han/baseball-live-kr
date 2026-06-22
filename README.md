@@ -169,4 +169,5 @@ backend-spike/fixtures/live-<YYYYMMDD>/
 - `PROJECT_CONTEXT/backend-spike-results.md`
 - `PROJECT_CONTEXT/production-backend-strategy.md`
 - `PROJECT_CONTEXT/kbo-data-quality-regression-plan.md`
+- `PROJECT_CONTEXT/kbo-data-validation-checklist.md`
 - `PROJECT_CONTEXT/app-productization-roadmap.md`

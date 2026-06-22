@@ -8,6 +8,9 @@ backend-spike/node_modules/
 backend-spike/dist/
 
 # Runtime outputs
+artifacts/
+backend-spike/.data/
+backend-spike/artifacts/
 backend-spike/logs/polling/
 
 # Swift
