@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { parseBattingLeaders, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
+import { parseBattingLeaders, parseKoreanPlayerNameMap, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
 import { upsertBattingSeasonRecords, upsertPitchingSeasonRecords } from '../src/repositories/playerRecordRepository.js'
 import { saveRawSource } from '../src/repositories/rawSourceRepository.js'
 import { getTeamStandings, getTodayGamesRaw } from '../src/services/gameService.js'
@@ -27,6 +27,7 @@ interface PlayerSourceSummary {
   statusCode: number
   bodyLength: number
   parsedRecords: number
+  koreanNameCandidates: number
   htmlFile?: string
   metadataFile?: string
   recordsFile?: string
@@ -35,6 +36,11 @@ interface PlayerSourceSummary {
 const PLAYER_URLS: Record<PlayerRecordKind, string> = {
   batting: 'https://eng.koreabaseball.com/stats/battingLeaders.aspx',
   pitching: 'https://eng.koreabaseball.com/stats/pitchingLeaders.aspx'
+}
+
+const KOREAN_PLAYER_URLS: Record<PlayerRecordKind, string> = {
+  batting: 'https://www.koreabaseball.com/Record/Player/HitterBasic/Basic1.aspx',
+  pitching: 'https://www.koreabaseball.com/Record/Player/PitcherBasic/Basic1.aspx'
 }
 
 function readArg(name: string, fallback?: string): string | undefined {
@@ -168,21 +174,73 @@ async function fetchPlayerSource(kind: PlayerRecordKind) {
   }
 }
 
+async function fetchKoreanPlayerNames(kind: PlayerRecordKind): Promise<{
+  kind: PlayerRecordKind
+  url: string
+  fetchedAt: string
+  statusCode: number
+  names: Map<string, string>
+}> {
+  const url = KOREAN_PLAYER_URLS[kind]
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      Referer: 'https://www.koreabaseball.com/Record/Player/'
+    }
+  })
+  const body = await response.text()
+  const fetchedAt = new Date().toISOString()
+
+  saveRawSource({
+    source: 'kbo-official-kr',
+    endpoint: kind === 'batting' ? 'HitterBasic' : 'PitcherBasic',
+    requestKey: `kind=${kind}`,
+    statusCode: response.status,
+    body,
+    fetchedAt
+  })
+
+  if (!response.ok) {
+    throw new Error(`${kind} Korean player source returned HTTP ${response.status}`)
+  }
+
+  return {
+    kind,
+    url,
+    fetchedAt,
+    statusCode: response.status,
+    names: parseKoreanPlayerNameMap(body)
+  }
+}
+
+function applyKoreanPlayerNames<T extends { playerId: string, playerName: string }>(records: T[], names: Map<string, string>): T[] {
+  return records.map((record) => ({
+    ...record,
+    playerName: names.get(record.playerId) ?? record.playerName
+  }))
+}
+
 async function collectPlayerSource(date: string, outDir: string, shouldWrite: boolean): Promise<PlayerSourceSummary[]> {
-  const dumps = await Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchPlayerSource))
+  const [dumps, koreanNameSources] = await Promise.all([
+    Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchPlayerSource)),
+    Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchKoreanPlayerNames))
+  ])
+  const koreanNamesByKind = new Map(koreanNameSources.map((source) => [source.kind, source.names]))
   const summaries: PlayerSourceSummary[] = []
 
   for (const dump of dumps) {
     let parsedRecords = 0
     let records: unknown[] = []
+    const koreanNames = koreanNamesByKind.get(dump.kind) ?? new Map<string, string>()
 
     if (dump.kind === 'batting') {
-      const parsed = parseBattingLeaders(dump.body)
+      const parsed = applyKoreanPlayerNames(parseBattingLeaders(dump.body), koreanNames)
       upsertBattingSeasonRecords(date, parsed)
       parsedRecords = parsed.length
       records = parsed
     } else {
-      const parsed = parsePitchingLeaders(dump.body)
+      const parsed = applyKoreanPlayerNames(parsePitchingLeaders(dump.body), koreanNames)
       upsertPitchingSeasonRecords(date, parsed)
       parsedRecords = parsed.length
       records = parsed
@@ -193,7 +251,8 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       url: dump.url,
       statusCode: dump.statusCode,
       bodyLength: dump.body.length,
-      parsedRecords
+      parsedRecords,
+      koreanNameCandidates: koreanNames.size
     }
 
     if (shouldWrite) {
@@ -209,7 +268,8 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
         fetchedAt: dump.fetchedAt,
         statusCode: dump.statusCode,
         bodyLength: dump.body.length,
-        parsedRecords
+        parsedRecords,
+        koreanNameCandidates: koreanNames.size
       })
       await writeJson(recordsFile, {
         kind: dump.kind,

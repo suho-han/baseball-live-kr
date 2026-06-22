@@ -114,13 +114,26 @@ function playerFromCell(cellHtml: string | undefined): { playerId: string, playe
     return null
   }
 
-  const playerId = cellHtml.match(/pcode=([0-9A-Za-z_-]+)/i)?.[1]
+  const playerId = cellHtml.match(/(?:pcode|playerId)=([0-9A-Za-z_-]+)/i)?.[1]
   const playerName = stripTags(cellHtml)
   if (!playerId || playerName === '') {
     return null
   }
 
   return { playerId, playerName }
+}
+
+export function parseKoreanPlayerNameMap(html: string): Map<string, string> {
+  const names = new Map<string, string>()
+  for (const match of html.matchAll(/<a\s+[^>]*href="[^"]*(?:pcode|playerId)=([0-9A-Za-z_-]+)[^"]*"[^>]*>([\s\S]*?)<\/a>/gi)) {
+    const playerId = match[1]
+    const playerName = stripTags(match[2])
+    if (playerId && /[가-힣]/.test(playerName)) {
+      names.set(playerId, playerName)
+    }
+  }
+
+  return names
 }
 
 function rowsForTable(html: string, summaryPattern: RegExp): Map<string, string>[] {

@@ -52,9 +52,12 @@ backend-spike/artifacts/source-collection/<run-id>/player-records/pitching-recor
 
 - `eng.koreabaseball.com/stats/battingLeaders.aspx`
 - `eng.koreabaseball.com/stats/pitchingLeaders.aspx`
+- 한국어 이름 보정용 `www.koreabaseball.com/Record/Player/HitterBasic/Basic1.aspx`
+- 한국어 이름 보정용 `www.koreabaseball.com/Record/Player/PitcherBasic/Basic1.aspx`
 - raw HTML
 - parsed batting record JSON: rank, games, PA, AB, R, H, 2B, 3B, HR, TB, RBI, SB, CS, SAC, SF, AVG
 - parsed pitching record JSON: rank, games, CG, SHO, W, L, SV, HLD, PCT, PA, NP, IP outs, hits/extra-base allowed, HR, ERA
+- 영문 source의 `playerId`를 기준으로 한국어 기록 페이지 이름을 매칭해 `playerName`은 한글로 저장
 - local DB upsert 결과 검증용 raw source 저장
 
 ## 4. 날짜 선정 기준

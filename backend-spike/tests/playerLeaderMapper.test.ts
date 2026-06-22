@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseBattingLeaders, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
+import { parseBattingLeaders, parseKoreanPlayerNameMap, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
 
 describe('playerLeaderMapper', () => {
   it('parses batting leaders with player pcode as stable player id candidate', () => {
@@ -105,6 +105,22 @@ describe('playerLeaderMapper', () => {
       homeRunsAllowed: 6,
       era: 2.58
     }])
+  })
+
+  it('parses Korean player names by player id from KBO Korean record links', () => {
+    const html = `
+      <table>
+        <tbody>
+          <tr><td><a href="/Record/Player/HitterDetail/Basic.aspx?playerId=66606">최원준</a></td></tr>
+          <tr><td><a href="/Record/Player/PitcherDetail/Basic.aspx?playerId=55633">올러</a></td></tr>
+          <tr><td><a href="/Teams/PlayerInfoHitter/Summary.aspx?pcode=54529">REYES Victor</a></td></tr>
+        </tbody>
+      </table>`
+
+    expect(Object.fromEntries(parseKoreanPlayerNameMap(html))).toEqual({
+      '66606': '최원준',
+      '55633': '올러'
+    })
   })
 })
 
