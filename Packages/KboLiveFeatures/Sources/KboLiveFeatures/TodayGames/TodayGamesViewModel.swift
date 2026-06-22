@@ -145,20 +145,29 @@ public final class TodayGamesViewModel: ObservableObject {
         let liveGames = games.filter { $0.status == .live }.count
         let scheduledGames = games.filter { $0.status == .scheduled || $0.status == .delayed }.count
         let finalGames = games.filter { $0.status == .final || $0.status == .cancelled }.count
+        let countsText = Self.countsText(
+            totalGames: games.count,
+            liveGames: liveGames,
+            scheduledGames: scheduledGames,
+            finalGames: finalGames
+        )
         let headline: String
+        let detail: String
 
-        if let selectedTeam, let favoriteGame {
-            headline = "\(selectedTeam.name) 경기 \(Self.shortStatusText(for: favoriteGame.status))"
+        if let favoriteGame {
+            headline = Self.headline(for: favoriteGame)
+            detail = Self.detail(for: favoriteGame, countsText: countsText)
         } else if let selectedTeam {
             headline = "오늘은 \(selectedTeam.name) 경기가 없습니다"
-        } else if liveGames > 0 {
-            headline = "\(liveGames)경기 진행 중"
-        } else if scheduledGames > 0 {
-            headline = "\(scheduledGames)경기 예정"
-        } else if finalGames > 0 {
-            headline = "오늘 경기 종료"
+            detail = countsText
+        } else if let spotlightGame = TodayGames(date: activeDateString, games: games)
+            .orderedGames(filter: .all, preferredTeamID: selectedTeamID)
+            .first {
+            headline = Self.headline(for: spotlightGame)
+            detail = Self.detail(for: spotlightGame, countsText: countsText)
         } else {
             headline = "오늘 편성된 경기가 없습니다"
+            detail = countsText
         }
 
         return TodayDashboardSummary(
@@ -167,7 +176,7 @@ public final class TodayGamesViewModel: ObservableObject {
             scheduledGames: scheduledGames,
             finalGames: finalGames,
             headline: headline,
-            detail: "전체 \(games.count)경기 · 진행 \(liveGames) · 예정 \(scheduledGames) · 종료 \(finalGames)"
+            detail: detail
         )
     }
 
@@ -268,6 +277,38 @@ public final class TodayGamesViewModel: ObservableObject {
         }
 
         return "경기 데이터를 불러오지 못했습니다."
+    }
+
+    private static func headline(for game: Game) -> String {
+        switch game.status {
+        case .scheduled, .delayed, .cancelled, .unknown:
+            return "\(game.awayTeam.name) vs \(game.homeTeam.name)"
+        case .live, .final:
+            return GameProjectionFormatter.scoreLine(for: game)
+        }
+    }
+
+    private static func detail(for game: Game, countsText: String) -> String {
+        var parts: [String] = []
+
+        if game.status == .live, game.inning == nil {
+            parts.append(shortStatusText(for: game.status))
+        } else if let gameStateText = GameProjectionFormatter.inningText(for: game), gameStateText.isEmpty == false {
+            parts.append(gameStateText)
+        } else {
+            parts.append(shortStatusText(for: game.status))
+        }
+
+        if let venue = game.venue?.trimmingCharacters(in: .whitespacesAndNewlines), venue.isEmpty == false {
+            parts.append(venue)
+        }
+
+        parts.append(countsText)
+        return parts.joined(separator: " · ")
+    }
+
+    private static func countsText(totalGames: Int, liveGames: Int, scheduledGames: Int, finalGames: Int) -> String {
+        "전체 \(totalGames)경기 · 진행 \(liveGames) · 예정 \(scheduledGames) · 종료 \(finalGames)"
     }
 
     private static func shortStatusText(for status: GameStatus) -> String {

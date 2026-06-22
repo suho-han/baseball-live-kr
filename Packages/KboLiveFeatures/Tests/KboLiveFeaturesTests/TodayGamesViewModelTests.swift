@@ -174,8 +174,8 @@ struct TodayGamesViewModelTests {
         #expect(summary.liveGames == 1)
         #expect(summary.scheduledGames == 2)
         #expect(summary.finalGames == 2)
-        #expect(summary.headline == "1경기 진행 중")
-        #expect(summary.detail == "전체 5경기 · 진행 1 · 예정 2 · 종료 2")
+        #expect(summary.headline == "LG 0:0 두산")
+        #expect(summary.detail == "진행 중 · 잠실 · 전체 5경기 · 진행 1 · 예정 2 · 종료 2")
     }
 
     @Test func dashboardSummaryFocusesSelectedTeamGame() async {
@@ -211,7 +211,40 @@ struct TodayGamesViewModelTests {
 
         await viewModel.load()
 
-        #expect(viewModel.dashboardSummary.headline == "LG 경기 예정")
+        let summary = viewModel.dashboardSummary
+        #expect(summary.headline == "LG vs 두산")
+        #expect(summary.detail == "19:30 예정 · 잠실 · 전체 2경기 · 진행 1 · 예정 1 · 종료 0")
+    }
+
+    @Test func dashboardSummaryKeepsSelectedTeamNoGameCopy() async {
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: MockGameRepository(
+                    todayGames: TodayGames(
+                        date: "20260612",
+                        games: [
+                            makeGame(
+                                id: "other-live",
+                                status: .live,
+                                startHour: 17,
+                                awayTeam: Team(id: "KT", name: "KT"),
+                                homeTeam: Team(id: "NC", name: "NC")
+                            )
+                        ]
+                    )
+                )
+            ),
+            filter: .all,
+            selectedTeamID: "LG",
+            loadSelectedTeamID: { "LG" },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+
+        let summary = viewModel.dashboardSummary
+        #expect(summary.headline == "오늘은 LG 경기가 없습니다")
+        #expect(summary.detail == "전체 1경기 · 진행 1 · 예정 0 · 종료 0")
     }
 
     @Test func loadStoresFriendlyFailureMessage() async {
