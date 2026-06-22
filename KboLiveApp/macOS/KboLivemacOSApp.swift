@@ -33,6 +33,11 @@ struct KboLivemacOSApp: App {
         Task {
             await viewModel.loadIfNeeded()
         }
+
+        if let screenshotPath = ProcessInfo.processInfo.environment["KBO_LIVE_DEBUG_SCREENSHOT_PATH"],
+           screenshotPath.isEmpty == false {
+            Self.renderDebugScreenshot(to: screenshotPath)
+        }
     }
 
     var body: some Scene {
@@ -103,6 +108,51 @@ struct KboLivemacOSApp: App {
             .environment(\.kboFontScale, CGFloat(fontScale))
         }
     }
+
+#if canImport(AppKit)
+    @MainActor
+    private static func renderDebugScreenshot(to path: String) {
+        Task { @MainActor in
+            let viewModel = TodayGamesViewModel(
+                client: GameFeedClient(
+                    repository: MockGameRepository(todayGames: SampleGameFactory.todayGames)
+                ),
+                selectedTeamID: "KT",
+                loadSelectedTeamID: { "KT" },
+                saveSelectedTeamID: { _ in }
+            )
+            await viewModel.load()
+
+            let settings = BackendSettingsModel()
+            let content = KboLiveHomeRootView(
+                viewModel: viewModel,
+                settings: settings,
+                navigationModel: AppNavigationModel(),
+                updateChecker: AppUpdateCheckModel()
+            )
+            .frame(width: MainWindowLayout.defaultWidth, height: MainWindowLayout.defaultHeight)
+            .environment(\.kboFontScale, CGFloat(KboFontScale.defaultValue))
+            .preferredColorScheme(.dark)
+
+            let renderer = ImageRenderer(content: content)
+            renderer.scale = 2
+
+            guard let image = renderer.nsImage,
+                  let tiffData = image.tiffRepresentation,
+                  let bitmap = NSBitmapImageRep(data: tiffData),
+                  let pngData = bitmap.representation(using: .png, properties: [:]) else {
+                exit(2)
+            }
+
+            do {
+                try pngData.write(to: URL(fileURLWithPath: path), options: .atomic)
+                exit(0)
+            } catch {
+                exit(3)
+            }
+        }
+    }
+#endif
 
     private func adjustFontScale(by delta: CGFloat) {
         fontScale = Double(KboFontScale.clamped(CGFloat(fontScale) + delta))
