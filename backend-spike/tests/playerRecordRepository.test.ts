@@ -80,7 +80,13 @@ describe('playerRecordRepository', () => {
       walks: 27,
       strikeouts: 92,
       earnedRuns: 25,
-      whip: 0.95
+      whip: 0.95,
+      strikeoutsPerNine: 9.48,
+      walksPerNine: 2.78,
+      strikeoutWalkRatio: 3.41,
+      opponentObp: 0.260,
+      opponentSlg: 0.275,
+      opponentOps: 0.535
     }], db)
 
     expect(searchPlayers('choi', 2026, db)).toMatchObject([{
@@ -114,7 +120,13 @@ describe('playerRecordRepository', () => {
         walks: 27,
         strikeouts: 92,
         earned_runs: 25,
-        whip: 0.95
+        whip: 0.95,
+        strikeouts_per_nine: 9.48,
+        walks_per_nine: 2.78,
+        strikeout_walk_ratio: 3.41,
+        opponent_obp: 0.260,
+        opponent_slg: 0.275,
+        opponent_ops: 0.535
       }
     })
   })

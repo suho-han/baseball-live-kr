@@ -225,6 +225,18 @@ const migrations: Migration[] = [
       create index if not exists idx_player_pitching_latest
         on player_pitching_season_records(player_id, season, date desc);
     `
+  },
+  {
+    version: 4,
+    name: 'pitching_detail_rate_stats',
+    sql: `
+      alter table player_pitching_season_records add column strikeouts_per_nine real;
+      alter table player_pitching_season_records add column walks_per_nine real;
+      alter table player_pitching_season_records add column strikeout_walk_ratio real;
+      alter table player_pitching_season_records add column opponent_obp real;
+      alter table player_pitching_season_records add column opponent_slg real;
+      alter table player_pitching_season_records add column opponent_ops real;
+    `
   }
 ]
 

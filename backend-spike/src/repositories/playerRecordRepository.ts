@@ -137,9 +137,10 @@ export function upsertPitchingSeasonRecords(date: string, entries: PitchingLeade
       season, date, player_id, team_id, rank, games, games_started, complete_games, shutouts,
       wins, losses, saves, holds, winning_percentage, plate_appearances, pitches, innings_pitched_outs,
       hits_allowed, doubles_allowed, triples_allowed, home_runs_allowed, walks, strikeouts, earned_runs,
-      era, whip, source, raw_source_id, created_at, updated_at
+      era, whip, strikeouts_per_nine, walks_per_nine, strikeout_walk_ratio, opponent_obp, opponent_slg, opponent_ops,
+      source, raw_source_id, created_at, updated_at
     )
-    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     on conflict(season, date, player_id, team_id) do update set
       rank = excluded.rank,
       games = excluded.games,
@@ -162,6 +163,12 @@ export function upsertPitchingSeasonRecords(date: string, entries: PitchingLeade
       earned_runs = excluded.earned_runs,
       era = excluded.era,
       whip = excluded.whip,
+      strikeouts_per_nine = excluded.strikeouts_per_nine,
+      walks_per_nine = excluded.walks_per_nine,
+      strikeout_walk_ratio = excluded.strikeout_walk_ratio,
+      opponent_obp = excluded.opponent_obp,
+      opponent_slg = excluded.opponent_slg,
+      opponent_ops = excluded.opponent_ops,
       updated_at = excluded.updated_at
   `)
 
@@ -173,7 +180,9 @@ export function upsertPitchingSeasonRecords(date: string, entries: PitchingLeade
         season, date, entry.playerId, entry.teamId, entry.rank, entry.games, null, entry.completeGames, entry.shutouts,
         entry.wins, entry.losses, entry.saves, entry.holds, entry.winningPercentage, entry.plateAppearances, entry.pitches, entry.inningsPitchedOuts,
         entry.hitsAllowed, entry.doublesAllowed, entry.triplesAllowed, entry.homeRunsAllowed, entry.walks ?? null, entry.strikeouts ?? null, entry.earnedRuns ?? null,
-        entry.era, entry.whip ?? null, 'kbo-official-eng-pitching-leaders', null, now, now
+        entry.era, entry.whip ?? null, entry.strikeoutsPerNine ?? null, entry.walksPerNine ?? null, entry.strikeoutWalkRatio ?? null,
+        entry.opponentObp ?? null, entry.opponentSlg ?? null, entry.opponentOps ?? null,
+        'kbo-official-eng-pitching-leaders', null, now, now
       )
     }
     database.exec('commit')
