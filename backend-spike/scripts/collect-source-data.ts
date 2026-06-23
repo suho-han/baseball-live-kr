@@ -5,7 +5,7 @@ import { parseBattingLeaders, parseKoreanPlayerNameMap, parsePitchingLeaders } f
 import { upsertBattingSeasonRecords, upsertPitchingSeasonRecords } from '../src/repositories/playerRecordRepository.js'
 import { saveRawSource } from '../src/repositories/rawSourceRepository.js'
 import { selectExtraRecordSources, type ExtraRecordKind } from '../src/records/extraRecordSources.js'
-import { collectRecordTableMetadata, fetchTextWithTimeout, requireKoreanPlayerNames } from '../src/records/sourceCollectionUtils.js'
+import { collectRecordTableMetadata, fetchTextWithTimeout, requireKoreanPlayerNames, resolveArtifactOutDir } from '../src/records/sourceCollectionUtils.js'
 import { getTeamStandings, getTodayGamesRaw } from '../src/services/gameService.js'
 import { toKboDate } from '../src/utils/date.js'
 
@@ -33,6 +33,8 @@ interface PlayerSourceSummary {
   htmlFile?: string
   metadataFile?: string
   recordsFile?: string
+  koreanHtmlFile?: string
+  koreanMetadataFile?: string
 }
 
 
@@ -47,17 +49,21 @@ const KOREAN_PLAYER_URLS: Record<PlayerRecordKind, string> = {
 }
 
 const FETCH_TIMEOUT_MS = 15000
+const FETCH_RETRIES = 2
+const FETCH_RETRY_DELAY_MS = 500
 
 interface ExtraRecordSummary {
   id: string
   kind: ExtraRecordKind
   label: string
   url: string
-  statusCode: number
-  bodyLength: number
-  tableCount: number
-  rowCount: number
-  columns: string[]
+  status: 'ok' | 'failed'
+  statusCode?: number
+  bodyLength?: number
+  tableCount?: number
+  rowCount?: number
+  columns?: string[]
+  error?: string
   htmlFile?: string
   metadataFile?: string
 }
@@ -163,57 +169,82 @@ async function collectExtraRecordSources(outDir: string, shouldWrite: boolean): 
   const summaries: ExtraRecordSummary[] = []
 
   for (const source of selectExtraRecordSources(readArg('extra-records'))) {
-    const fetched = await fetchTextWithTimeout(source.url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        Referer: 'https://www.koreabaseball.com/Record/Player/HitterBasic/Basic1.aspx'
-      }
-    }, FETCH_TIMEOUT_MS)
-    const { body, fetchedAt, statusCode } = fetched
-    const tableMetadata = collectRecordTableMetadata(body)
+    try {
+      const fetched = await fetchTextWithTimeout(source.url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0',
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          Referer: 'https://www.koreabaseball.com/Record/Player/HitterBasic/Basic1.aspx'
+        }
+      }, { timeoutMs: FETCH_TIMEOUT_MS, retries: FETCH_RETRIES, retryDelayMs: FETCH_RETRY_DELAY_MS })
+      const { body, fetchedAt, statusCode } = fetched
+      const tableMetadata = collectRecordTableMetadata(body)
 
-    saveRawSource({
-      source: 'kbo-official-kr-records',
-      endpoint: source.id,
-      requestKey: source.url,
-      statusCode,
-      body,
-      fetchedAt
-    })
-
-    if (statusCode < 200 || statusCode >= 300) {
-      throw new Error(`${source.id} returned HTTP ${statusCode}`)
-    }
-
-    const summary: ExtraRecordSummary = {
-      id: source.id,
-      kind: source.kind,
-      label: source.label,
-      url: source.url,
-      statusCode,
-      bodyLength: body.length,
-      tableCount: tableMetadata.tableCount,
-      rowCount: tableMetadata.rowCount,
-      columns: tableMetadata.columns
-    }
-
-    if (shouldWrite) {
-      const baseDir = path.join(outDir, 'extra-records', source.kind)
-      const htmlFile = path.join(baseDir, `${source.id}.html`)
-      const metadataFile = path.join(baseDir, `${source.id}.json`)
-      await mkdir(baseDir, { recursive: true })
-      await writeFile(htmlFile, body, 'utf8')
-      await writeJson(metadataFile, {
-        ...summary,
-        priority: source.priority,
+      saveRawSource({
+        source: 'kbo-official-kr-records',
+        endpoint: source.id,
+        requestKey: source.url,
+        statusCode,
+        body,
         fetchedAt
       })
-      summary.htmlFile = path.relative(process.cwd(), htmlFile)
-      summary.metadataFile = path.relative(process.cwd(), metadataFile)
-    }
 
-    summaries.push(summary)
+      if (statusCode < 200 || statusCode >= 300) {
+        throw new Error(`${source.id} returned HTTP ${statusCode}`)
+      }
+
+      const summary: ExtraRecordSummary = {
+        id: source.id,
+        kind: source.kind,
+        label: source.label,
+        url: source.url,
+        status: 'ok',
+        statusCode,
+        bodyLength: body.length,
+        tableCount: tableMetadata.tableCount,
+        rowCount: tableMetadata.rowCount,
+        columns: tableMetadata.columns
+      }
+
+      if (shouldWrite) {
+        const baseDir = path.join(outDir, 'extra-records', source.kind)
+        const htmlFile = path.join(baseDir, `${source.id}.html`)
+        const metadataFile = path.join(baseDir, `${source.id}.json`)
+        await mkdir(baseDir, { recursive: true })
+        await writeFile(htmlFile, body, 'utf8')
+        await writeJson(metadataFile, {
+          ...summary,
+          priority: source.priority,
+          fetchedAt
+        })
+        summary.htmlFile = path.relative(process.cwd(), htmlFile)
+        summary.metadataFile = path.relative(process.cwd(), metadataFile)
+      }
+
+      summaries.push(summary)
+    } catch (error) {
+      const summary: ExtraRecordSummary = {
+        id: source.id,
+        kind: source.kind,
+        label: source.label,
+        url: source.url,
+        status: 'failed',
+        error: error instanceof Error ? error.message : String(error)
+      }
+
+      if (shouldWrite) {
+        const baseDir = path.join(outDir, 'extra-records', source.kind)
+        const metadataFile = path.join(baseDir, `${source.id}.json`)
+        await writeJson(metadataFile, {
+          ...summary,
+          priority: source.priority,
+          fetchedAt: new Date().toISOString()
+        })
+        summary.metadataFile = path.relative(process.cwd(), metadataFile)
+      }
+
+      summaries.push(summary)
+    }
   }
 
   return summaries
@@ -227,7 +258,7 @@ async function fetchPlayerSource(kind: PlayerRecordKind) {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       Referer: 'https://eng.koreabaseball.com/stats/'
     }
-  }, FETCH_TIMEOUT_MS)
+  }, { timeoutMs: FETCH_TIMEOUT_MS, retries: FETCH_RETRIES, retryDelayMs: FETCH_RETRY_DELAY_MS })
   const { body, fetchedAt, statusCode } = fetched
 
   saveRawSource({
@@ -257,6 +288,7 @@ async function fetchKoreanPlayerNames(kind: PlayerRecordKind): Promise<{
   url: string
   fetchedAt: string
   statusCode: number
+  body: string
   names: Map<string, string>
 }> {
   const url = KOREAN_PLAYER_URLS[kind]
@@ -266,7 +298,7 @@ async function fetchKoreanPlayerNames(kind: PlayerRecordKind): Promise<{
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       Referer: 'https://www.koreabaseball.com/Record/Player/'
     }
-  }, FETCH_TIMEOUT_MS)
+  }, { timeoutMs: FETCH_TIMEOUT_MS, retries: FETCH_RETRIES, retryDelayMs: FETCH_RETRY_DELAY_MS })
   const { body, fetchedAt, statusCode } = fetched
 
   saveRawSource({
@@ -287,6 +319,7 @@ async function fetchKoreanPlayerNames(kind: PlayerRecordKind): Promise<{
     url,
     fetchedAt,
     statusCode,
+    body,
     names: parseKoreanPlayerNameMap(body)
   }
 }
@@ -296,13 +329,14 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
     Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchPlayerSource)),
     Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchKoreanPlayerNames))
   ])
-  const koreanNamesByKind = new Map(koreanNameSources.map((source) => [source.kind, source.names]))
+  const koreanSourceByKind = new Map(koreanNameSources.map((source) => [source.kind, source]))
   const summaries: PlayerSourceSummary[] = []
 
   for (const dump of dumps) {
     let parsedRecords = 0
     let records: unknown[] = []
-    const koreanNames = koreanNamesByKind.get(dump.kind) ?? new Map<string, string>()
+    const koreanSource = koreanSourceByKind.get(dump.kind)
+    const koreanNames = koreanSource?.names ?? new Map<string, string>()
 
     if (dump.kind === 'batting') {
       const parsed = requireKoreanPlayerNames(parseBattingLeaders(dump.body), koreanNames, dump.kind)
@@ -330,8 +364,21 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       const htmlFile = path.join(baseDir, `${dump.kind}-latest.html`)
       const metadataFile = path.join(baseDir, `${dump.kind}-latest.json`)
       const recordsFile = path.join(baseDir, `${dump.kind}-records-latest.json`)
+      const koreanHtmlFile = path.join(baseDir, `${dump.kind}-korean-source-latest.html`)
+      const koreanMetadataFile = path.join(baseDir, `${dump.kind}-korean-source-latest.json`)
       await mkdir(baseDir, { recursive: true })
       await writeFile(htmlFile, dump.body, 'utf8')
+      if (koreanSource) {
+        await writeFile(koreanHtmlFile, koreanSource.body, 'utf8')
+        await writeJson(koreanMetadataFile, {
+          kind: dump.kind,
+          url: koreanSource.url,
+          fetchedAt: koreanSource.fetchedAt,
+          statusCode: koreanSource.statusCode,
+          bodyLength: koreanSource.body.length,
+          koreanNameCandidates: koreanSource.names.size
+        })
+      }
       await writeJson(metadataFile, {
         kind: dump.kind,
         url: dump.url,
@@ -339,7 +386,9 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
         statusCode: dump.statusCode,
         bodyLength: dump.body.length,
         parsedRecords,
-        koreanNameCandidates: koreanNames.size
+        koreanNameCandidates: koreanNames.size,
+        koreanHtmlFile: koreanSource ? path.relative(process.cwd(), koreanHtmlFile) : null,
+        koreanMetadataFile: koreanSource ? path.relative(process.cwd(), koreanMetadataFile) : null
       })
       await writeJson(recordsFile, {
         kind: dump.kind,
@@ -351,6 +400,10 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       summary.htmlFile = path.relative(process.cwd(), htmlFile)
       summary.metadataFile = path.relative(process.cwd(), metadataFile)
       summary.recordsFile = path.relative(process.cwd(), recordsFile)
+      if (koreanSource) {
+        summary.koreanHtmlFile = path.relative(process.cwd(), koreanHtmlFile)
+        summary.koreanMetadataFile = path.relative(process.cwd(), koreanMetadataFile)
+      }
     }
 
     summaries.push(summary)
@@ -365,7 +418,8 @@ async function main() {
   const includePlayerRecords = readBooleanArg('include-player-records')
   const includeExtraRecords = readBooleanArg('include-extra-records')
   const runId = readArg('run-id', timestampForFile())!
-  const outDir = readArg('out-dir', path.resolve('artifacts', 'source-collection', runId))!
+  const artifactRoot = path.resolve('artifacts', 'source-collection')
+  const outDir = resolveArtifactOutDir(artifactRoot, runId, readArg('out-dir'))
   const dateSummaries: CollectedDateSummary[] = []
 
   for (const date of dates) {

@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
 import { parseTopFiveCategories } from '../src/records/leagueRecordExtractors.js'
-import { fetchTextWithTimeout } from '../src/records/sourceCollectionUtils.js'
+import { fetchTextWithTimeout, resolveArtifactOutDir } from '../src/records/sourceCollectionUtils.js'
 
 function readArg(name: string, fallback?: string): string | undefined {
   const prefix = `--${name}`
@@ -42,7 +42,7 @@ async function fetchCrowdTeam(year: string) {
       Referer: 'https://www.koreabaseball.com/Record/Crowd/GraphTeam.aspx'
     },
     body
-  })
+  }, { timeoutMs: 15000, retries: 2, retryDelayMs: 500 })
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
     throw new Error(`crowd team endpoint returned HTTP ${response.statusCode}`)
@@ -57,7 +57,8 @@ async function fetchCrowdTeam(year: string) {
 async function main() {
   const runId = readArg('run-id', timestampForFile())!
   const year = readArg('year', '2026')!
-  const outDir = readArg('out-dir', path.resolve('artifacts', 'league-record-data', runId))!
+  const artifactRoot = path.resolve('artifacts', 'league-record-data')
+  const outDir = resolveArtifactOutDir(artifactRoot, runId, readArg('out-dir'))
 
   const top5 = await fetchTextWithTimeout('https://www.koreabaseball.com/Record/Ranking/Top5.aspx', {
     headers: {
@@ -65,7 +66,7 @@ async function main() {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       Referer: 'https://www.koreabaseball.com/Record/Ranking/Top5.aspx'
     }
-  })
+  }, { timeoutMs: 15000, retries: 2, retryDelayMs: 500 })
   if (top5.statusCode < 200 || top5.statusCode >= 300) {
     throw new Error(`TOP5 page returned HTTP ${top5.statusCode}`)
   }

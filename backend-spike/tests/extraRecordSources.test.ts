@@ -18,4 +18,8 @@ describe('extraRecordSources', () => {
   it('rejects unknown --extra-records values', () => {
     expect(() => selectExtraRecordSources('team,typo-id')).toThrow(/Unknown extra record source: typo-id/)
   })
+
+  it('rejects an explicitly empty --extra-records value', () => {
+    expect(() => selectExtraRecordSources('')).toThrow(/Empty extra record source filter/)
+  })
 })

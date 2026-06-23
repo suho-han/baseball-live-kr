@@ -124,7 +124,15 @@ export const EXTRA_RECORD_SOURCES: ExtraRecordSource[] = [
 ]
 
 export function selectExtraRecordSources(explicit?: string): ExtraRecordSource[] {
-  if (!explicit || explicit === 'all') {
+  if (explicit === undefined) {
+    return EXTRA_RECORD_SOURCES
+  }
+
+  if (explicit.trim() === '') {
+    throw new Error('Empty extra record source filter')
+  }
+
+  if (explicit === 'all') {
     return EXTRA_RECORD_SOURCES
   }
 

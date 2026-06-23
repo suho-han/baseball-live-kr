@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 export interface FetchedText {
   body: string
   fetchedAt: string
@@ -12,29 +14,60 @@ export interface RecordTableMetadata {
 
 export type FetchLike = (url: string | URL, init?: RequestInit) => Promise<Response>
 
+export interface FetchTextOptions {
+  timeoutMs?: number
+  retries?: number
+  retryDelayMs?: number
+}
+
+function sleep(ms: number): Promise<void> {
+  if (ms <= 0) {
+    return Promise.resolve()
+  }
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export async function fetchTextWithTimeout(
   url: string,
   init: RequestInit = {},
-  timeoutMs = 15000,
+  optionsOrTimeout: FetchTextOptions | number = 15000,
   fetchImpl: FetchLike = fetch
 ): Promise<FetchedText> {
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  const options: FetchTextOptions = typeof optionsOrTimeout === 'number'
+    ? { timeoutMs: optionsOrTimeout }
+    : optionsOrTimeout
+  const timeoutMs = options.timeoutMs ?? 15000
+  const retries = options.retries ?? 0
+  const retryDelayMs = options.retryDelayMs ?? 250
+  let lastError: unknown
 
-  try {
-    const response = await fetchImpl(url, {
-      ...init,
-      signal: controller.signal
-    })
-    const body = await response.text()
-    return {
-      body,
-      fetchedAt: new Date().toISOString(),
-      statusCode: response.status
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), timeoutMs)
+
+    try {
+      const response = await fetchImpl(url, {
+        ...init,
+        signal: controller.signal
+      })
+      const body = await response.text()
+      return {
+        body,
+        fetchedAt: new Date().toISOString(),
+        statusCode: response.status
+      }
+    } catch (error) {
+      lastError = error
+      if (attempt >= retries) {
+        throw error
+      }
+      await sleep(retryDelayMs)
+    } finally {
+      clearTimeout(timeout)
     }
-  } finally {
-    clearTimeout(timeout)
   }
+
+  throw lastError instanceof Error ? lastError : new Error(String(lastError))
 }
 
 export function decodeBasicHtml(value: string): string {
@@ -65,6 +98,24 @@ export function collectRecordTableMetadata(html: string): RecordTableMetadata {
     rowCount,
     columns
   }
+}
+
+export function resolveArtifactOutDir(artifactRoot: string, runId: string, explicitOutDir?: string): string {
+  if (!/^[A-Za-z0-9._-]+$/.test(runId) || runId.includes('..')) {
+    throw new Error(`Invalid run id: ${runId}`)
+  }
+
+  const resolvedRoot = path.resolve(artifactRoot)
+  const resolvedOutDir = explicitOutDir
+    ? path.resolve(explicitOutDir)
+    : path.join(resolvedRoot, runId)
+
+  const relative = path.relative(resolvedRoot, resolvedOutDir)
+  if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative)) {
+    throw new Error(`Output directory is outside artifact root: ${resolvedOutDir}`)
+  }
+
+  return resolvedOutDir
 }
 
 export function requireKoreanPlayerNames<T extends { playerId: string, playerName: string }>(
