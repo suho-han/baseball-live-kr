@@ -21,6 +21,11 @@ export interface BattingLeaderEntry {
   sacrificeHits: number | null
   sacrificeFlies: number | null
   avg: number | null
+  walks?: number | null
+  strikeouts?: number | null
+  obp?: number | null
+  slg?: number | null
+  ops?: number | null
 }
 
 export interface PitchingLeaderEntry {
@@ -45,6 +50,16 @@ export interface PitchingLeaderEntry {
   triplesAllowed: number | null
   homeRunsAllowed: number | null
   era: number | null
+  walks?: number | null
+  strikeouts?: number | null
+  earnedRuns?: number | null
+  whip?: number | null
+  strikeoutsPerNine?: number | null
+  walksPerNine?: number | null
+  strikeoutWalkRatio?: number | null
+  opponentObp?: number | null
+  opponentSlg?: number | null
+  opponentOps?: number | null
 }
 
 function decodeHtml(value: string): string {
@@ -147,6 +162,34 @@ function rowsForTable(html: string, summaryPattern: RegExp): Map<string, string>
     .filter((cells) => cells.size > 0)
 }
 
+function dataIdCells(rowHtml: string): Map<string, string> {
+  const cells = new Map<string, string>()
+  let index = 0
+  for (const match of rowHtml.matchAll(/<td([^>]*)>([\s\S]*?)<\/td>/gi)) {
+    const dataId = match[1].match(/data-id="([^"]*)"/i)?.[1]
+    cells.set(dataId?.trim().toUpperCase() ?? `INDEX_${index}`, match[2])
+    index += 1
+  }
+  return cells
+}
+
+function rowsWithDataIds(html: string): Map<string, string>[] {
+  return [...html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)]
+    .map((row) => dataIdCells(row[1]))
+    .filter((cells) => cells.has('INDEX_1') && cells.has('INDEX_2'))
+}
+
+function playerFromIndexedCells(cells: Map<string, string>): { playerId: string, playerName: string, teamId: string, teamName: string } | null {
+  const player = playerFromCell(cells.get('INDEX_1'))
+  const teamName = stripTags(cells.get('INDEX_2') ?? '')
+  const teamId = mapTeamNameToId(teamName)
+  if (!player || !teamId) {
+    return null
+  }
+
+  return { ...player, teamId, teamName }
+}
+
 export function parseBattingLeaders(html: string): BattingLeaderEntry[] {
   return rowsForTable(html, /batting leaders/i).flatMap((cells) => {
     const player = playerFromCell(cells.get('PLAYER'))
@@ -212,5 +255,68 @@ export function parsePitchingLeaders(html: string): PitchingLeaderEntry[] {
       era: toNumber(stripTags(cells.get('ERA') ?? ''))
     }]
   })
+}
+
+export function parseKoreanBattingDetailStats(html: string): Map<string, Partial<BattingLeaderEntry> & Pick<BattingLeaderEntry, 'playerId' | 'playerName' | 'teamId' | 'teamName'>> {
+  const stats = new Map<string, Partial<BattingLeaderEntry> & Pick<BattingLeaderEntry, 'playerId' | 'playerName' | 'teamId' | 'teamName'>>()
+  for (const cells of rowsWithDataIds(html)) {
+    const player = playerFromIndexedCells(cells)
+    if (!player) {
+      continue
+    }
+
+    stats.set(player.playerId, {
+      ...player,
+      walks: toNumber(stripTags(cells.get('BB_CN') ?? '')),
+      strikeouts: toNumber(stripTags(cells.get('KK_CN') ?? '')),
+      avg: toNumber(stripTags(cells.get('HRA_RT') ?? '')),
+      obp: toNumber(stripTags(cells.get('OBP_RT') ?? '')),
+      slg: toNumber(stripTags(cells.get('SLG_RT') ?? '')),
+      ops: toNumber(stripTags(cells.get('OPS_RT') ?? ''))
+    })
+  }
+  return stats
+}
+
+export function parseKoreanPitchingBasicStats(html: string): Map<string, Partial<PitchingLeaderEntry> & Pick<PitchingLeaderEntry, 'playerId' | 'playerName' | 'teamId' | 'teamName'>> {
+  const stats = new Map<string, Partial<PitchingLeaderEntry> & Pick<PitchingLeaderEntry, 'playerId' | 'playerName' | 'teamId' | 'teamName'>>()
+  for (const cells of rowsWithDataIds(html)) {
+    const player = playerFromIndexedCells(cells)
+    if (!player) {
+      continue
+    }
+
+    stats.set(player.playerId, {
+      ...player,
+      era: toNumber(stripTags(cells.get('ERA_RT') ?? '')),
+      walks: toNumber(stripTags(cells.get('BB_CN') ?? '')),
+      strikeouts: toNumber(stripTags(cells.get('KK_CN') ?? '')),
+      earnedRuns: toNumber(stripTags(cells.get('ER_CN') ?? '')),
+      whip: toNumber(stripTags(cells.get('WHIP_RT') ?? ''))
+    })
+  }
+  return stats
+}
+
+export function parseKoreanPitchingDetailStats(html: string): Map<string, Partial<PitchingLeaderEntry> & Pick<PitchingLeaderEntry, 'playerId' | 'playerName' | 'teamId' | 'teamName'>> {
+  const stats = new Map<string, Partial<PitchingLeaderEntry> & Pick<PitchingLeaderEntry, 'playerId' | 'playerName' | 'teamId' | 'teamName'>>()
+  for (const cells of rowsWithDataIds(html)) {
+    const player = playerFromIndexedCells(cells)
+    if (!player) {
+      continue
+    }
+
+    stats.set(player.playerId, {
+      ...player,
+      era: toNumber(stripTags(cells.get('ERA_RT') ?? '')),
+      strikeoutsPerNine: toNumber(stripTags(cells.get('GAME_KK_RT') ?? '')),
+      walksPerNine: toNumber(stripTags(cells.get('GAME_BB_RT') ?? '')),
+      strikeoutWalkRatio: toNumber(stripTags(cells.get('BB_KK_RT') ?? '')),
+      opponentObp: toNumber(stripTags(cells.get('OOBP_RT') ?? '')),
+      opponentSlg: toNumber(stripTags(cells.get('OSLG_RT') ?? '')),
+      opponentOps: toNumber(stripTags(cells.get('OOPS_RT') ?? ''))
+    })
+  }
+  return stats
 }
 

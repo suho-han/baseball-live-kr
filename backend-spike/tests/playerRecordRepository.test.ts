@@ -48,7 +48,12 @@ describe('playerRecordRepository', () => {
       caughtStealing: 6,
       sacrificeHits: 3,
       sacrificeFlies: 3,
-      avg: 0.381
+      avg: 0.381,
+      walks: 39,
+      strikeouts: 47,
+      obp: 0.459,
+      slg: 0.529,
+      ops: 0.988
     }], db)
     upsertPitchingSeasonRecords('20260618', [{
       playerId: '55633',
@@ -71,7 +76,11 @@ describe('playerRecordRepository', () => {
       doublesAllowed: 6,
       triplesAllowed: 2,
       homeRunsAllowed: 6,
-      era: 2.58
+      era: 2.58,
+      walks: 27,
+      strikeouts: 92,
+      earnedRuns: 25,
+      whip: 0.95
     }], db)
 
     expect(searchPlayers('choi', 2026, db)).toMatchObject([{
@@ -81,6 +90,19 @@ describe('playerRecordRepository', () => {
       season: 2026,
       positionGroup: 'batter'
     }])
+    expect(getPlayerSeasonRecord('66606', 2026, '20260618', db)).toMatchObject({
+      playerId: '66606',
+      playerName: 'CHOI Won Jun',
+      season: 2026,
+      teamId: 'KT',
+      batting: {
+        walks: 39,
+        strikeouts: 47,
+        obp: 0.459,
+        slg: 0.529,
+        ops: 0.988
+      }
+    })
     expect(getPlayerSeasonRecord('55633', 2026, '20260618', db)).toMatchObject({
       playerId: '55633',
       playerName: 'OLLER Adam',
@@ -88,7 +110,11 @@ describe('playerRecordRepository', () => {
       teamId: 'HT',
       pitching: {
         era: 2.58,
-        innings_pitched_outs: 262
+        innings_pitched_outs: 262,
+        walks: 27,
+        strikeouts: 92,
+        earned_runs: 25,
+        whip: 0.95
       }
     })
   })

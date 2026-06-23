@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { parseBattingLeaders, parseKoreanPlayerNameMap, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
+import { parseBattingLeaders, parseKoreanBattingDetailStats, parseKoreanPitchingBasicStats, parseKoreanPitchingDetailStats, parseKoreanPlayerNameMap, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
 import { upsertBattingSeasonRecords, upsertPitchingSeasonRecords } from '../src/repositories/playerRecordRepository.js'
 import { saveRawSource } from '../src/repositories/rawSourceRepository.js'
 import { selectExtraRecordSources, type ExtraRecordKind } from '../src/records/extraRecordSources.js'
@@ -29,12 +29,15 @@ interface PlayerSourceSummary {
   statusCode: number
   bodyLength: number
   parsedRecords: number
+  detailStats: number
   koreanNameCandidates: number
   htmlFile?: string
   metadataFile?: string
   recordsFile?: string
   koreanHtmlFile?: string
   koreanMetadataFile?: string
+  detailHtmlFile?: string
+  detailMetadataFile?: string
 }
 
 
@@ -46,6 +49,11 @@ const PLAYER_URLS: Record<PlayerRecordKind, string> = {
 const KOREAN_PLAYER_URLS: Record<PlayerRecordKind, string> = {
   batting: 'https://www.koreabaseball.com/Record/Player/HitterBasic/Basic1.aspx',
   pitching: 'https://www.koreabaseball.com/Record/Player/PitcherBasic/Basic1.aspx'
+}
+
+const KOREAN_PLAYER_DETAIL_URLS: Record<PlayerRecordKind, string> = {
+  batting: 'https://www.koreabaseball.com/Record/Player/HitterBasic/Basic2.aspx',
+  pitching: 'https://www.koreabaseball.com/Record/Player/PitcherBasic/Detail2.aspx'
 }
 
 const FETCH_TIMEOUT_MS = 15000
@@ -290,6 +298,7 @@ async function fetchKoreanPlayerNames(kind: PlayerRecordKind): Promise<{
   statusCode: number
   body: string
   names: Map<string, string>
+  basicStats: Map<string, unknown>
 }> {
   const url = KOREAN_PLAYER_URLS[kind]
   const fetched = await fetchTextWithTimeout(url, {
@@ -320,16 +329,60 @@ async function fetchKoreanPlayerNames(kind: PlayerRecordKind): Promise<{
     fetchedAt,
     statusCode,
     body,
-    names: parseKoreanPlayerNameMap(body)
+    names: parseKoreanPlayerNameMap(body),
+    basicStats: kind === 'pitching' ? parseKoreanPitchingBasicStats(body) : new Map<string, unknown>()
+  }
+}
+
+async function fetchKoreanPlayerDetails(kind: PlayerRecordKind): Promise<{
+  kind: PlayerRecordKind
+  url: string
+  fetchedAt: string
+  statusCode: number
+  body: string
+  stats: Map<string, unknown>
+}> {
+  const url = KOREAN_PLAYER_DETAIL_URLS[kind]
+  const fetched = await fetchTextWithTimeout(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      Referer: 'https://www.koreabaseball.com/Record/Player/'
+    }
+  }, { timeoutMs: FETCH_TIMEOUT_MS, retries: FETCH_RETRIES, retryDelayMs: FETCH_RETRY_DELAY_MS })
+  const { body, fetchedAt, statusCode } = fetched
+
+  saveRawSource({
+    source: 'kbo-official-kr',
+    endpoint: kind === 'batting' ? 'HitterBasic2' : 'PitcherDetail2',
+    requestKey: `kind=${kind}`,
+    statusCode,
+    body,
+    fetchedAt
+  })
+
+  if (statusCode < 200 || statusCode >= 300) {
+    throw new Error(`${kind} Korean player detail source returned HTTP ${statusCode}`)
+  }
+
+  return {
+    kind,
+    url,
+    fetchedAt,
+    statusCode,
+    body,
+    stats: kind === 'batting' ? parseKoreanBattingDetailStats(body) : parseKoreanPitchingDetailStats(body)
   }
 }
 
 async function collectPlayerSource(date: string, outDir: string, shouldWrite: boolean): Promise<PlayerSourceSummary[]> {
-  const [dumps, koreanNameSources] = await Promise.all([
+  const [dumps, koreanNameSources, koreanDetailSources] = await Promise.all([
     Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchPlayerSource)),
-    Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchKoreanPlayerNames))
+    Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchKoreanPlayerNames)),
+    Promise.all((['batting', 'pitching'] as PlayerRecordKind[]).map(fetchKoreanPlayerDetails))
   ])
   const koreanSourceByKind = new Map(koreanNameSources.map((source) => [source.kind, source]))
+  const koreanDetailSourceByKind = new Map(koreanDetailSources.map((source) => [source.kind, source]))
   const summaries: PlayerSourceSummary[] = []
 
   for (const dump of dumps) {
@@ -337,14 +390,26 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
     let records: unknown[] = []
     const koreanSource = koreanSourceByKind.get(dump.kind)
     const koreanNames = koreanSource?.names ?? new Map<string, string>()
+    const koreanBasicStats = koreanSource?.basicStats ?? new Map<string, unknown>()
+    const koreanDetailSource = koreanDetailSourceByKind.get(dump.kind)
+    const detailStats = koreanDetailSource?.stats ?? new Map<string, unknown>()
 
     if (dump.kind === 'batting') {
-      const parsed = requireKoreanPlayerNames(parseBattingLeaders(dump.body), koreanNames, dump.kind)
+      const localized = requireKoreanPlayerNames(parseBattingLeaders(dump.body), koreanNames, dump.kind)
+      const parsed = localized.map((record) => ({
+        ...record,
+        ...(detailStats.get(record.playerId) as object | undefined)
+      }))
       upsertBattingSeasonRecords(date, parsed)
       parsedRecords = parsed.length
       records = parsed
     } else {
-      const parsed = requireKoreanPlayerNames(parsePitchingLeaders(dump.body), koreanNames, dump.kind)
+      const localized = requireKoreanPlayerNames(parsePitchingLeaders(dump.body), koreanNames, dump.kind)
+      const parsed = localized.map((record) => ({
+        ...record,
+        ...(koreanBasicStats.get(record.playerId) as object | undefined),
+        ...(detailStats.get(record.playerId) as object | undefined)
+      }))
       upsertPitchingSeasonRecords(date, parsed)
       parsedRecords = parsed.length
       records = parsed
@@ -356,6 +421,7 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       statusCode: dump.statusCode,
       bodyLength: dump.body.length,
       parsedRecords,
+      detailStats: detailStats.size,
       koreanNameCandidates: koreanNames.size
     }
 
@@ -366,6 +432,8 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       const recordsFile = path.join(baseDir, `${dump.kind}-records-latest.json`)
       const koreanHtmlFile = path.join(baseDir, `${dump.kind}-korean-source-latest.html`)
       const koreanMetadataFile = path.join(baseDir, `${dump.kind}-korean-source-latest.json`)
+      const detailHtmlFile = path.join(baseDir, `${dump.kind}-korean-detail-latest.html`)
+      const detailMetadataFile = path.join(baseDir, `${dump.kind}-korean-detail-latest.json`)
       await mkdir(baseDir, { recursive: true })
       await writeFile(htmlFile, dump.body, 'utf8')
       if (koreanSource) {
@@ -379,6 +447,17 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
           koreanNameCandidates: koreanSource.names.size
         })
       }
+      if (koreanDetailSource) {
+        await writeFile(detailHtmlFile, koreanDetailSource.body, 'utf8')
+        await writeJson(detailMetadataFile, {
+          kind: dump.kind,
+          url: koreanDetailSource.url,
+          fetchedAt: koreanDetailSource.fetchedAt,
+          statusCode: koreanDetailSource.statusCode,
+          bodyLength: koreanDetailSource.body.length,
+          detailStats: koreanDetailSource.stats.size
+        })
+      }
       await writeJson(metadataFile, {
         kind: dump.kind,
         url: dump.url,
@@ -386,9 +465,12 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
         statusCode: dump.statusCode,
         bodyLength: dump.body.length,
         parsedRecords,
+        detailStats: detailStats.size,
         koreanNameCandidates: koreanNames.size,
         koreanHtmlFile: koreanSource ? path.relative(process.cwd(), koreanHtmlFile) : null,
-        koreanMetadataFile: koreanSource ? path.relative(process.cwd(), koreanMetadataFile) : null
+        koreanMetadataFile: koreanSource ? path.relative(process.cwd(), koreanMetadataFile) : null,
+        detailHtmlFile: koreanDetailSource ? path.relative(process.cwd(), detailHtmlFile) : null,
+        detailMetadataFile: koreanDetailSource ? path.relative(process.cwd(), detailMetadataFile) : null
       })
       await writeJson(recordsFile, {
         kind: dump.kind,
@@ -403,6 +485,10 @@ async function collectPlayerSource(date: string, outDir: string, shouldWrite: bo
       if (koreanSource) {
         summary.koreanHtmlFile = path.relative(process.cwd(), koreanHtmlFile)
         summary.koreanMetadataFile = path.relative(process.cwd(), koreanMetadataFile)
+      }
+      if (koreanDetailSource) {
+        summary.detailHtmlFile = path.relative(process.cwd(), detailHtmlFile)
+        summary.detailMetadataFile = path.relative(process.cwd(), detailMetadataFile)
       }
     }
 

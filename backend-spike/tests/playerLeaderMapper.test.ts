@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseBattingLeaders, parseKoreanPlayerNameMap, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
+import { parseBattingLeaders, parseKoreanBattingDetailStats, parseKoreanPitchingBasicStats, parseKoreanPitchingDetailStats, parseKoreanPlayerNameMap, parsePitchingLeaders } from '../src/mappers/playerLeaderMapper.js'
 
 describe('playerLeaderMapper', () => {
   it('parses batting leaders with player pcode as stable player id candidate', () => {
@@ -121,6 +121,96 @@ describe('playerLeaderMapper', () => {
       '66606': '최원준',
       '55633': '올러'
     })
+  })
+
+  it('parses Korean batting detail stats by data-id from hitter basic2 pages', () => {
+    const html = `
+      <table><tbody><tr>
+        <td>1</td>
+        <td><a href="/Record/Player/HitterDetail/Basic.aspx?playerId=66606">최원준</a></td>
+        <td>KT</td>
+        <td data-id="HRA_RT">0.379</td>
+        <td data-id="BB_CN">39</td>
+        <td data-id="KK_CN">47</td>
+        <td data-id="SLG_RT">0.529</td>
+        <td data-id="OBP_RT">0.459</td>
+        <td data-id="OPS_RT">0.988</td>
+      </tr></tbody></table>`
+
+    expect(parseKoreanBattingDetailStats(html)).toEqual(new Map([
+      ['66606', {
+        playerId: '66606',
+        playerName: '최원준',
+        teamId: 'KT',
+        teamName: 'KT',
+        walks: 39,
+        strikeouts: 47,
+        avg: 0.379,
+        obp: 0.459,
+        slg: 0.529,
+        ops: 0.988
+      }]
+    ]))
+  })
+
+  it('parses Korean pitching basic counting stats by data-id from pitcher basic1 pages', () => {
+    const html = `
+      <table><tbody><tr>
+        <td>1</td>
+        <td><a href="/Record/Player/PitcherDetail/Basic.aspx?playerId=55633">올러</a></td>
+        <td>KIA</td>
+        <td data-id="ERA_RT">2.58</td>
+        <td data-id="BB_CN">27</td>
+        <td data-id="KK_CN">92</td>
+        <td data-id="ER_CN">25</td>
+        <td data-id="WHIP_RT">0.95</td>
+      </tr></tbody></table>`
+
+    expect(parseKoreanPitchingBasicStats(html)).toEqual(new Map([
+      ['55633', {
+        playerId: '55633',
+        playerName: '올러',
+        teamId: 'HT',
+        teamName: 'KIA',
+        era: 2.58,
+        walks: 27,
+        strikeouts: 92,
+        earnedRuns: 25,
+        whip: 0.95
+      }]
+    ]))
+  })
+
+  it('parses Korean pitching detail rates by data-id from pitcher detail2 pages', () => {
+    const html = `
+      <table><tbody><tr>
+        <td>1</td>
+        <td><a href="/Record/Player/PitcherDetail/Basic.aspx?playerId=55633">올러</a></td>
+        <td>KIA</td>
+        <td data-id="ERA_RT">2.58</td>
+        <td data-id="GAME_KK_RT">9.48</td>
+        <td data-id="GAME_BB_RT">2.78</td>
+        <td data-id="BB_KK_RT">3.41</td>
+        <td data-id="OOBP_RT">0.260</td>
+        <td data-id="OSLG_RT">0.275</td>
+        <td data-id="OOPS_RT">0.535</td>
+      </tr></tbody></table>`
+
+    expect(parseKoreanPitchingDetailStats(html)).toEqual(new Map([
+      ['55633', {
+        playerId: '55633',
+        playerName: '올러',
+        teamId: 'HT',
+        teamName: 'KIA',
+        era: 2.58,
+        strikeoutsPerNine: 9.48,
+        walksPerNine: 2.78,
+        strikeoutWalkRatio: 3.41,
+        opponentObp: 0.260,
+        opponentSlg: 0.275,
+        opponentOps: 0.535
+      }]
+    ]))
   })
 })
 

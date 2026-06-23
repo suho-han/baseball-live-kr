@@ -93,11 +93,16 @@ export function upsertBattingSeasonRecords(date: string, entries: BattingLeaderE
       total_bases = excluded.total_bases,
       rbi = excluded.rbi,
       runs = excluded.runs,
+      walks = excluded.walks,
+      strikeouts = excluded.strikeouts,
       stolen_bases = excluded.stolen_bases,
       caught_stealing = excluded.caught_stealing,
       sacrifice_hits = excluded.sacrifice_hits,
       sacrifice_flies = excluded.sacrifice_flies,
       avg = excluded.avg,
+      obp = excluded.obp,
+      slg = excluded.slg,
+      ops = excluded.ops,
       updated_at = excluded.updated_at
   `)
 
@@ -107,8 +112,8 @@ export function upsertBattingSeasonRecords(date: string, entries: BattingLeaderE
       upsertPlayerAndTeam(database, { ...entry, season, position: 'batter' }, now)
       upsertRecord.run(
         season, date, entry.playerId, entry.teamId, entry.rank, entry.games, entry.plateAppearances, entry.atBats,
-        entry.hits, entry.doubles, entry.triples, entry.homeRuns, entry.totalBases, entry.rbi, entry.runs, null, null,
-        entry.stolenBases, entry.caughtStealing, entry.sacrificeHits, entry.sacrificeFlies, entry.avg, null, null, null,
+        entry.hits, entry.doubles, entry.triples, entry.homeRuns, entry.totalBases, entry.rbi, entry.runs, entry.walks ?? null, entry.strikeouts ?? null,
+        entry.stolenBases, entry.caughtStealing, entry.sacrificeHits, entry.sacrificeFlies, entry.avg, entry.obp ?? null, entry.slg ?? null, entry.ops ?? null,
         'kbo-official-eng-batting-leaders', null, now, now
       )
     }
@@ -152,7 +157,11 @@ export function upsertPitchingSeasonRecords(date: string, entries: PitchingLeade
       doubles_allowed = excluded.doubles_allowed,
       triples_allowed = excluded.triples_allowed,
       home_runs_allowed = excluded.home_runs_allowed,
+      walks = excluded.walks,
+      strikeouts = excluded.strikeouts,
+      earned_runs = excluded.earned_runs,
       era = excluded.era,
+      whip = excluded.whip,
       updated_at = excluded.updated_at
   `)
 
@@ -163,8 +172,8 @@ export function upsertPitchingSeasonRecords(date: string, entries: PitchingLeade
       upsertRecord.run(
         season, date, entry.playerId, entry.teamId, entry.rank, entry.games, null, entry.completeGames, entry.shutouts,
         entry.wins, entry.losses, entry.saves, entry.holds, entry.winningPercentage, entry.plateAppearances, entry.pitches, entry.inningsPitchedOuts,
-        entry.hitsAllowed, entry.doublesAllowed, entry.triplesAllowed, entry.homeRunsAllowed, null, null, null,
-        entry.era, null, 'kbo-official-eng-pitching-leaders', null, now, now
+        entry.hitsAllowed, entry.doublesAllowed, entry.triplesAllowed, entry.homeRunsAllowed, entry.walks ?? null, entry.strikeouts ?? null, entry.earnedRuns ?? null,
+        entry.era, entry.whip ?? null, 'kbo-official-eng-pitching-leaders', null, now, now
       )
     }
     database.exec('commit')
