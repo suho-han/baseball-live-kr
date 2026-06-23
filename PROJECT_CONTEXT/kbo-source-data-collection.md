@@ -97,16 +97,17 @@ backend-spike/artifacts/league-record-data/<run-id>/manifest.json
 옵션:
 
 - `--include-extra-records`: 위 세부 기록 전체 수집
+- `--extra-records all` 또는 `--extra-records ' all '`: 전체 세부 기록 수집
 - `--extra-records team`: 팀 기록만 수집
 - `--extra-records player`: 선수 세부 기록만 수집
 - `--extra-records team-hitter-basic1,player-pitcher-detail1`: 특정 id만 수집
 - 알 수 없는 `--extra-records` 값은 실패 처리
 - 빈 `--extra-records` 값은 실패 처리
-- 외부 KBO HTTP 요청은 timeout과 제한적 retry로 보호
+- 외부 KBO HTTP 요청은 timeout과 제한적 retry로 보호하며, 네트워크 예외/timeout뿐 아니라 429/5xx도 retry 대상으로 처리
 - 선수 기록 한글명 매칭이 실패하면 영어명 fallback 없이 실패 처리
 - 한글명 보정용 KBO HTML/metadata도 artifact로 저장
 - 세부 기록 소스 중 일부가 실패해도 manifest에 `status: failed`로 남기고 나머지는 보존
-- artifact 출력 경로는 artifacts root 밖으로 나가지 못하게 검증
+- artifact 출력 경로는 lexical path와 기존 symlink realpath 기준 모두 artifacts root 밖으로 나가지 못하게 검증
 
 구조화 리그 데이터 추출:
 

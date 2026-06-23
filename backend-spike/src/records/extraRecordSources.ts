@@ -128,15 +128,17 @@ export function selectExtraRecordSources(explicit?: string): ExtraRecordSource[]
     return EXTRA_RECORD_SOURCES
   }
 
-  if (explicit.trim() === '') {
+  const normalizedExplicit = explicit.trim()
+
+  if (normalizedExplicit === '') {
     throw new Error('Empty extra record source filter')
   }
 
-  if (explicit === 'all') {
+  if (normalizedExplicit === 'all') {
     return EXTRA_RECORD_SOURCES
   }
 
-  const requested = explicit.split(',').map((value) => value.trim()).filter(Boolean)
+  const requested = normalizedExplicit.split(',').map((value) => value.trim()).filter(Boolean)
   const validKinds = new Set<ExtraRecordKind>(['team', 'player', 'league'])
   const validIds = new Set(EXTRA_RECORD_SOURCES.map((source) => source.id))
   const unknown = requested.filter((value) => !validKinds.has(value as ExtraRecordKind) && !validIds.has(value))

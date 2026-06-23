@@ -1,3 +1,4 @@
+import { existsSync, realpathSync } from 'node:fs'
 import path from 'node:path'
 
 export interface FetchedText {
@@ -18,6 +19,7 @@ export interface FetchTextOptions {
   timeoutMs?: number
   retries?: number
   retryDelayMs?: number
+  retryStatuses?: number[]
 }
 
 function sleep(ms: number): Promise<void> {
@@ -39,6 +41,7 @@ export async function fetchTextWithTimeout(
   const timeoutMs = options.timeoutMs ?? 15000
   const retries = options.retries ?? 0
   const retryDelayMs = options.retryDelayMs ?? 250
+  const retryStatuses = new Set(options.retryStatuses ?? [429, 500, 502, 503, 504])
   let lastError: unknown
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
@@ -51,6 +54,13 @@ export async function fetchTextWithTimeout(
         signal: controller.signal
       })
       const body = await response.text()
+
+      if (retryStatuses.has(response.status) && attempt < retries) {
+        lastError = new Error(`Transient HTTP ${response.status} from ${url}`)
+        await sleep(retryDelayMs)
+        continue
+      }
+
       return {
         body,
         fetchedAt: new Date().toISOString(),
@@ -100,6 +110,26 @@ export function collectRecordTableMetadata(html: string): RecordTableMetadata {
   }
 }
 
+function resolveRealPathForExistingPrefix(candidate: string): string {
+  const absolute = path.resolve(candidate)
+  const parsed = path.parse(absolute)
+  const parts = path.relative(parsed.root, absolute).split(path.sep).filter(Boolean)
+  let existing = parsed.root
+  const remaining: string[] = []
+
+  for (const part of parts) {
+    const next = path.join(existing, part)
+    if (existsSync(next)) {
+      existing = next
+    } else {
+      remaining.push(part)
+    }
+  }
+
+  const realExisting = realpathSync.native(existing)
+  return remaining.length > 0 ? path.join(realExisting, ...remaining) : realExisting
+}
+
 export function resolveArtifactOutDir(artifactRoot: string, runId: string, explicitOutDir?: string): string {
   if (!/^[A-Za-z0-9._-]+$/.test(runId) || runId.includes('..')) {
     throw new Error(`Invalid run id: ${runId}`)
@@ -113,6 +143,15 @@ export function resolveArtifactOutDir(artifactRoot: string, runId: string, expli
   const relative = path.relative(resolvedRoot, resolvedOutDir)
   if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative)) {
     throw new Error(`Output directory is outside artifact root: ${resolvedOutDir}`)
+  }
+
+  if (existsSync(resolvedRoot)) {
+    const realRoot = realpathSync.native(resolvedRoot)
+    const realOutDir = resolveRealPathForExistingPrefix(resolvedOutDir)
+    const realRelative = path.relative(realRoot, realOutDir)
+    if (realRelative === '' || realRelative.startsWith('..') || path.isAbsolute(realRelative)) {
+      throw new Error(`Output directory is outside artifact root: ${resolvedOutDir}`)
+    }
   }
 
   return resolvedOutDir

@@ -1,3 +1,7 @@
+import { mkdirSync, mkdtempSync, symlinkSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { collectRecordTableMetadata, fetchTextWithTimeout, requireKoreanPlayerNames, resolveArtifactOutDir } from '../src/records/sourceCollectionUtils.js'
@@ -73,5 +77,46 @@ describe('sourceCollectionUtils', () => {
     expect(() => resolveArtifactOutDir('/repo/backend-spike/artifacts/source-collection', 'safe-run', '/tmp/outside')).toThrow(/outside artifact root/)
     expect(() => resolveArtifactOutDir('/repo/backend-spike/artifacts/source-collection', '../bad-run')).toThrow(/Invalid run id/)
     expect(resolveArtifactOutDir('/repo/backend-spike/artifacts/source-collection', 'safe-run')).toBe('/repo/backend-spike/artifacts/source-collection/safe-run')
+  })
+
+  it('rejects an artifact output directory that escapes through an existing symlink', () => {
+    const temp = mkdtempSync(path.join(tmpdir(), 'kbo-artifact-root-'))
+    const root = path.join(temp, 'artifacts')
+    const outside = path.join(temp, 'outside')
+    mkdirSync(root)
+    mkdirSync(outside)
+    symlinkSync(outside, path.join(root, 'escape'))
+
+    expect(() => resolveArtifactOutDir(root, 'safe-run', path.join(root, 'escape', 'run'))).toThrow(/outside artifact root/)
+  })
+
+  it('retries transient HTTP status responses before returning success', async () => {
+    let attempts = 0
+    const fetchImpl = async () => {
+      attempts += 1
+      if (attempts < 3) {
+        return new Response('busy', { status: 503 })
+      }
+      return new Response('ok', { status: 200 })
+    }
+
+    const body = await fetchTextWithTimeout('https://example.test/http-retry', {}, { timeoutMs: 1000, retries: 2, retryDelayMs: 0 }, fetchImpl)
+
+    expect(body.body).toBe('ok')
+    expect(body.statusCode).toBe(200)
+    expect(attempts).toBe(3)
+  })
+
+  it('does not retry non-transient HTTP status responses', async () => {
+    let attempts = 0
+    const fetchImpl = async () => {
+      attempts += 1
+      return new Response('missing', { status: 404 })
+    }
+
+    const body = await fetchTextWithTimeout('https://example.test/not-found', {}, { timeoutMs: 1000, retries: 2, retryDelayMs: 0 }, fetchImpl)
+
+    expect(body.statusCode).toBe(404)
+    expect(attempts).toBe(1)
   })
 })

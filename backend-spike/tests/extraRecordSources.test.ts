@@ -5,6 +5,7 @@ import { EXTRA_RECORD_SOURCES, selectExtraRecordSources } from '../src/records/e
 describe('extraRecordSources', () => {
   it('selects all configured sources by default', () => {
     expect(selectExtraRecordSources()).toHaveLength(EXTRA_RECORD_SOURCES.length)
+    expect(selectExtraRecordSources(' all ')).toHaveLength(EXTRA_RECORD_SOURCES.length)
   })
 
   it('filters sources by kind and explicit id', () => {
