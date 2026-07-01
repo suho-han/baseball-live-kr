@@ -1,9 +1,4 @@
 import SwiftUI
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 #if canImport(KboLiveCore)
 import KboLiveCore
 #endif
@@ -907,51 +902,24 @@ private struct TeamStandingLogoCellView: View {
         Group {
             if isHeader {
                 Color.clear
-            } else if let logoImage {
-                logoImage
-                    .resizable()
-                    .scaledToFit()
             } else {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(accentColor.opacity(0.18))
                     .overlay {
-                        Text(teamID.map { String($0.prefix(1)) } ?? "")
+                        Text(teamToken)
                             .font(KboTypographyToken.system(size: 12, weight: .semibold, scaledBy: fontScale))
                             .foregroundStyle(accentColor)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
             }
         }
         .frame(width: 26, height: 26)
     }
 
-    private var logoImage: Image? {
-        guard let teamID else { return nil }
-
-#if canImport(AppKit)
-        if let image = NSImage(named: teamID) {
-            return Image(nsImage: image)
-        }
-#elseif canImport(UIKit)
-        if let image = UIImage(named: teamID) {
-            return Image(uiImage: image)
-        }
-#endif
-
-        let logoURL = Bundle.main.url(forResource: teamID, withExtension: "png")
-            ?? Bundle.main.url(forResource: teamID, withExtension: "png", subdirectory: "TeamLogos")
-        guard let logoURL else { return nil }
-
-#if canImport(AppKit)
-        if let image = NSImage(contentsOf: logoURL) {
-            return Image(nsImage: image)
-        }
-#elseif canImport(UIKit)
-        if let image = UIImage(contentsOfFile: logoURL.path()) {
-            return Image(uiImage: image)
-        }
-#endif
-
-        return nil
+    private var teamToken: String {
+        guard let teamID else { return "" }
+        return String(teamID.trimmingCharacters(in: .whitespacesAndNewlines).prefix(2)).uppercased()
     }
 }
 

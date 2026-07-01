@@ -1,9 +1,4 @@
 import SwiftUI
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 #if canImport(KboLiveCore)
 import KboLiveCore
 #endif
@@ -389,44 +384,26 @@ private struct TeamSelectionCard: View {
 
 private struct TeamLogoImage: View {
     let teamID: String
+    @Environment(\.kboFontScale) private var fontScale
 
     var body: some View {
-        if let image = loadPlatformImage(named: teamID) {
-            image
-                .resizable()
-                .scaledToFit()
-        } else {
+        ZStack {
             RoundedRectangle(cornerRadius: 7, style: .continuous)
                 .fill(TeamColorResolver.color(forTeamID: teamID))
+
+            Text(String(teamID.trimmingCharacters(in: .whitespacesAndNewlines).prefix(2)).uppercased())
+                .font(KboTypographyToken.system(size: 13, weight: .black, scaledBy: fontScale))
+                .foregroundStyle(tokenColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
         }
     }
 
-    private func loadPlatformImage(named teamID: String) -> Image? {
-#if canImport(AppKit)
-        if let image = NSImage(named: teamID) {
-            return Image(nsImage: image)
+    private var tokenColor: Color {
+        if TeamColorResolver.usesLightForeground(forTeamID: teamID) {
+            return .white
         }
-#elseif canImport(UIKit)
-        if let image = UIImage(named: teamID) {
-            return Image(uiImage: image)
-        }
-#endif
 
-        let logoURL = Bundle.main.url(forResource: teamID, withExtension: "png")
-        ?? Bundle.main.url(forResource: teamID, withExtension: "png", subdirectory: "TeamLogos")
-
-        guard let logoURL else { return nil }
-
-#if canImport(AppKit)
-        if let image = NSImage(contentsOf: logoURL) {
-            return Image(nsImage: image)
-        }
-#elseif canImport(UIKit)
-        if let image = UIImage(contentsOfFile: logoURL.path()) {
-            return Image(uiImage: image)
-        }
-#endif
-
-        return nil
+        return KboColorToken.textPrimary
     }
 }
