@@ -26,5 +26,13 @@ Remove-ai-slops criteria:
 - Missing tests: not applicable; no runtime behavior introduced.
 - Oversized modules: not applicable; no source module edited in the follow-up.
 
+Overfit-test taxonomy:
+- Excessive/useless tests: not applicable; no tests were added in the T1 rename or gate-remediation follow-ups.
+- Deletion-only tests: not applicable; no tests were added whose only assertion is that old KboLive names were deleted. The manual QA artifact uses rg as data evidence, not as a new committed test.
+- Removal-only tests: not applicable; no tests were added to assert only the absence of legacy identifiers without checking positive BaseballLiveKR behavior.
+- Tautological tests: not applicable; no tests were added that repeat implementation literals or assert a fixture against itself.
+- Implementation-mirroring tests: not applicable; no tests were added that duplicate rename implementation details, generated project internals, or package path construction.
+- Unnecessary extraction/parsing/normalization: not applicable; the remediation did not add extraction helpers, parsers, normalizers, or data-shaping code.
+
 Slop/overfit conclusion:
 - The follow-up is intentionally narrow and does not add compatibility wording around KboLive.xcworkspace. It records the current BaseballLiveKR workspace name and current cleanup process state only.
