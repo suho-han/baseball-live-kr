@@ -53,7 +53,7 @@ open BaseballLiveKR.xcodeproj
 
 참고:
 
-- 루트에 `KboLive.xcworkspace`도 같이 두었지만, 현재 샌드박스의 `xcodebuild -workspace` 검증은 통과하지 못했습니다.
+- 루트에 `BaseballLiveKR.xcworkspace`도 같이 두었지만, 현재 샌드박스의 `xcodebuild -workspace` 검증은 통과하지 못했습니다.
 - 실제 빌드 검증은 `BaseballLiveKR.xcodeproj` 기준으로 수행했습니다.
 
 로컬 검증에 사용한 Xcode 명령:
