@@ -39,16 +39,28 @@ function isAtBatResultLine(line: string): boolean {
   return /^[가-힣A-Za-z][가-힣A-Za-z0-9 .·-]{0,24}\s*:\s*\S/.test(line)
 }
 
+function hasInningSections(lines: string[]): boolean {
+  return lines.some((line) => /^[0-9]+회[초말]\s/.test(line))
+}
+
 export function parsePreviousAtBatResult(html: string): string | null {
   const lines = stripTags(html)
     .split(/\n+/)
     .map((line) => line.replace(/\s+/g, ' ').trim())
     .filter((line) => line.length > 0)
 
-  for (let index = lines.length - 1; index >= 0; index -= 1) {
-    const line = lines[index]
-    if (line && isAtBatResultLine(line)) {
-      return line
+  if (hasInningSections(lines)) {
+    for (const line of lines) {
+      if (isAtBatResultLine(line)) {
+        return line
+      }
+    }
+  } else {
+    for (let index = lines.length - 1; index >= 0; index -= 1) {
+      const line = lines[index]
+      if (line && isAtBatResultLine(line)) {
+        return line
+      }
     }
   }
 

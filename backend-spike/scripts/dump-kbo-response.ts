@@ -1,9 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { fetchKboGameDate, fetchKboGameList, fetchKboScheduleList } from '../src/clients/kboClient.js'
-import { mapGame } from '../src/mappers/gameMapper.js'
-import { indexScheduleGames, mapScheduleGames } from '../src/mappers/scheduleMapper.js'
+import { loadKboMonthGameSource } from '../src/services/monthScheduleSource.js'
 import { toPollingView } from '../src/utils/gameSnapshot.js'
 import { toKboDate } from '../src/utils/date.js'
 
@@ -34,30 +32,25 @@ async function writeJson(filePath: string, value: unknown) {
 }
 
 const date = toKboDate(readArg('date'))
-const seasonId = date.slice(0, 4)
-const gameMonth = date.slice(4, 6)
 const outDir = readArg('out-dir', path.resolve('fixtures', date, 'dump'))!
 const shouldWrite = readBooleanArg('write')
 const fetchedAt = new Date().toISOString()
 
-const [gameDate, gameList, scheduleList] = await Promise.all([
-  fetchKboGameDate(date),
-  fetchKboGameList(date),
-  fetchKboScheduleList(seasonId, gameMonth)
-])
-
-const scheduleByGameId = indexScheduleGames(scheduleList)
-const scheduleGames = mapScheduleGames(scheduleList).filter((game) => game.date === date)
-const normalized = gameList.game.map((game) => mapGame(game, scheduleByGameId.get(game.G_ID)))
+const source = await loadKboMonthGameSource(date)
+const requestedScheduleGames = source.scheduleGames.filter((game) => game.date === date)
+const requestedNormalizedGames = source.normalizedGames.filter((game) => game.date === date)
 const payload = {
   requestedDate: date,
   fetchedAt,
-  gameDate,
-  gameList,
-  scheduleList,
-  scheduleGames,
-  normalizedGames: normalized,
-  pollingView: normalized.map(toPollingView)
+  gameDate: source.gameDate,
+  gameList: source.requestedGameList,
+  gameLists: source.gameLists,
+  scheduleList: source.scheduleList,
+  scheduleGames: source.scheduleGames,
+  requestedScheduleGames,
+  normalizedGames: source.normalizedGames,
+  requestedNormalizedGames,
+  pollingView: source.normalizedGames.map(toPollingView)
 }
 
 console.log(JSON.stringify(payload, null, 2))
