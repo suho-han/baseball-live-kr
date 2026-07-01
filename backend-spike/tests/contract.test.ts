@@ -9,7 +9,7 @@ const CONTRACT_DATE = '20260615'
 const CONTRACT_FETCHED_AT = '2026-06-15T12:00:00.000Z'
 const SWIFT_CONTRACT_FIXTURE = path.resolve(
   '..',
-  'Packages/KboLiveCore/Tests/KboLiveCoreTests/Fixtures/live-test-game-response.json'
+  'Packages/BaseballLiveKRCore/Tests/BaseballLiveKRCoreTests/Fixtures/live-test-game-response.json'
 )
 
 describe('normalized API contract fixtures', () => {
