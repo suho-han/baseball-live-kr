@@ -16,7 +16,7 @@ Scope: rights-release-qa for official visual asset removal, UI fallback replacem
 | Stale team state | `adversarial/stale_state-main-team-json.txt`, `adversarial/stale_state-main-guide.txt` | Main team state binds D to this thread and cwd | PASS |
 | Dirty worktree preservation | `baseline/dirty-worktree-before.txt`, `adversarial/dirty_worktree-current.txt` | Pre-existing unrelated dirty files remain unstaged/unreverted | PASS |
 | Long command handling | `adversarial/hung_or_long_commands.txt`, `green/xcodebuild-macos-debug.txt` | Long macOS build is observed to completion and succeeds | PASS |
-| Cleanup | `manual-qa/cleanup-receipt.txt` | Temporary adversarial probes removed and screenshot captured | PASS |
+| Cleanup | `manual-qa/cleanup-receipt.txt` | No leftover app process, injected probe directories removed, fake app/archive artifacts absent, screenshot retained, unrelated dirty work preserved | PASS |
 
 Notes:
 - `KboLiveApp.xcodeproj` edits in this worktree are local baseline-project evidence only. The durable generated-project exclusion is `project.yml`, which now excludes `TeamLogos/**`, `TeamWordmarks/**`, and `TeamBrandAssets/**`.

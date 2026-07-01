@@ -278,322 +278,322 @@ SwiftCompile normal arm64 Compiling\ TeamStandingsDTOMapper.swift,\ TodayGamesLi
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/TeamStandingsDTOMapper.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/TodayGamesList.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/TodayGames/TodayGamesView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/TodayGames/TodayGamesViewModel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Projections/WidgetGameSnapshot.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/WidgetGameSnapshotMapper.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/WidgetGameSnapshotStore.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftEmitModule normal arm64 Emitting\ module\ for\ BaseballLiveKR (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 EmitSwiftModule normal arm64 (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift:48:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'BackendPresetPolicy<BackendSettingsModel.BackendPreset>', consider removing it
     nonisolated(unsafe) static let presetPolicy = BackendPresetPolicy<BackendPreset>(
     ^~~~~~~~~~~~~~~~~~~~
-    
+
 
 SwiftCompile normal arm64 Compiling\ KboTheme.swift,\ KboTypographyToken.swift,\ LiveBadgeView.swift,\ LiveGameActivityAttributes.swift,\ LiveGameActivityController.swift,\ LiveGamePollingService.swift,\ MenuBarDashboardView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Theme/KboTheme.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboTypographyToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/LiveBadgeView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/LiveGameActivityAttributes.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/LiveGameActivityController.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Services/LiveGamePollingService.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/MenuBarDashboardView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Theme/KboTheme.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboTypographyToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/LiveBadgeView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/LiveGameActivityAttributes.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/LiveGameActivityController.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Services/LiveGamePollingService.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/MenuBarDashboardView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ MenuBarGameSummary.swift,\ MenuBarGameSummaryMapper.swift,\ MockGameRepository.swift,\ MyTeamSelectionStore.swift,\ OutCountView.swift,\ PitchCountView.swift,\ SampleGameFactory.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Projections/MenuBarGameSummary.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/MenuBarGameSummaryMapper.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mocks/MockGameRepository.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/TodayGames/MyTeamSelectionStore.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/OutCountView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/PitchCountView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/SampleGameFactory.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Projections/MenuBarGameSummary.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/MenuBarGameSummaryMapper.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mocks/MockGameRepository.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/TodayGames/MyTeamSelectionStore.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/OutCountView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/PitchCountView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/SampleGameFactory.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ ActivityGameState.swift,\ ActivityGameStateMapper.swift,\ AppNavigationModel.swift,\ AppRuntime.swift,\ AppSettingsView.swift,\ BackendPresetPolicy.swift,\ BackendPresetRow.swift,\ BackendSettingsModel+Resolution.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Projections/ActivityGameState.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/ActivityGameStateMapper.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/AppNavigationModel.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/AppRuntime.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/AppSettingsView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/BackendPresetPolicy.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendPresetRow.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsModel+Resolution.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Projections/ActivityGameState.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/ActivityGameStateMapper.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/AppNavigationModel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/AppRuntime.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/AppSettingsView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/BackendPresetPolicy.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendPresetRow.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsModel+Resolution.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ GameDetailView.swift,\ GameDetailViewModel.swift,\ GameFeed.swift,\ GameFeedClient.swift,\ GameProjectionFormatter.swift,\ GameRepository.swift,\ InningStateView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/GameDetail/GameDetailView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/GameDetail/GameDetailViewModel.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/GameFeed.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/GameFeedClient.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Formatting/GameProjectionFormatter.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Repository/GameRepository.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/InningStateView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/GameDetail/GameDetailView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/GameDetail/GameDetailViewModel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/GameFeed.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/GameFeedClient.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Formatting/GameProjectionFormatter.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Repository/GameRepository.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/InningStateView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ BackendSettingsModel.swift,\ BackendSettingsView.swift,\ BaseDiamondView.swift,\ Game.swift,\ GameDTO.swift,\ GameDTOMapper.swift,\ GameDetailScreen.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/BaseDiamondView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/Game.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/DTO/GameDTO.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/GameDTOMapper.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/GameDetail/GameDetailScreen.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift:48:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'BackendPresetPolicy<BackendSettingsModel.BackendPreset>', consider removing it
     nonisolated(unsafe) static let presetPolicy = BackendPresetPolicy<BackendPreset>(
     ^~~~~~~~~~~~~~~~~~~~
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/BackendSettingsView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/BaseDiamondView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/Game.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/DTO/GameDTO.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Mappers/GameDTOMapper.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveFeatures/Sources/KboLiveFeatures/GameDetail/GameDetailScreen.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ KboLiveAPIClient.swift,\ KboLiveEnvironment.swift,\ KboLiveHomeRootView.swift,\ KboLivemacOSApp.swift,\ KboMetricRow.swift,\ KboMotionToken.swift,\ KboPrimaryActionButton.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/API/KboLiveAPIClient.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/KboLiveEnvironment.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/KboLiveHomeRootView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/KboLivemacOSApp.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboMetricRow.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboMotionToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboPrimaryActionButton.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/API/KboLiveAPIClient.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/KboLiveEnvironment.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/Shared/KboLiveHomeRootView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/KboLivemacOSApp.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/KboLivemacOSApp.swift:58:18: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead.
                 .onChange(of: appearanceMode) { newValue in
                  ^
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboMetricRow.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboMotionToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboPrimaryActionButton.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ KboRadiusToken.swift,\ KboSemanticColorToken.swift,\ KboShadowToken.swift,\ KboSpacingToken.swift,\ KboStatusPill.swift,\ KboSurfaceToken.swift,\ KboTeamOption.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboRadiusToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboSemanticColorToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboShadowToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboSpacingToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboStatusPill.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboSurfaceToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/KboTeamOption.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboRadiusToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboSemanticColorToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboShadowToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboSpacingToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboStatusPill.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboSurfaceToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/KboTeamOption.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ ScoreDigitsView.swift,\ SettingsView.swift,\ TeamBadgeView.swift,\ TeamColorPalette.swift,\ TeamColorResolver.swift,\ TeamStandings.swift,\ TeamStandingsDTO.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/ScoreDigitsView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/SettingsView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/TeamBadgeView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Theme/TeamColorPalette.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Helpers/TeamColorResolver.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/TeamStandings.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/DTO/TeamStandingsDTO.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/ScoreDigitsView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/KboLiveApp/macOS/SettingsView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/TeamBadgeView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Theme/TeamColorPalette.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Helpers/TeamColorResolver.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/Domain/TeamStandings.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/DTO/TeamStandingsDTO.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ KboAppearanceMode.swift,\ KboColorToken.swift,\ KboCommandBar.swift,\ KboControlToken.swift,\ KboEmptyStateView.swift,\ KboGlassPanel.swift,\ KboGlassToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Theme/KboAppearanceMode.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboColorToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboCommandBar.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboControlToken.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboEmptyStateView.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboGlassPanel.swift /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboGlassToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Theme/KboAppearanceMode.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboColorToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboCommandBar.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboControlToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboEmptyStateView.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Components/KboGlassPanel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/7435/kbo-live/Packages/KboLiveDesignSystem/Sources/KboLiveDesignSystem/Tokens/KboGlassToken.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/7435/kbo-live
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Emitting module for BaseballLiveKR (in target 'KboLivemacOS' from project 'KboLiveApp')
 
@@ -686,4 +686,3 @@ RegisterWithLaunchServices /Users/suhohan/.codex/worktrees/7435/kbo-live/.xcode/
     /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /Users/suhohan/.codex/worktrees/7435/kbo-live/.xcode/DerivedData/Build/Products/Debug/BaseballLiveKR.app
 
 ** BUILD SUCCEEDED **
-

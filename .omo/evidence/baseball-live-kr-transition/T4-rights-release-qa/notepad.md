@@ -22,3 +22,4 @@ Integration notes:
 
 - T1 owns the generated `BaseballLiveKR.xcodeproj` replacement. T4's durable generated-project input is `project.yml`, which excludes official asset directories.
 - C owns package output naming. T4's release gate is the standalone `scripts/verify-release-assets.sh`.
+- Follow-up evidence hygiene commit normalizes trailing whitespace in `green/xcodebuild-macos-debug.txt`; the check to use after the follow-up is `git diff --check 43b4445^ HEAD`.
