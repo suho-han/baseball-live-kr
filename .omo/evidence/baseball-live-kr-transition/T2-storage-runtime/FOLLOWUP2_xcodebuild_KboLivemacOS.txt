@@ -47,17 +47,17 @@ SwiftEmitModule normal arm64 Emitting\ module\ for\ BaseballLiveKR (in target 'K
 
 EmitSwiftModule normal arm64 (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/f85d/kbo-live
-    
+
 /Users/suhohan/.codex/worktrees/f85d/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift:50:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'BackendPresetPolicy<BackendSettingsModel.BackendPreset>', consider removing it
     nonisolated(unsafe) static let presetPolicy = BackendPresetPolicy<BackendPreset>(
     ^~~~~~~~~~~~~~~~~~~~
-    
+
 
 SwiftCompile normal arm64 Compiling\ KboLiveEnvironment.swift /Users/suhohan/.codex/worktrees/f85d/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/KboLiveEnvironment.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/f85d/kbo-live/Packages/KboLiveCore/Sources/KboLiveCore/App/KboLiveEnvironment.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/f85d/kbo-live
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling KboLiveEnvironment.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
@@ -65,17 +65,17 @@ SwiftCompile normal arm64 Compiling\ BackendSettingsModel+Resolution.swift /User
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/f85d/kbo-live/KboLiveApp/Shared/BackendSettingsModel+Resolution.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/f85d/kbo-live
-    
+
 
 SwiftCompile normal arm64 Compiling\ BackendSettingsModel.swift /Users/suhohan/.codex/worktrees/f85d/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
 SwiftCompile normal arm64 /Users/suhohan/.codex/worktrees/f85d/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
     cd /Users/suhohan/.codex/worktrees/f85d/kbo-live
-    
+
 /Users/suhohan/.codex/worktrees/f85d/kbo-live/KboLiveApp/Shared/BackendSettingsModel.swift:50:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'BackendPresetPolicy<BackendSettingsModel.BackendPreset>', consider removing it
     nonisolated(unsafe) static let presetPolicy = BackendPresetPolicy<BackendPreset>(
     ^~~~~~~~~~~~~~~~~~~~
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling BackendSettingsModel+Resolution.swift (in target 'KboLivemacOS' from project 'KboLiveApp')
 
@@ -132,4 +132,3 @@ ProcessInfoPlistFile /Users/suhohan/Library/Developer/Xcode/DerivedData/KboLiveA
     builtin-infoPlistUtility /Users/suhohan/.codex/worktrees/f85d/kbo-live/KboLiveApp/macOS/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/suhohan/Library/Developer/Xcode/DerivedData/KboLiveApp-gvqelpdtvnizsdbkyvxxczvbyyot/Build/Products/Debug/BaseballLiveKR.app/Contents/PkgInfo -expandbuildsettings -platform macosx -o /Users/suhohan/Library/Developer/Xcode/DerivedData/KboLiveApp-gvqelpdtvnizsdbkyvxxczvbyyot/Build/Products/Debug/BaseballLiveKR.app/Contents/Info.plist
 
 ** BUILD SUCCEEDED **
-

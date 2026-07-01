@@ -61,3 +61,16 @@ Command: xcodebuild -project KboLiveApp.xcodeproj -scheme KboLivemacOS -configur
 Result: PASS - ** BUILD SUCCEEDED **. Pre-existing warning remains: BackendSettingsModel.swift reports nonisolated(unsafe) is unnecessary for a Sendable constant.
 Evidence file: .omo/evidence/baseball-live-kr-transition/T2-storage-runtime/FOLLOWUP2_xcodebuild_KboLivemacOS.txt
 Exit status: 0
+
+Thu Jul  2 02:55:17 KST 2026
+
+## evidence log whitespace remediation
+Files:
+- .omo/evidence/baseball-live-kr-transition/T2-storage-runtime/FOLLOWUP2_xcodebuild_KboLiveiOS.txt
+- .omo/evidence/baseball-live-kr-transition/T2-storage-runtime/FOLLOWUP2_xcodebuild_KboLivemacOS.txt
+Action: stripped trailing whitespace and final extra blank lines from the committed xcodebuild evidence logs.
+
+## staged reviewed-range diff check
+Command: git add -f .omo/evidence/baseball-live-kr-transition/T2-storage-runtime/FOLLOWUP2_xcodebuild_KboLiveiOS.txt .omo/evidence/baseball-live-kr-transition/T2-storage-runtime/FOLLOWUP2_xcodebuild_KboLivemacOS.txt .omo/evidence/baseball-live-kr-transition/T2-storage-runtime/FOLLOWUP_slop_verification.txt && tree=$(git write-tree) && git diff --check e345d30^ "$tree"
+Result: PASS - no whitespace errors across the staged full reviewed range from e345d30^ to the staged follow-up tree.
+Exit status: 0
