@@ -1,9 +1,12 @@
 import type { FastifyInstance } from 'fastify'
 
+import { backendVersion } from '../version.js'
+
 function healthPayload() {
   return {
     ok: true,
     source: 'kbo-official-spike',
+    version: backendVersion,
     now: new Date().toISOString()
   }
 }
@@ -12,6 +15,7 @@ function readinessPayload() {
   return {
     ok: true,
     source: 'kbo-official-spike',
+    version: backendVersion,
     checks: {
       config: true
     },
