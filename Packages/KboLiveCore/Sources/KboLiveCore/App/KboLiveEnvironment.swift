@@ -51,31 +51,11 @@ extension UserDefaults: RuntimeStringSettingStore {
 }
 
 public enum RuntimeStringSettingMigration {
-    public enum Source: Equatable, Sendable {
-        case new
-        case legacy
-        case missing
-    }
-
     public struct Result: Equatable, Sendable {
         public let value: String?
-        public let source: Source
-        public let persistedLegacyValue: Bool
-        public let removedLegacyValue: Bool
-        public let destinationUnavailable: Bool
 
-        public init(
-            value: String?,
-            source: Source,
-            persistedLegacyValue: Bool = false,
-            removedLegacyValue: Bool = false,
-            destinationUnavailable: Bool = false
-        ) {
+        public init(value: String?) {
             self.value = value
-            self.source = source
-            self.persistedLegacyValue = persistedLegacyValue
-            self.removedLegacyValue = removedLegacyValue
-            self.destinationUnavailable = destinationUnavailable
         }
     }
 
@@ -85,22 +65,18 @@ public enum RuntimeStringSettingMigration {
         legacyKey: String
     ) -> Result {
         if let value = store.string(forKey: newKey), value.isEmpty == false {
-            return Result(value: value, source: .new)
+            return Result(value: value)
         }
 
         guard let legacyValue = store.string(forKey: legacyKey), legacyValue.isEmpty == false else {
-            return Result(value: nil, source: .missing)
+            return Result(value: nil)
         }
 
-        let persisted = store.persistString(legacyValue, forKey: newKey)
-        let removedLegacy = persisted ? store.clearString(forKey: legacyKey) : false
-        return Result(
-            value: legacyValue,
-            source: .legacy,
-            persistedLegacyValue: persisted,
-            removedLegacyValue: removedLegacy,
-            destinationUnavailable: persisted == false
-        )
+        if store.persistString(legacyValue, forKey: newKey) {
+            _ = store.clearString(forKey: legacyKey)
+        }
+
+        return Result(value: legacyValue)
     }
 
     public static func resolveEnvironmentValue(
@@ -110,13 +86,13 @@ public enum RuntimeStringSettingMigration {
         isValid: (String) -> Bool = { $0.isEmpty == false }
     ) -> Result {
         if let value = environment[newName], isValid(value) {
-            return Result(value: value, source: .new)
+            return Result(value: value)
         }
 
         if let legacyValue = environment[legacyName], isValid(legacyValue) {
-            return Result(value: legacyValue, source: .legacy)
+            return Result(value: legacyValue)
         }
 
-        return Result(value: nil, source: .missing)
+        return Result(value: nil)
     }
 }
