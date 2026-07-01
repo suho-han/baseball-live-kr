@@ -1,1 +1,11 @@
-screenshot captured
+Cleanup receipt for T4 evidence run:
+
+- macOS app launch process: no `BaseballLiveKR` process remained after screenshot capture and cleanup.
+- Screenshot artifact: `manual-qa/macos-launch-screenshot.png` exists and is non-empty.
+- Filesystem adversarial probe directory: `adversarial/misleading_success_probe` removed after verifier failure was recorded.
+- Archive adversarial probe directory: `adversarial/misleading_success_archive_probe` removed after verifier failure was recorded.
+- Injected fake app artifact: no `Fake.app` directory remains under `adversarial/`.
+- Injected fake archives: no `fake-runtime.tar.gz` remains under `adversarial/`.
+- Release verifier cleanup evidence: both injected probes record `exit_code=1`, proving the temporary official-asset leaks were caught before removal.
+- Long command handling: `adversarial/hung_or_long_commands.txt` records that xcodebuild completed successfully after an initial long-running poll and required no timeout kill.
+- Dirty worktree preservation: unrelated pre-existing files were left unstaged and unreverted.
