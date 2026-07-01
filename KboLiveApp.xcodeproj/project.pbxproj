@@ -13,7 +13,6 @@
 		044E3E7B3D87BB88B5335F41 /* KboSpacingToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F99D486EE9B83DC36298CDE /* KboSpacingToken.swift */; };
 		057A70D1309C61C0461FD174 /* KboRadiusToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30557F93ECD6E377217BB75 /* KboRadiusToken.swift */; };
 		05DEC26B5B59A18326695FB8 /* TeamStandingsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D6DB0960ABC13A598AAE76 /* TeamStandingsDTO.swift */; };
-		06DB4452DB4F2C93409B728F /* NC.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A837357B11D9BFD3216A4DA /* NC.png */; };
 		0790961D7E625E27D70D16BA /* BackendPresetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D253D266631A6E89D1BD31 /* BackendPresetRow.swift */; };
 		07A57D2ADDD501156CF3A911 /* MenuBarGameSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CCC77B6A44AFF986BE6E8C /* MenuBarGameSummary.swift */; };
 		09A9AA20C2B96A37DCFEB0B1 /* KboPrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554A1540C411A99F6FC3A626 /* KboPrimaryActionButton.swift */; };
@@ -45,7 +44,6 @@
 		245AA0D63DC4BC5E399A9AF6 /* BaseDiamondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26DF245E991A188DDF5D19D /* BaseDiamondView.swift */; };
 		257732F9310011276A4BB95F /* KboLiveHomeRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5070F61F85A0ED473884F3BB /* KboLiveHomeRootView.swift */; };
 		2610E8B358C7D562676ABABC /* MyTeamSelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB67D0000CA13922E91F01FE /* MyTeamSelectionStore.swift */; };
-		28B26AA71564639FCD351DA4 /* LG.png in Resources */ = {isa = PBXBuildFile; fileRef = C48C9530DAA7970AED6BC4DA /* LG.png */; };
 		29C0BFB292CB3EA783E7CB39 /* PitchCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB6364D9E774CAD4FC5FDB /* PitchCountView.swift */; };
 		29F2BEC32C60A59B0DA70B49 /* KboSpacingToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F99D486EE9B83DC36298CDE /* KboSpacingToken.swift */; };
 		2A2EEAE980D1A59A76F90AC5 /* ActivityGameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C1B71B6B06E0A008D4EFF9 /* ActivityGameState.swift */; };
@@ -62,7 +60,6 @@
 		38487670161414DFC5CBB4AA /* KboTeamOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4048DDAA5DB7D3A9B78B392 /* KboTeamOption.swift */; };
 		38F299CFEF2C8EE6760EF499 /* GameProjectionFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AFD2831E065F6CFE51E0B3 /* GameProjectionFormatter.swift */; };
 		39272CE78D2E55A327D1966F /* SampleGameFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9260D96448AE10F25C20DB26 /* SampleGameFactory.swift */; };
-		3948789402A84130E2686F15 /* NC.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A837357B11D9BFD3216A4DA /* NC.png */; };
 		3C061C52AA98CF7D04213319 /* TeamColorResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACFF97E39BE078C429098F5 /* TeamColorResolver.swift */; };
 		3C4EC475AE35932CAE0D048D /* BaseDiamondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26DF245E991A188DDF5D19D /* BaseDiamondView.swift */; };
 		3F2501E7C1DD69ADADBFE2BA /* BackendSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A686C354EF0ED378A734CE4C /* BackendSettingsView.swift */; };
@@ -76,7 +73,6 @@
 		4C992144F987A7572C206599 /* TeamColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E52E1E0947A31920164810C7 /* TeamColorPalette.swift */; };
 		4E49F5886A2B0F0028220D66 /* TeamBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F9677C6F7731A6E3841ABE /* TeamBadgeView.swift */; };
 		4EE4544F07AB413E9BE0DBEE /* GameProjectionFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AFD2831E065F6CFE51E0B3 /* GameProjectionFormatter.swift */; };
-		4F18E0C538671DD04580CD5D /* SS.png in Resources */ = {isa = PBXBuildFile; fileRef = EA2D04833BC16C1D066F9750 /* SS.png */; };
 		5172569E5B034F287BAB0973 /* KboMotionToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DD52C08C8040555947A491 /* KboMotionToken.swift */; };
 		527182090912A49F8D8397F0 /* WidgetGameSnapshotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80662BACED147F8AE4A669F /* WidgetGameSnapshotStore.swift */; };
 		549FA42B882A0719AA7C45B4 /* ActivityGameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C1B71B6B06E0A008D4EFF9 /* ActivityGameState.swift */; };
@@ -84,7 +80,6 @@
 		57DB3AFF7861D815CA0AB6BC /* KboLivemacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 367EA61F763FBEE507EC308A /* KboLivemacOSApp.swift */; };
 		5843F2ECD2CE5C56B70EBFB3 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A03EF828CFD2DE490A3D9 /* Game.swift */; };
 		586573288BA3F813BBCDE370 /* KboMetricRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638123A5CA06544610145208 /* KboMetricRow.swift */; };
-		58BBD4CFEEE8CA303A78AAF7 /* SS.png in Resources */ = {isa = PBXBuildFile; fileRef = EA2D04833BC16C1D066F9750 /* SS.png */; };
 		59D675C7D6F078AC3CCC8AE0 /* KboAppearanceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000EF7F86AEE954E3BC734 /* KboAppearanceMode.swift */; };
 		5A162B5EA0DB51985E6B126C /* KboTypographyToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAE26336A903AAF0A3B5267 /* KboTypographyToken.swift */; };
 		5CE438193D390802A4E78EBD /* GameDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69A1866B76532FFC55C6334 /* GameDetailView.swift */; };
@@ -101,7 +96,6 @@
 		63EABE7E994BEAAF21EB00A0 /* BackendPresetPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D987CD41241FECB9966A82A /* BackendPresetPolicy.swift */; };
 		63F9EF7CDD8392871D5118BA /* KboLiveAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFE3D6A0EC0BFA0298E27B /* KboLiveAPIClient.swift */; };
 		645112421C6C2D6AEDAC4005 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B552D9873A04FC7F241B1181 /* SettingsView.swift */; };
-		6571B7173191366D1255502F /* SK.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D1D5D08B71C14FE895639D7 /* SK.png */; };
 		663B9A30F470D0127B96585D /* KboLiveAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFE3D6A0EC0BFA0298E27B /* KboLiveAPIClient.swift */; };
 		6657BF988C213A405AD4ED7B /* KboPrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554A1540C411A99F6FC3A626 /* KboPrimaryActionButton.swift */; };
 		675C0EDFC451C47CD3A97503 /* MockGameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CC9BD25065338C93F1842 /* MockGameRepository.swift */; };
@@ -111,7 +105,6 @@
 		6A88F6E1E2A35A4C5828675F /* GameDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69A1866B76532FFC55C6334 /* GameDetailView.swift */; };
 		6B2E2EBDF67C40341CD8EE26 /* KboSemanticColorToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92618984EEFA0FFD270B27E /* KboSemanticColorToken.swift */; };
 		6B66BADA2326DB834259EC28 /* GameFeedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A933A216D48A95FC01F1B764 /* GameFeedClient.swift */; };
-		6C905BCB71B038E3C812C748 /* LT.png in Resources */ = {isa = PBXBuildFile; fileRef = C24D68EAD2FADAC6B1466068 /* LT.png */; };
 		6CF626E28CEB06C2D5A7D065 /* WidgetGameSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2FBF395F0C0973B1F683E06 /* WidgetGameSnapshot.swift */; };
 		6E33ABDF19750FC9D50B7DCD /* AppRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D1278DBE81ECB048C453EE2 /* AppRuntime.swift */; };
 		6E5223B1071AA1C69343AA08 /* KboTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59579DB8DE6E2D5FE9BEA6F5 /* KboTheme.swift */; };
@@ -120,7 +113,6 @@
 		73BF5B35C7ADC7D6AEBDC36E /* KboAppearanceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000EF7F86AEE954E3BC734 /* KboAppearanceMode.swift */; };
 		74897888F5C194DF3EBDCE0D /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A03EF828CFD2DE490A3D9 /* Game.swift */; };
 		74DA1B400981530AF9E1B0B4 /* TodayGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD4549DE87B250463A5D190 /* TodayGamesView.swift */; };
-		7506F7B9BB6CF763F7800951 /* LG.png in Resources */ = {isa = PBXBuildFile; fileRef = C48C9530DAA7970AED6BC4DA /* LG.png */; };
 		756106FCD08AECB57EAECB18 /* TeamBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F9677C6F7731A6E3841ABE /* TeamBadgeView.swift */; };
 		77513558B3FF1DA24CCF6C36 /* LiveGameActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F837D57B975899B142B7F3 /* LiveGameActivityAttributes.swift */; };
 		78517F82C681827CC6FEE6F5 /* GameDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D462F621562EB9C3BDD5CF81 /* GameDTO.swift */; };
@@ -130,12 +122,9 @@
 		826D8A62458C005FA09DC655 /* BackendSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D012C3EDB6E731C77F133C /* BackendSettingsModel.swift */; };
 		88BB350AE7F65B1A718AC8CF /* TeamStandingsDTOMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E15C11E0BE68FDBFC7E91A9 /* TeamStandingsDTOMapper.swift */; };
 		8C784409547ECDDCA034B677 /* KboLiveWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA6750E0EA4DDD3FF969124 /* KboLiveWidgetBundle.swift */; };
-		8D485CB475B6B8486C143BAE /* SK.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D1D5D08B71C14FE895639D7 /* SK.png */; };
 		8D4F6DE8251E6EC945715700 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641400291B2478DDC4767E59 /* AppSettingsView.swift */; };
-		8D6A4FCDEDC311F2EEBB59C4 /* LT.png in Resources */ = {isa = PBXBuildFile; fileRef = C24D68EAD2FADAC6B1466068 /* LT.png */; };
 		8E0A127C3FC0A676CB028BAE /* KboLiveiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE5DC9EA71E1B3B98EAEC91 /* KboLiveiOSApp.swift */; };
 		8E480801FECD4F9588916826 /* KboEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B79222474193C056684971 /* KboEmptyStateView.swift */; };
-		901B1309FA1793B144719F02 /* WO.png in Resources */ = {isa = PBXBuildFile; fileRef = AB8CD0BF0D2625C7794E5A65 /* WO.png */; };
 		91B73255E9287DF331323278 /* KboLiveEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E1DDC846D9737E866A2B4A /* KboLiveEnvironment.swift */; };
 		9246339BCC9A4ACF41A03ED4 /* KboStatusPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEBF1A3219C0B0ACDF0E7C /* KboStatusPill.swift */; };
 		92997E0BDA796CDA508E5247 /* ActivityGameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C1B71B6B06E0A008D4EFF9 /* ActivityGameState.swift */; };
@@ -146,7 +135,6 @@
 		984C486CD2B22F0DF5A529FA /* InningStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52C5005821B88E6CB852256 /* InningStateView.swift */; };
 		9A3D7F49AD345BBA8570600C /* BackendPresetPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D987CD41241FECB9966A82A /* BackendPresetPolicy.swift */; };
 		9B9D81D2573A2D89B43D37E7 /* TeamStandings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3300F9AEA1D1CFB7D9DCA12 /* TeamStandings.swift */; };
-		9BACF4B3A8D89F21B95F020A /* HT.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E47031A8A835FE772BAC3BE /* HT.png */; };
 		9D35A891F5413AA55697F6A9 /* ActivityGameStateMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 926BDC39BB01A80C4EDB3F95 /* ActivityGameStateMapper.swift */; };
 		9E58C9FE2CEFF1F40C0EC766 /* TeamBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F9677C6F7731A6E3841ABE /* TeamBadgeView.swift */; };
 		9EF3BBD616992BDF97D9503A /* TeamStandingsDTOMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E15C11E0BE68FDBFC7E91A9 /* TeamStandingsDTOMapper.swift */; };
@@ -163,14 +151,12 @@
 		AE7EA92C4A853E631FF35131 /* KboShadowToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A63CE0FD4450245094F1948 /* KboShadowToken.swift */; };
 		AE84524143EA35BB7BD1E254 /* MenuBarGameSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CCC77B6A44AFF986BE6E8C /* MenuBarGameSummary.swift */; };
 		AF5065F26E82AA7935334722 /* KboEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B79222474193C056684971 /* KboEmptyStateView.swift */; };
-		B032538B0C0932B48A735208 /* HT.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E47031A8A835FE772BAC3BE /* HT.png */; };
 		B114EB52AE9B85672EC6A123 /* KboStatusPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEBF1A3219C0B0ACDF0E7C /* KboStatusPill.swift */; };
 		B4152DB64F9743733DF7FBFC /* GameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858AFEDE6438D42D0ACE7705 /* GameRepository.swift */; };
 		B529C17FBF27DDF735D01AA8 /* GameDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286990675AF53E58A876F6D /* GameDetailScreen.swift */; };
 		B54E158F07148B744A9E97F8 /* MyTeamSelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB67D0000CA13922E91F01FE /* MyTeamSelectionStore.swift */; };
 		B6FC668C93BF466C9F4AF924 /* InningStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52C5005821B88E6CB852256 /* InningStateView.swift */; };
 		B819A244F4690530EB6F347B /* KboSemanticColorToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92618984EEFA0FFD270B27E /* KboSemanticColorToken.swift */; };
-		B9131E3587EB828C77AEA6C3 /* HH.png in Resources */ = {isa = PBXBuildFile; fileRef = EB9E42778130C35C55386ADC /* HH.png */; };
 		B9F86C9660161CB4227AF043 /* TeamStandingsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D6DB0960ABC13A598AAE76 /* TeamStandingsDTO.swift */; };
 		BAE6701572FE51B76997999C /* ScoreDigitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98430CCC8189B75F88B812FD /* ScoreDigitsView.swift */; };
 		BCAD006FAEAD802C136A6FD8 /* KboColorToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E7F4854A1805B2F7C22149 /* KboColorToken.swift */; };
@@ -194,7 +180,6 @@
 		C722EF5B36D5ECD40F616514 /* ActivityGameStateMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 926BDC39BB01A80C4EDB3F95 /* ActivityGameStateMapper.swift */; };
 		C74A39F0326909378AAF0289 /* GameFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F45520806D38A86D25558BC /* GameFeed.swift */; };
 		C9E47EB9EFC8965AA913A7A8 /* AppNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CAD9358DA427001339338C /* AppNavigationModel.swift */; };
-		C9E5EF6F6F4D109D46340626 /* OB.png in Resources */ = {isa = PBXBuildFile; fileRef = DE84ACB97607A2822AF55531 /* OB.png */; };
 		CA1592DF8D923A46E3A4AEDC /* KboCommandBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29611A483DBC1A46C51B34FE /* KboCommandBar.swift */; };
 		CA6ED52AE8F0E13DA616004C /* LiveGameActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4871B27DCDD1FA6DF5CFB331 /* LiveGameActivityController.swift */; };
 		CCCCB8B28F543ABB048AF9F7 /* LiveGamePollingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912C9F0E2642AABD5754AE6 /* LiveGamePollingService.swift */; };
@@ -202,9 +187,6 @@
 		CDE6BAED23FC0EC0AAAD5C67 /* ScoreDigitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98430CCC8189B75F88B812FD /* ScoreDigitsView.swift */; };
 		CFD95D6DC9820E07E2D12F3E /* SampleGameFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9260D96448AE10F25C20DB26 /* SampleGameFactory.swift */; };
 		D0BC9F5051A6D395A94B53CB /* GameDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D462F621562EB9C3BDD5CF81 /* GameDTO.swift */; };
-		D3797EC776FF669DA055E102 /* KT.png in Resources */ = {isa = PBXBuildFile; fileRef = 8805E55C67E4AD75C8F65B17 /* KT.png */; };
-		D9171F6CA0738181EB337E38 /* KT.png in Resources */ = {isa = PBXBuildFile; fileRef = 8805E55C67E4AD75C8F65B17 /* KT.png */; };
-		DCC65A066CEA014A5696E612 /* HH.png in Resources */ = {isa = PBXBuildFile; fileRef = EB9E42778130C35C55386ADC /* HH.png */; };
 		DDD250FDF9E2EC00B76D4F85 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641400291B2478DDC4767E59 /* AppSettingsView.swift */; };
 		DF1F89CC0C80E20E83FF7568 /* WidgetGameSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2FBF395F0C0973B1F683E06 /* WidgetGameSnapshot.swift */; };
 		E05177BFE30B0BB424B82BC8 /* TeamColorResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACFF97E39BE078C429098F5 /* TeamColorResolver.swift */; };
@@ -217,11 +199,9 @@
 		E9399557193DA04A7AB39E16 /* KboControlToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CB07430236523622F00C5 /* KboControlToken.swift */; };
 		E9DE1F1F00674703965D5AF7 /* BackendSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D012C3EDB6E731C77F133C /* BackendSettingsModel.swift */; };
 		EA292533A2261A0029C1B660 /* TeamStandingsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D6DB0960ABC13A598AAE76 /* TeamStandingsDTO.swift */; };
-		EAAA8C22A967364C708E588A /* WO.png in Resources */ = {isa = PBXBuildFile; fileRef = AB8CD0BF0D2625C7794E5A65 /* WO.png */; };
 		EF290DE02547345C176965AF /* KboControlToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CB07430236523622F00C5 /* KboControlToken.swift */; };
 		F1504B82B238696665DE7FFD /* LiveGameActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2F021CB0CD8EC5A3222F8F /* LiveGameActivityWidget.swift */; };
 		F584C26D2FE8B04B56A0BAE7 /* MenuBarGameSummaryMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BFBA95BCA60FA7810B57CD6 /* MenuBarGameSummaryMapper.swift */; };
-		F72E15D45B7B6A34339234B2 /* OB.png in Resources */ = {isa = PBXBuildFile; fileRef = DE84ACB97607A2822AF55531 /* OB.png */; };
 		F7C59E5F8C3AD25E7FBA8115 /* LiveGamePollingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912C9F0E2642AABD5754AE6 /* LiveGamePollingService.swift */; };
 		FB9B7C266D927D8804904763 /* GameFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F45520806D38A86D25558BC /* GameFeed.swift */; };
 		FE4B728439AA0B86E5BFC5AF /* KboSemanticColorToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92618984EEFA0FFD270B27E /* KboSemanticColorToken.swift */; };
@@ -261,7 +241,6 @@
 		1FD30E5FCC45096A31CE21EB /* KboGlassToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboGlassToken.swift; sourceTree = "<group>"; };
 		27CFE3D6A0EC0BFA0298E27B /* KboLiveAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboLiveAPIClient.swift; sourceTree = "<group>"; };
 		29611A483DBC1A46C51B34FE /* KboCommandBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboCommandBar.swift; sourceTree = "<group>"; };
-		2A837357B11D9BFD3216A4DA /* NC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NC.png; sourceTree = "<group>"; };
 		2ACFF97E39BE078C429098F5 /* TeamColorResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamColorResolver.swift; sourceTree = "<group>"; };
 		2BFBA95BCA60FA7810B57CD6 /* MenuBarGameSummaryMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarGameSummaryMapper.swift; sourceTree = "<group>"; };
 		2C74DFB4748A86EAD2133A79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -279,7 +258,6 @@
 		57EEBF1A3219C0B0ACDF0E7C /* KboStatusPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboStatusPill.swift; sourceTree = "<group>"; };
 		5912C9F0E2642AABD5754AE6 /* LiveGamePollingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGamePollingService.swift; sourceTree = "<group>"; };
 		59579DB8DE6E2D5FE9BEA6F5 /* KboTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboTheme.swift; sourceTree = "<group>"; };
-		5E47031A8A835FE772BAC3BE /* HT.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HT.png; sourceTree = "<group>"; };
 		5FAE26336A903AAF0A3B5267 /* KboTypographyToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboTypographyToken.swift; sourceTree = "<group>"; };
 		638123A5CA06544610145208 /* KboMetricRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboMetricRow.swift; sourceTree = "<group>"; };
 		641400291B2478DDC4767E59 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
@@ -291,7 +269,6 @@
 		858AFEDE6438D42D0ACE7705 /* GameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRepository.swift; sourceTree = "<group>"; };
 		85B79222474193C056684971 /* KboEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboEmptyStateView.swift; sourceTree = "<group>"; };
 		87ED10D5B2C9F062DA7EDF2A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		8805E55C67E4AD75C8F65B17 /* KT.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KT.png; sourceTree = "<group>"; };
 		88D36275489AE276CDAEA2B5 /* KboLiveWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KboLiveWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BE6777EA72E07EB39F6A0C8 /* TodayGameWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayGameWidget.swift; sourceTree = "<group>"; };
 		8D1278DBE81ECB048C453EE2 /* AppRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRuntime.swift; sourceTree = "<group>"; };
@@ -300,7 +277,6 @@
 		977A783217C6C830D63E6805 /* LiveBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveBadgeView.swift; sourceTree = "<group>"; };
 		98430CCC8189B75F88B812FD /* ScoreDigitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreDigitsView.swift; sourceTree = "<group>"; };
 		9A6CC9BD25065338C93F1842 /* MockGameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGameRepository.swift; sourceTree = "<group>"; };
-		9D1D5D08B71C14FE895639D7 /* SK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SK.png; sourceTree = "<group>"; };
 		9EA6750E0EA4DDD3FF969124 /* KboLiveWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboLiveWidgetBundle.swift; sourceTree = "<group>"; };
 		A2158310D98D121771C11DD5 /* GameDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewModel.swift; sourceTree = "<group>"; };
 		A26DF245E991A188DDF5D19D /* BaseDiamondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDiamondView.swift; sourceTree = "<group>"; };
@@ -309,7 +285,6 @@
 		A933A216D48A95FC01F1B764 /* GameFeedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFeedClient.swift; sourceTree = "<group>"; };
 		A96E546F35CE627030DEE371 /* BackendSettingsModel+Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackendSettingsModel+Resolution.swift"; sourceTree = "<group>"; };
 		A9D253D266631A6E89D1BD31 /* BackendPresetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendPresetRow.swift; sourceTree = "<group>"; };
-		AB8CD0BF0D2625C7794E5A65 /* WO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WO.png; sourceTree = "<group>"; };
 		AC156241B24A8F38DE0E32B8 /* WidgetGameSnapshotMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGameSnapshotMapper.swift; sourceTree = "<group>"; };
 		B0B60AB972936ACD0A1D7EA6 /* KboLiveiOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KboLiveiOS.entitlements; sourceTree = "<group>"; };
 		B2FBF395F0C0973B1F683E06 /* WidgetGameSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGameSnapshot.swift; sourceTree = "<group>"; };
@@ -317,11 +292,9 @@
 		B69A1866B76532FFC55C6334 /* GameDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailView.swift; sourceTree = "<group>"; };
 		B9D6DB0960ABC13A598AAE76 /* TeamStandingsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamStandingsDTO.swift; sourceTree = "<group>"; };
 		BECBE3489269CA50C5F36684 /* KboLiveWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KboLiveWidget.entitlements; sourceTree = "<group>"; };
-		C24D68EAD2FADAC6B1466068 /* LT.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LT.png; sourceTree = "<group>"; };
 		C2C1B71B6B06E0A008D4EFF9 /* ActivityGameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityGameState.swift; sourceTree = "<group>"; };
 		C3CCC77B6A44AFF986BE6E8C /* MenuBarGameSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarGameSummary.swift; sourceTree = "<group>"; };
 		C3E1DDC846D9737E866A2B4A /* KboLiveEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboLiveEnvironment.swift; sourceTree = "<group>"; };
-		C48C9530DAA7970AED6BC4DA /* LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LG.png; sourceTree = "<group>"; };
 		C7CAD9358DA427001339338C /* AppNavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationModel.swift; sourceTree = "<group>"; };
 		C92618984EEFA0FFD270B27E /* KboSemanticColorToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboSemanticColorToken.swift; sourceTree = "<group>"; };
 		CB67D0000CA13922E91F01FE /* MyTeamSelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTeamSelectionStore.swift; sourceTree = "<group>"; };
@@ -330,14 +303,11 @@
 		D7DD52C08C8040555947A491 /* KboMotionToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboMotionToken.swift; sourceTree = "<group>"; };
 		D80662BACED147F8AE4A669F /* WidgetGameSnapshotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGameSnapshotStore.swift; sourceTree = "<group>"; };
 		DDBB27567CBFEC7419A1EAF5 /* TodayGamesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayGamesList.swift; sourceTree = "<group>"; };
-		DE84ACB97607A2822AF55531 /* OB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OB.png; sourceTree = "<group>"; };
 		E0E7F4854A1805B2F7C22149 /* KboColorToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboColorToken.swift; sourceTree = "<group>"; };
 		E286990675AF53E58A876F6D /* GameDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailScreen.swift; sourceTree = "<group>"; };
 		E3300F9AEA1D1CFB7D9DCA12 /* TeamStandings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamStandings.swift; sourceTree = "<group>"; };
 		E52E1E0947A31920164810C7 /* TeamColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamColorPalette.swift; sourceTree = "<group>"; };
-		EA2D04833BC16C1D066F9750 /* SS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SS.png; sourceTree = "<group>"; };
 		EA2F021CB0CD8EC5A3222F8F /* LiveGameActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGameActivityWidget.swift; sourceTree = "<group>"; };
-		EB9E42778130C35C55386ADC /* HH.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HH.png; sourceTree = "<group>"; };
 		ED9E2C23EA76E492A852B234 /* KboSurfaceToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboSurfaceToken.swift; sourceTree = "<group>"; };
 		F2000EF7F86AEE954E3BC734 /* KboAppearanceMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboAppearanceMode.swift; sourceTree = "<group>"; };
 		F3AFD2831E065F6CFE51E0B3 /* GameProjectionFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProjectionFormatter.swift; sourceTree = "<group>"; };
@@ -459,7 +429,6 @@
 				4871B27DCDD1FA6DF5CFB331 /* LiveGameActivityController.swift */,
 				9260D96448AE10F25C20DB26 /* SampleGameFactory.swift */,
 				D80662BACED147F8AE4A669F /* WidgetGameSnapshotStore.swift */,
-				D4DEE64AD2293A2D02F5A3BB /* TeamLogos */,
 			);
 			name = Shared;
 			path = KboLiveApp/Shared;
@@ -574,23 +543,6 @@
 				E52E1E0947A31920164810C7 /* TeamColorPalette.swift */,
 			);
 			path = Theme;
-			sourceTree = "<group>";
-		};
-		D4DEE64AD2293A2D02F5A3BB /* TeamLogos */ = {
-			isa = PBXGroup;
-			children = (
-				EB9E42778130C35C55386ADC /* HH.png */,
-				5E47031A8A835FE772BAC3BE /* HT.png */,
-				8805E55C67E4AD75C8F65B17 /* KT.png */,
-				C48C9530DAA7970AED6BC4DA /* LG.png */,
-				C24D68EAD2FADAC6B1466068 /* LT.png */,
-				2A837357B11D9BFD3216A4DA /* NC.png */,
-				DE84ACB97607A2822AF55531 /* OB.png */,
-				9D1D5D08B71C14FE895639D7 /* SK.png */,
-				EA2D04833BC16C1D066F9750 /* SS.png */,
-				AB8CD0BF0D2625C7794E5A65 /* WO.png */,
-			);
-			path = TeamLogos;
 			sourceTree = "<group>";
 		};
 		D55AC5F4D1632775AD1109B1 /* KboLiveDesignSystem */ = {
@@ -751,16 +703,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B9131E3587EB828C77AEA6C3 /* HH.png in Resources */,
-				9BACF4B3A8D89F21B95F020A /* HT.png in Resources */,
-				D3797EC776FF669DA055E102 /* KT.png in Resources */,
-				28B26AA71564639FCD351DA4 /* LG.png in Resources */,
-				6C905BCB71B038E3C812C748 /* LT.png in Resources */,
-				3948789402A84130E2686F15 /* NC.png in Resources */,
-				C9E5EF6F6F4D109D46340626 /* OB.png in Resources */,
-				6571B7173191366D1255502F /* SK.png in Resources */,
-				58BBD4CFEEE8CA303A78AAF7 /* SS.png in Resources */,
-				EAAA8C22A967364C708E588A /* WO.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -769,16 +711,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C45BD0C5F18B92A24EF091CE /* Assets.xcassets in Resources */,
-				DCC65A066CEA014A5696E612 /* HH.png in Resources */,
-				B032538B0C0932B48A735208 /* HT.png in Resources */,
-				D9171F6CA0738181EB337E38 /* KT.png in Resources */,
-				7506F7B9BB6CF763F7800951 /* LG.png in Resources */,
-				8D6A4FCDEDC311F2EEBB59C4 /* LT.png in Resources */,
-				06DB4452DB4F2C93409B728F /* NC.png in Resources */,
-				F72E15D45B7B6A34339234B2 /* OB.png in Resources */,
-				8D485CB475B6B8486C143BAE /* SK.png in Resources */,
-				4F18E0C538671DD04580CD5D /* SS.png in Resources */,
-				901B1309FA1793B144719F02 /* WO.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
