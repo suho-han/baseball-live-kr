@@ -49,8 +49,8 @@ export function closeDatabase(): void {
 }
 
 export function isDatabaseDisabled(): boolean {
-  if (process.env.KBO_DB_ENABLED === '1') {
-    return false
+  if (process.env.KBO_DB_ENABLED !== undefined) {
+    return process.env.KBO_DB_ENABLED !== '1'
   }
 
   return process.env.KBO_DB_DISABLED === '1' || process.env.NODE_ENV === 'test'

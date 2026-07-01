@@ -22,6 +22,12 @@ cp "${BACKEND_DIR}/package.json" "${TEMP_OUTPUT_DIR}/package.json"
 cp "${BACKEND_DIR}/package-lock.json" "${TEMP_OUTPUT_DIR}/package-lock.json"
 cp -R "${BACKEND_DIR}/node_modules" "${TEMP_OUTPUT_DIR}/node_modules"
 
+SOURCE_DB="${BACKEND_DIR}/.data/kbo-live.sqlite"
+if [[ -f "${SOURCE_DB}" ]]; then
+  mkdir -p "${TEMP_OUTPUT_DIR}/.data"
+  cp "${SOURCE_DB}" "${TEMP_OUTPUT_DIR}/.data/kbo-live.sqlite"
+fi
+
 cat > "${TEMP_OUTPUT_DIR}/run-backend.command" <<'SCRIPT'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -37,6 +43,12 @@ fi
 export NODE_ENV="${NODE_ENV:-production}"
 export HOST="${HOST:-0.0.0.0}"
 export PORT="${PORT:-17361}"
+
+PACKAGED_DB="${DIR}/.data/kbo-live.sqlite"
+if [[ -f "${PACKAGED_DB}" ]]; then
+  export KBO_DB_ENABLED="${KBO_DB_ENABLED:-1}"
+  export KBO_DB_PATH="${KBO_DB_PATH:-${PACKAGED_DB}}"
+fi
 
 exec node "${DIR}/dist/src/index.js"
 SCRIPT
