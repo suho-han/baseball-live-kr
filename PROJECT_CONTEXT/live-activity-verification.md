@@ -4,7 +4,7 @@
 
 ## 1. 목적
 
-KBO Live iOS app에서 진행 중 경기 Live Activity를 실제 기기 Lock Screen과 Dynamic Island에서 start/stop 할 수 있는지 검증한다.
+Baseball LIVE KR iOS app에서 진행 중 경기 Live Activity를 실제 기기 Lock Screen과 Dynamic Island에서 start/stop 할 수 있는지 검증한다.
 
 ## 2. 현재 구현 상태
 
@@ -28,11 +28,11 @@ KBO Live iOS app에서 진행 중 경기 Live Activity를 실제 기기 Lock Scr
 KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
 ```
 
-iOS 실제 기기에서는 Mac host backend 접근을 위해 `KBO_LIVE_BASE_URL` 또는 앱 설정의 Custom URL을 Mac의 접근 가능한 IP로 맞춘다.
+iOS 실제 기기에서는 Mac host backend 접근을 위해 `BASEBALL_LIVE_KR_BASE_URL` 또는 앱 설정의 Custom URL을 Mac의 접근 가능한 IP로 맞춘다.
 
 ## 4. 검증 절차
 
-1. iPhone에서 `KboLiveiOS` scheme을 실제 기기로 실행한다.
+1. iPhone에서 `BaseballLiveKRiOS` scheme을 실제 기기로 실행한다.
 2. 설정에서 backend URL을 live fixture 또는 실제 live 경기 backend로 맞춘다.
 3. 오늘 경기 화면에 live 경기 카드가 보이는지 확인한다.
 4. live 경기 아래 `Live Activity 시작`을 누른다.

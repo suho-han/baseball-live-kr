@@ -1,4 +1,4 @@
-# KBO Live Project Structure
+# Baseball LIVE KR Project Structure
 
 작성일: 2026-06-13  
 업데이트: 2026-06-14  
@@ -21,8 +21,8 @@ AGENTS.md
 README.md
 project.yml
 KboLiveApp/
-KboLiveApp.xcodeproj/
-KboLive.xcworkspace/
+BaseballLiveKR.xcodeproj/
+BaseballLiveKR.xcworkspace/
 Packages/
 PROJECT_CONTEXT/
 backend-spike/
@@ -35,9 +35,9 @@ scripts/
   - XcodeGen으로 실제 프로젝트를 생성하는 단일 정의 파일
 - `KboLiveApp/`
   - iOS, macOS, Widget 타깃용 앱 소스
-- `KboLiveApp.xcodeproj/`
+- `BaseballLiveKR.xcodeproj/`
   - 현재 빌드 검증에 사용한 실제 프로젝트
-- `KboLive.xcworkspace/`
+- `BaseballLiveKR.xcworkspace/`
   - 루트 워크스페이스
   - 현재 샌드박스에서는 `xcodebuild -workspace` 검증이 안정적이지 않음
 - `Packages/`
@@ -58,13 +58,13 @@ scripts/
 의존 방향:
 
 ```text
-KboLiveCore
+BaseballLiveKRCore
   -> domain / dto / mapper / repository / polling / projections
 
-KboLiveDesignSystem
+BaseballLiveKRDesignSystem
   -> reusable SwiftUI tokens / themes / components
 
-KboLiveFeatures
+BaseballLiveKRFeatures
   -> screen-level UI and view model
 
 KboLiveApp targets
@@ -75,19 +75,19 @@ KboLiveApp targets
 
 `project.yml` 기준 현재 타깃:
 
-- `KboLiveiOS`
+- `BaseballLiveKRiOS`
   - iOS app
-  - product name: `KboLiveiOS`
-  - bundle id: `com.suhohan.kbo-live.ios`
+  - product name: `BaseballLiveKR`
+  - bundle id: `kr.suhohan.baseballlivekr.ios`
   - Live Activities 활성화
-- `KboLivemacOS`
+- `BaseballLiveKRmacOS`
   - macOS app
-  - product name: `KboLiveApp`
-  - bundle id: `com.suhohan.kbo-live.macos`
+  - product name: `BaseballLiveKR`
+  - bundle id: `kr.suhohan.baseballlivekr.macos`
   - `MenuBarExtra` 기반 엔트리 포함
-- `KboLiveWidgetExtension`
+- `BaseballLiveKRWidgetExtension`
   - iOS widget extension
-  - bundle id: `com.suhohan.kbo-live.ios.widget`
+  - bundle id: `kr.suhohan.baseballlivekr.ios.widget`
   - Today widget + Live Activity widget 포함
 
 배포 타깃:
@@ -114,18 +114,18 @@ KboLiveApp/
 주요 파일:
 
 - `KboLiveApp/Shared/AppRuntime.swift`
-- `KboLiveApp/Shared/KboLiveHomeRootView.swift`
+- `KboLiveApp/Shared/BaseballLiveKRHomeRootView.swift`
 - `KboLiveApp/Shared/SampleGameFactory.swift`
-- `KboLiveApp/iOS/KboLiveiOSApp.swift`
-- `KboLiveApp/macOS/KboLivemacOSApp.swift`
+- `KboLiveApp/iOS/BaseballLiveKRiOSApp.swift`
+- `KboLiveApp/macOS/BaseballLiveKRmacOSApp.swift`
 - `KboLiveApp/macOS/MenuBarDashboardView.swift`
-- `KboLiveApp/Widget/KboLiveWidgetBundle.swift`
+- `KboLiveApp/Widget/BaseballLiveKRWidgetBundle.swift`
 - `KboLiveApp/Widget/TodayGameWidget.swift`
 - `KboLiveApp/Widget/LiveGameActivityWidget.swift`
 
 ## 6. Swift Packages
 
-### `Packages/KboLiveCore`
+### `Packages/BaseballLiveKRCore`
 
 책임:
 
@@ -144,7 +144,7 @@ KboLiveApp/
 - `scheduled` 필터는 `delayed` 포함
 - `final` 필터는 `cancelled` 포함
 
-### `Packages/KboLiveDesignSystem`
+### `Packages/BaseballLiveKRDesignSystem`
 
 책임:
 
@@ -152,7 +152,7 @@ KboLiveApp/
 - typography / spacing / radius / shadow 토큰
 - 재사용 가능한 SwiftUI primitive/component
 
-### `Packages/KboLiveFeatures`
+### `Packages/BaseballLiveKRFeatures`
 
 책임:
 
@@ -168,7 +168,7 @@ KboLiveApp/
 
 - `ObservableObject` + `@Published` 기반
 - 로딩 / 리프레시 / 에러 / 필터 상태 관리
-- 경기 정렬은 `KboLiveCore` 공용 규칙 재사용
+- 경기 정렬은 `BaseballLiveKRCore` 공용 규칙 재사용
 
 ## 7. Backend Spike
 
@@ -194,7 +194,7 @@ KboLiveApp/
 macOS 앱 연결:
 
 - 기본 backend URL: `http://127.0.0.1:3000`
-- `KBO_LIVE_BASE_URL` 환경변수로 override 가능
+- `BASEBALL_LIVE_KR_BASE_URL` 환경변수로 override 가능
 - 메뉴바에서 설정, 메인 창, 서버 상태 확인 버튼을 같은 행에 표시
 - 서버 상태는 `/health`를 5초 주기로 확인
 
@@ -203,7 +203,7 @@ macOS 앱 연결:
 현재 가장 안전한 진입점:
 
 1. `project.yml`에서 프로젝트 재생성
-2. `KboLiveApp.xcodeproj` 오픈
+2. `BaseballLiveKR.xcodeproj` 오픈
 3. 원하는 스킴 빌드
 
 재생성:
@@ -215,33 +215,33 @@ macOS 앱 연결:
 오픈:
 
 ```bash
-open KboLiveApp.xcodeproj
+open BaseballLiveKR.xcodeproj
 ```
 
 검증된 빌드:
 
 ```bash
 env HOME=$PWD/.xcode/home CFFIXED_USER_HOME=$PWD/.xcode/home XDG_CACHE_HOME=$PWD/.xcode/home/Library/Caches \
-  xcodebuild -scheme KboLivemacOS -project KboLiveApp.xcodeproj -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build
+  xcodebuild -scheme BaseballLiveKRmacOS -project BaseballLiveKR.xcodeproj -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build
 
 env HOME=$PWD/.xcode/home CFFIXED_USER_HOME=$PWD/.xcode/home XDG_CACHE_HOME=$PWD/.xcode/home/Library/Caches \
-  xcodebuild -scheme KboLiveiOS -project KboLiveApp.xcodeproj -destination 'generic/platform=iOS' -derivedDataPath .xcode/DerivedData CODE_SIGNING_ALLOWED=NO build
+  xcodebuild -scheme BaseballLiveKRiOS -project BaseballLiveKR.xcodeproj -destination 'generic/platform=iOS' -derivedDataPath .xcode/DerivedData CODE_SIGNING_ALLOWED=NO build
 
 env HOME=$PWD/.xcode/home CFFIXED_USER_HOME=$PWD/.xcode/home XDG_CACHE_HOME=$PWD/.xcode/home/Library/Caches \
-  xcodebuild -scheme KboLiveWidgetExtension -project KboLiveApp.xcodeproj -destination 'generic/platform=iOS' -derivedDataPath .xcode/DerivedData CODE_SIGNING_ALLOWED=NO build
+  xcodebuild -scheme BaseballLiveKRWidgetExtension -project BaseballLiveKR.xcodeproj -destination 'generic/platform=iOS' -derivedDataPath .xcode/DerivedData CODE_SIGNING_ALLOWED=NO build
 ```
 
 최근 확인 상태:
 
-- `KboLivemacOS`: build succeeded
-- `KboLiveiOS`: build succeeded
-- `KboLiveWidgetExtension`: build succeeded
+- `BaseballLiveKRmacOS`: build succeeded
+- `BaseballLiveKRiOS`: build succeeded
+- `BaseballLiveKRWidgetExtension`: build succeeded
 
 ## 9. 현재 제약
 
-- 루트 `KboLive.xcworkspace`는 존재하지만, 현재 샌드박스에서는 `xcodebuild -workspace KboLive.xcworkspace` 검증이 안정적이지 않았다.
+- 루트 `BaseballLiveKR.xcworkspace`는 존재하지만, 현재 샌드박스에서는 `xcodebuild -workspace BaseballLiveKR.xcworkspace` 검증이 안정적이지 않았다.
 - app target은 package dependency 방식이 아니라 source 직접 포함 방식이다.
-- `KboLiveFeatures`는 아직 Today Games 중심의 최소 기능만 포함한다.
+- `BaseballLiveKRFeatures`는 아직 Today Games 중심의 최소 기능만 포함한다.
 
 ## 10. 다음 확장 후보
 

@@ -1,4 +1,4 @@
-# KBO Live Production Backend Strategy
+# Baseball LIVE KR Production Backend Strategy
 
 작성일: 2026-06-16
 상태: Working v0.2
@@ -150,20 +150,20 @@ production backend로 승격할 것:
 
 앱 전환 규칙:
 
-- 환경변수 `KBO_LIVE_BASE_URL`이 최우선이다.
+- 환경변수 `BASEBALL_LIVE_KR_BASE_URL`이 최우선이다.
 - 앱 설정의 backend preset과 저장된 Backend URL이 그 다음이다.
 - 앱 설정은 `local`, `staging`, `production` preset을 제공한다.
-- `KBO_LIVE_STAGING_BASE_URL`, `KBO_LIVE_PRODUCTION_BASE_URL`은 staging/production preset의 초기 URL로 사용한다.
+- `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`은 staging/production preset의 초기 URL로 사용한다.
 - 현재 앱 기본 local URL은 `http://127.0.0.1:17361`이고, production 빌드에서는 production URL을 기본 선택한다.
 - 별도 `custom` preset은 두지 않는다. 각 preset의 URL 입력값을 저장할 수 있으므로 임시 endpoint 검증은 선택한 preset의 URL override로 처리한다.
 
 권장 config:
 
 ```text
-KBO_LIVE_ENV=local|staging|production
-KBO_LIVE_BASE_URL=https://...
-KBO_LIVE_STAGING_BASE_URL=https://staging.example...
-KBO_LIVE_PRODUCTION_BASE_URL=https://api.example...
+BASEBALL_LIVE_KR_ENV=local|staging|production
+BASEBALL_LIVE_KR_BASE_URL=https://...
+BASEBALL_LIVE_KR_STAGING_BASE_URL=https://staging.example...
+BASEBALL_LIVE_KR_PRODUCTION_BASE_URL=https://api.example...
 KBO_SOURCE_TIMEOUT_MS=3000
 KBO_CACHE_TTL_SCHEDULE_SEC=21600
 KBO_CACHE_TTL_GAME_IDLE_SEC=60
@@ -297,8 +297,8 @@ Phase 3: app environment 전환
 현재 구현 상태:
 
 - `BackendSettingsModel`은 local/staging/production preset을 제공한다.
-- `KBO_LIVE_BASE_URL`은 모든 preset보다 우선한다.
-- `KBO_LIVE_STAGING_BASE_URL`, `KBO_LIVE_PRODUCTION_BASE_URL`은 각 preset의 초기 URL로 사용한다.
+- `BASEBALL_LIVE_KR_BASE_URL`은 모든 preset보다 우선한다.
+- `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`은 각 preset의 초기 URL로 사용한다.
 - 앱 설정에서 저장한 preset별 URL은 재시작 후에도 유지된다.
 
 Phase 4: operationalize

@@ -1,8 +1,8 @@
-# KBO Live Design System
+# Baseball LIVE KR Design System
 
 ## 1. Atmosphere & Identity
 
-KBO Live feels like a compact game-day command center: glassy, live, and information-dense without becoming noisy. The signature is broadcast glass over a deep blue-black field in dark mode and a crisp stadium-paper surface in light mode, with team colors used as sharp identity accents.
+Baseball LIVE KR feels like a compact game-day command center: glassy, live, and information-dense without becoming noisy. The signature is broadcast glass over a deep blue-black field in dark mode and a crisp stadium-paper surface in light mode, with team colors used as sharp identity accents.
 
 ## 2. Color
 
