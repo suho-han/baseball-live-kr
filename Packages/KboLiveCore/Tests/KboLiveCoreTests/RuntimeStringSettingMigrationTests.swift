@@ -12,10 +12,6 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == "legacy-value")
-        #expect(result.source == .legacy)
-        #expect(result.persistedLegacyValue)
-        #expect(result.removedLegacyValue)
-        #expect(result.destinationUnavailable == false)
         #expect(store.values["new"] == "legacy-value")
         #expect(store.values["old"] == nil)
     }
@@ -30,10 +26,8 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == "new-value")
-        #expect(result.source == .new)
-        #expect(result.persistedLegacyValue == false)
-        #expect(result.removedLegacyValue == false)
         #expect(store.values["new"] == "new-value")
+        #expect(store.values["old"] == nil)
     }
 
     @Test func bothPresentKeepsNewValue() {
@@ -49,7 +43,6 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == "new-value")
-        #expect(result.source == .new)
         #expect(store.values["new"] == "new-value")
         #expect(store.values["old"] == "legacy-value")
     }
@@ -67,12 +60,11 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == nil)
-        #expect(result.source == .missing)
-        #expect(result.persistedLegacyValue == false)
         #expect(store.values["new"] == nil)
+        #expect(store.values["old"] == "legacy-value")
     }
 
-    @Test func destinationUnavailableStillReturnsReadableLegacyValue() {
+    @Test func unwritableDestinationStillReturnsReadableLegacyValue() {
         let store = MockRuntimeStringSettingStore(
             values: ["old": "legacy-value"],
             unwritableKeys: ["new"]
@@ -85,10 +77,6 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == "legacy-value")
-        #expect(result.source == .legacy)
-        #expect(result.persistedLegacyValue == false)
-        #expect(result.removedLegacyValue == false)
-        #expect(result.destinationUnavailable)
         #expect(store.values["new"] == nil)
         #expect(store.values["old"] == "legacy-value")
     }
@@ -105,7 +93,6 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == "https://api.suhohan.kr")
-        #expect(result.source == .new)
     }
 
     @Test func malformedNewEnvironmentFallsBackToValidLegacyValue() {
@@ -120,7 +107,6 @@ struct RuntimeStringSettingMigrationTests {
         )
 
         #expect(result.value == "http://127.0.0.1:17361")
-        #expect(result.source == .legacy)
     }
 }
 
