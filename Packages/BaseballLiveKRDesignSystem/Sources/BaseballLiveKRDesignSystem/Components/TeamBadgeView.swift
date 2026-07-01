@@ -1,9 +1,4 @@
 import SwiftUI
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 
 public struct TeamBadgeView: View {
     public enum Emphasis: Sendable {
@@ -77,54 +72,30 @@ public struct TeamBadgeView: View {
 
     @ViewBuilder
     private var teamLogoView: some View {
-        if let logoImage = teamLogoImage {
-            logoImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: logoSize, height: logoSize)
-        } else {
+        ZStack {
             RoundedRectangle(cornerRadius: 6, style: .continuous)
                 .fill(accentColor)
-                .frame(width: logoSize, height: logoSize)
+
+            Text(teamToken)
+                .font(KboTypographyToken.system(size: max(9, logoSize * 0.42), weight: .black, scaledBy: fontScale))
+                .foregroundStyle(teamTokenColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
+        .frame(width: logoSize, height: logoSize)
     }
 
-    private var teamLogoImage: Image? {
-        guard let teamID else { return nil }
-
-        if let logoImage = loadPlatformImage(named: teamID) {
-            return logoImage
-        }
-
-        return nil
+    private var teamToken: String {
+        let source = teamID?.trimmingCharacters(in: .whitespacesAndNewlines)
+        ?? shortName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return String(source.prefix(2)).uppercased()
     }
 
-    private func loadPlatformImage(named teamID: String) -> Image? {
-#if canImport(AppKit)
-        if let image = NSImage(named: teamID) {
-            return Image(nsImage: image)
+    private var teamTokenColor: Color {
+        guard let teamID, TeamColorResolver.usesLightForeground(forTeamID: teamID) else {
+            return KboColorToken.textPrimary
         }
-#elseif canImport(UIKit)
-        if let image = UIImage(named: teamID) {
-            return Image(uiImage: image)
-        }
-#endif
 
-        let logoURL = Bundle.main.url(forResource: teamID, withExtension: "png")
-        ?? Bundle.main.url(forResource: teamID, withExtension: "png", subdirectory: "TeamLogos")
-
-        guard let logoURL else { return nil }
-
-#if canImport(AppKit)
-        if let image = NSImage(contentsOf: logoURL) {
-            return Image(nsImage: image)
-        }
-#elseif canImport(UIKit)
-        if let image = UIImage(contentsOfFile: logoURL.path()) {
-            return Image(uiImage: image)
-        }
-#endif
-
-        return nil
+        return .white
     }
 }

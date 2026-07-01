@@ -20,6 +20,7 @@ targets:
       - path: Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures
       - path: KboLiveApp/Shared
         excludes:
+          - TeamLogos/**
           - TeamWordmarks/**
           - TeamBrandAssets/**
       - path: KboLiveApp/iOS
@@ -41,6 +42,7 @@ targets:
       - path: Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures
       - path: KboLiveApp/Shared
         excludes:
+          - TeamLogos/**
           - TeamWordmarks/**
           - TeamBrandAssets/**
       - path: KboLiveApp/macOS
