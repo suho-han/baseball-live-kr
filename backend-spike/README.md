@@ -133,7 +133,7 @@ npm run dump -- --date 2026-06-13 --write --out-dir fixtures/202606-completed/20
 - `fixtures/202606-completed/<YYYYMMDD>/latest.json`
 - 대상 날짜: 2026-06-02~2026-06-07, 2026-06-09~2026-06-13
 
-Swift 테스트 fixture(`Packages/KboLiveCore/Tests/.../today-games-response.json`)는 앱 DTO 안정성 검증용으로 유지합니다.
+Swift 테스트 fixture(`Packages/BaseballLiveKRCore/Tests/.../today-games-response.json`)는 앱 DTO 안정성 검증용으로 유지합니다.
 
 ### 4) 선수 기록 source HTML dump
 

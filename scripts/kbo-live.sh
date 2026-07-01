@@ -43,7 +43,7 @@ case "$command" in
     ;;
   open)
     build_macos_app
-    launchctl unsetenv KBO_LIVE_BASE_URL
+    launchctl unsetenv BASEBALL_LIVE_KR_BASE_URL
     open -n "$DERIVED_DATA_PATH/Build/Products/Debug/BaseballLiveKR.app"
     ;;
   verify)
