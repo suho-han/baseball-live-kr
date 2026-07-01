@@ -29,7 +29,7 @@
 - `mvp-stability-checklist.md`
   - backend, Swift package, Xcode target 로컬 검증 체크리스트
 - `liquid-glass-toss-design-plan.md`
-  - Apple Liquid Glass와 Toss식 디자인 원칙을 KBO Live에 적용하는 단계별 계획
+  - Apple Liquid Glass와 Toss식 디자인 원칙을 Baseball LIVE KR에 적용하는 단계별 계획
 - `kbo-data-source-research.md`
   - KBO 데이터 소스 조사 메모
 - `shared-dto-draft.md`
