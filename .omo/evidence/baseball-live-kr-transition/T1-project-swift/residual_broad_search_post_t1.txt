@@ -12,27 +12,7 @@ project.yml:61:      - path: KboLiveApp/Shared/WidgetGameSnapshotStore.swift
 project.yml:62:      - path: KboLiveApp/Widget
 project.yml:66:        INFOPLIST_FILE: KboLiveApp/Widget/Info.plist
 project.yml:67:        CODE_SIGN_ENTITLEMENTS: KboLiveApp/Widget/BaseballLiveKRWidget.entitlements
-docs/dev.md:3:이 문서는 Baseball LIVE KR를 직접 개발하거나 배포 준비를 확인할 때 필요한 명령만 모아둡니다. 앱을 실행해 보고 싶은 경우에는 README의 `./scripts/kbo-live.sh run`을 먼저 사용하세요.
-docs/dev.md:8:./scripts/kbo-live.sh run
-docs/dev.md:9:./scripts/kbo-live.sh live
-docs/dev.md:10:./scripts/kbo-live.sh open
-docs/dev.md:11:./scripts/kbo-live.sh verify
-docs/dev.md:12:./scripts/kbo-live.sh package
-docs/dev.md:56:- 루트에 `KboLive.xcworkspace`도 같이 두었지만, 현재 샌드박스의 `xcodebuild -workspace` 검증은 통과하지 못했습니다.
-docs/dev.md:101:/Users/suhohan/Projects/kbo-live/scripts/backend-start.sh
-docs/dev.md:109:./scripts/run-kbo-live-fixture-capture.sh 20260616
-docs/dev.md:139:SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/kbo-live ./scripts/deploy-macmini-runtime.sh
 scripts/run-macos-app-with-packaged-backend.sh:5:BACKEND_DIR="${ROOT_DIR}/.build/kbo-live-backend-macos"
-scripts/deploy-macmini-runtime.sh:6:REMOTE_DIR="${REMOTE_DIR:-/Users/suhohan/Projects/kbo-live}"
-scripts/deploy-macmini-runtime.sh:9:ARCHIVE_PATH="${ARCHIVE_PATH:-$ROOT_DIR/.build/transfer/kbo-live-macmini-runtime.tar.gz}"
-scripts/deploy-macmini-runtime.sh:15:scp "$ARCHIVE_PATH" "$SSH_TARGET:$REMOTE_DIR/kbo-live-macmini-runtime.tar.gz"
-scripts/deploy-macmini-runtime.sh:17:ssh "$SSH_TARGET" "cd '$REMOTE_DIR' && tar -xzf kbo-live-macmini-runtime.tar.gz && chmod +x scripts/run-macos-app-with-packaged-backend.sh .build/kbo-live-backend-macos/run-backend.command"
-scripts/deploy-macmini-runtime.sh:20:ssh "$SSH_TARGET" "cd '$REMOTE_DIR' && PORT=$SMOKE_PORT .build/kbo-live-backend-macos/run-backend.command >/tmp/kbo-live-backend-$SMOKE_PORT.log 2>&1 & pid=\$!; for i in {1..20}; do if ! kill -0 \$pid 2>/dev/null; then cat /tmp/kbo-live-backend-$SMOKE_PORT.log; exit 1; fi; if curl -fsS --max-time 1 http://127.0.0.1:$SMOKE_PORT/health; then kill \$pid; wait \$pid 2>/dev/null || true; exit 0; fi; sleep 0.25; done; cat /tmp/kbo-live-backend-$SMOKE_PORT.log; kill \$pid 2>/dev/null || true; exit 1"
-scripts/kbo-live.sh:12:  ./scripts/kbo-live.sh run      Build and open the macOS app with game data
-scripts/kbo-live.sh:13:  ./scripts/kbo-live.sh live     Open the macOS app with a sample live game
-scripts/kbo-live.sh:14:  ./scripts/kbo-live.sh open     Build and open only the macOS app
-scripts/kbo-live.sh:15:  ./scripts/kbo-live.sh verify   Run local verification
-scripts/kbo-live.sh:16:  ./scripts/kbo-live.sh package  Build the Mac mini test package
 scripts/package-backend-macos.sh:6:OUTPUT_DIR="${ROOT_DIR}/.build/kbo-live-backend-macos"
 scripts/package-backend-macos.sh:7:TEMP_OUTPUT_DIR="${ROOT_DIR}/.build/kbo-live-backend-macos.tmp"
 scripts/package-backend-macos.sh:25:SOURCE_DB="${BACKEND_DIR}/.data/kbo-live.sqlite"
@@ -43,60 +23,79 @@ scripts/package-backend-macos.sh:59:KBO Live Backend macOS bundle
 scripts/package-macmini-runtime.sh:9:ARCHIVE_PATH="$OUT_DIR/kbo-live-macmini-runtime.tar.gz"
 scripts/package-macmini-runtime.sh:23:cp -R "$ROOT_DIR/.build/kbo-live-backend-macos" "$STAGING_DIR/.build/kbo-live-backend-macos"
 scripts/package-macmini-runtime.sh:27:chmod +x "$STAGING_DIR/.build/kbo-live-backend-macos/run-backend.command"
-scripts/fetch-team-brand-assets.sh:5:OUT_DIR="${ROOT_DIR}/KboLiveApp/Shared/TeamBrandAssets"
+docs/dev.md:3:이 문서는 Baseball LIVE KR를 직접 개발하거나 배포 준비를 확인할 때 필요한 명령만 모아둡니다. 앱을 실행해 보고 싶은 경우에는 README의 `./scripts/kbo-live.sh run`을 먼저 사용하세요.
+docs/dev.md:8:./scripts/kbo-live.sh run
+docs/dev.md:9:./scripts/kbo-live.sh live
+docs/dev.md:10:./scripts/kbo-live.sh open
+docs/dev.md:11:./scripts/kbo-live.sh verify
+docs/dev.md:12:./scripts/kbo-live.sh package
+docs/dev.md:101:/Users/suhohan/Projects/kbo-live/scripts/backend-start.sh
+docs/dev.md:109:./scripts/run-kbo-live-fixture-capture.sh 20260616
+docs/dev.md:139:SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/kbo-live ./scripts/deploy-macmini-runtime.sh
+backend-spike/src/services/liveTextEnrichment.ts:1:import { fetchKboLiveTextView } from '../clients/kboClient.js'
+backend-spike/src/services/liveTextEnrichment.ts:11:    const html = await fetchKboLiveTextView({
+scripts/kbo-live.sh:12:  ./scripts/kbo-live.sh run      Build and open the macOS app with game data
+scripts/kbo-live.sh:13:  ./scripts/kbo-live.sh live     Open the macOS app with a sample live game
+scripts/kbo-live.sh:14:  ./scripts/kbo-live.sh open     Build and open only the macOS app
+scripts/kbo-live.sh:15:  ./scripts/kbo-live.sh verify   Run local verification
+scripts/kbo-live.sh:16:  ./scripts/kbo-live.sh package  Build the Mac mini test package
+scripts/deploy-macmini-runtime.sh:6:REMOTE_DIR="${REMOTE_DIR:-/Users/suhohan/Projects/kbo-live}"
+scripts/deploy-macmini-runtime.sh:9:ARCHIVE_PATH="${ARCHIVE_PATH:-$ROOT_DIR/.build/transfer/kbo-live-macmini-runtime.tar.gz}"
+scripts/deploy-macmini-runtime.sh:15:scp "$ARCHIVE_PATH" "$SSH_TARGET:$REMOTE_DIR/kbo-live-macmini-runtime.tar.gz"
+scripts/deploy-macmini-runtime.sh:17:ssh "$SSH_TARGET" "cd '$REMOTE_DIR' && tar -xzf kbo-live-macmini-runtime.tar.gz && chmod +x scripts/run-macos-app-with-packaged-backend.sh .build/kbo-live-backend-macos/run-backend.command"
+scripts/deploy-macmini-runtime.sh:20:ssh "$SSH_TARGET" "cd '$REMOTE_DIR' && PORT=$SMOKE_PORT .build/kbo-live-backend-macos/run-backend.command >/tmp/kbo-live-backend-$SMOKE_PORT.log 2>&1 & pid=\$!; for i in {1..20}; do if ! kill -0 \$pid 2>/dev/null; then cat /tmp/kbo-live-backend-$SMOKE_PORT.log; exit 1; fi; if curl -fsS --max-time 1 http://127.0.0.1:$SMOKE_PORT/health; then kill \$pid; wait \$pid 2>/dev/null || true; exit 0; fi; sleep 0.25; done; cat /tmp/kbo-live-backend-$SMOKE_PORT.log; kill \$pid 2>/dev/null || true; exit 1"
+backend-spike/src/db/database.ts:11:  return resolve(process.cwd(), '.data/kbo-live.sqlite')
 backend-spike/package.json:2:  "name": "kbo-live-backend-spike",
+backend-spike/package-lock.json:2:  "name": "kbo-live-backend-spike",
+backend-spike/package-lock.json:8:      "name": "kbo-live-backend-spike",
+scripts/fetch-team-brand-assets.sh:5:OUT_DIR="${ROOT_DIR}/KboLiveApp/Shared/TeamBrandAssets"
 backend-spike/README.md:1:# KBO Live Backend Spike
 backend-spike/README.md:3:Fastify 기반 KBO Live backend spike 뼈대입니다.
 backend-spike/README.md:39:KBO_DB_PATH=.data/kbo-live.sqlite
 backend-spike/README.md:44:기본값은 `backend-spike/.data/kbo-live.sqlite`입니다. KBO source 응답은 `raw_sources` table에 checksum 기준으로 중복 저장을 방지하며 기록됩니다. 테스트 환경에서는 기본 비활성화되며, 임시 실행에서 DB 기록을 끄려면 `KBO_DB_DISABLED=1`, 테스트에서 명시적으로 켜려면 `KBO_DB_ENABLED=1`을 사용합니다.
 backend-spike/README.md:102:../scripts/run-kbo-live-fixture-capture.sh 20260616
 backend-spike/README.md:136:Swift 테스트 fixture(`Packages/KboLiveCore/Tests/.../today-games-response.json`)는 앱 DTO 안정성 검증용으로 유지합니다.
+backend-spike/src/clients/kboClient.ts:132:export async function fetchKboLiveTextView(input: LiveTextViewRequest): Promise<string> {
 KboLiveApp/iOS/BaseballLiveKRiOS.entitlements:7:		<string>group.com.suhohan.kbo-live</string>
-backend-spike/src/services/liveTextEnrichment.ts:1:import { fetchKboLiveTextView } from '../clients/kboClient.js'
-backend-spike/src/services/liveTextEnrichment.ts:11:    const html = await fetchKboLiveTextView({
-backend-spike/package-lock.json:2:  "name": "kbo-live-backend-spike",
-backend-spike/package-lock.json:8:      "name": "kbo-live-backend-spike",
+Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures/TodayGames/TodayGamesViewModel.swift:59:        let selectedTeamKey = "kbo-live.selected-team-id"
 KboLiveApp/Shared/WidgetGameSnapshotStore.swift:7:    static let appGroupIdentifier = "group.com.suhohan.kbo-live"
 KboLiveApp/Shared/WidgetGameSnapshotStore.swift:8:    static let snapshotKey = "kbo-live.widget.snapshot"
 KboLiveApp/Shared/WidgetGameSnapshotStore.swift:9:    static let lastUpdatedAtKey = "kbo-live.widget.snapshot-updated-at"
 backend-spike/tests/gameService.enrichment.test.ts:6:  fetchKboLiveTextView: vi.fn(),
 backend-spike/tests/gameService.enrichment.test.ts:39:    seedPitcherRecord(tempDirs, 'kbo-live-game-service-probable-')
 backend-spike/tests/gameService.enrichment.test.ts:56:    seedPitcherRecord(tempDirs, 'kbo-live-game-service-starters-', { teamId: 'HT', teamName: 'KIA' })
-Packages/BaseballLiveKRCore/Sources/BaseballLiveKRCore/App/BaseballLiveKREnvironment.swift:9:    public static let backendBaseURLDefaultsKey = "kbo-live.backend-base-url"
-Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures/TodayGames/TodayGamesViewModel.swift:59:        let selectedTeamKey = "kbo-live.selected-team-id"
-KboLiveApp/Shared/AppRuntime.swift:39:    private let latestReleaseURL = URL(string: "https://api.github.com/repos/suho-han/kbo-live/releases/latest")!
-KboLiveApp/Shared/AppRuntime.swift:40:    private let releasesPageURL = URL(string: "https://github.com/suho-han/kbo-live/releases")!
-KboLiveApp/Shared/BackendSettingsModel.swift:54:    private let presetKey = "kbo-live.backend-preset"
-backend-spike/src/clients/kboClient.ts:132:export async function fetchKboLiveTextView(input: LiveTextViewRequest): Promise<string> {
-Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures/TodayGames/MyTeamSelectionStore.swift:12:    init(defaults: UserDefaults = .standard, key: String = "kbo-live.selected-team-id") {
 KboLiveApp/Widget/BaseballLiveKRWidget.entitlements:7:		<string>group.com.suhohan.kbo-live</string>
 backend-spike/tests/routes.players.test.ts:24:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-player-routes-'))
-backend-spike/tests/liveTextEnrichment.test.ts:3:import { fetchKboLiveTextView } from '../src/clients/kboClient.js'
-backend-spike/tests/liveTextEnrichment.test.ts:8:  fetchKboLiveTextView: vi.fn()
-backend-spike/tests/liveTextEnrichment.test.ts:11:const mockLiveTextView = vi.mocked(fetchKboLiveTextView)
-backend-spike/tests/contract.test.ts:12:  'Packages/KboLiveCore/Tests/KboLiveCoreTests/Fixtures/live-test-game-response.json'
-backend-spike/tests/teamRecordRepository.test.ts:22:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-team-records-'))
-backend-spike/tests/gameService.cache.test.ts:9:  fetchKboLiveTextView: vi.fn(),
-backend-spike/tests/gameService.cache.test.ts:104:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-standings-fallback-'))
-backend-spike/tests/gameServiceTestSupport.ts:6:import { fetchKboGameDate, fetchKboGameList, fetchKboLiveTextView, fetchKboScheduleList, fetchKboTeamRankDailyPage } from '../src/clients/kboClient.js'
-backend-spike/tests/gameServiceTestSupport.ts:14:export const mockLiveTextView = vi.mocked(fetchKboLiveTextView)
-backend-spike/tests/monthScheduleSource.test.ts:6:  fetchKboLiveTextView: vi.fn(),
-backend-spike/tests/gameService.misc.test.ts:6:  fetchKboLiveTextView: vi.fn(),
-backend-spike/tests/rawSourceRepository.test.ts:23:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-db-'))
-backend-spike/tests/rawSourceRepository.test.ts:51:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-db-'))
-backend-spike/src/db/database.ts:11:  return resolve(process.cwd(), '.data/kbo-live.sqlite')
-backend-spike/tests/kboClient.test.ts:6:import { fetchKboGameDate, fetchKboGameList, fetchKboLiveTextView, KboSourceError } from '../src/clients/kboClient.js'
-backend-spike/tests/kboClient.test.ts:54:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-client-db-'))
-backend-spike/tests/kboClient.test.ts:82:    const html = await fetchKboLiveTextView({
-backend-spike/tests/kboClient.test.ts:94:    await expect(fetchKboLiveTextView({
-backend-spike/tests/liveTextMapper.test.ts:6:  it('returns the newest completed at-bat result from KBO LiveText HTML', () => {
+KboLiveApp/Shared/BackendSettingsModel.swift:54:    private let presetKey = "kbo-live.backend-preset"
+KboLiveApp/Shared/AppRuntime.swift:39:    private let latestReleaseURL = URL(string: "https://api.github.com/repos/suho-han/kbo-live/releases/latest")!
+KboLiveApp/Shared/AppRuntime.swift:40:    private let releasesPageURL = URL(string: "https://github.com/suho-han/kbo-live/releases")!
+Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures/TodayGames/MyTeamSelectionStore.swift:12:    init(defaults: UserDefaults = .standard, key: String = "kbo-live.selected-team-id") {
 KboLiveApp/Shared/BackendSettingsModel+Resolution.swift:44:        let storedPreset = defaults.string(forKey: "kbo-live.backend-preset")
 KboLiveApp/Shared/BackendSettingsModel+Resolution.swift:67:                ?? defaults.string(forKey: "kbo-live.backend-local-base-url")
 KboLiveApp/Shared/BackendSettingsModel+Resolution.swift:71:                ?? defaults.string(forKey: "kbo-live.backend-staging-base-url")
 KboLiveApp/Shared/BackendSettingsModel+Resolution.swift:75:                ?? defaults.string(forKey: "kbo-live.backend-production-base-url")
+Packages/BaseballLiveKRCore/Sources/BaseballLiveKRCore/App/BaseballLiveKREnvironment.swift:9:    public static let backendBaseURLDefaultsKey = "kbo-live.backend-base-url"
+backend-spike/tests/liveTextEnrichment.test.ts:3:import { fetchKboLiveTextView } from '../src/clients/kboClient.js'
+backend-spike/tests/liveTextEnrichment.test.ts:8:  fetchKboLiveTextView: vi.fn()
+backend-spike/tests/liveTextEnrichment.test.ts:11:const mockLiveTextView = vi.mocked(fetchKboLiveTextView)
+backend-spike/tests/contract.test.ts:12:  'Packages/KboLiveCore/Tests/KboLiveCoreTests/Fixtures/live-test-game-response.json'
+backend-spike/tests/monthScheduleSource.test.ts:6:  fetchKboLiveTextView: vi.fn(),
+backend-spike/tests/liveTextMapper.test.ts:6:  it('returns the newest completed at-bat result from KBO LiveText HTML', () => {
 backend-spike/tests/playerRecordRepository.test.ts:29:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-player-records-'))
 backend-spike/tests/playerRecordRepository.test.ts:138:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-probable-pitchers-'))
 backend-spike/tests/playerRecordRepository.test.ts:218:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-probable-pitcher-disable-'))
+backend-spike/tests/gameServiceTestSupport.ts:6:import { fetchKboGameDate, fetchKboGameList, fetchKboLiveTextView, fetchKboScheduleList, fetchKboTeamRankDailyPage } from '../src/clients/kboClient.js'
+backend-spike/tests/gameServiceTestSupport.ts:14:export const mockLiveTextView = vi.mocked(fetchKboLiveTextView)
+backend-spike/tests/rawSourceRepository.test.ts:23:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-db-'))
+backend-spike/tests/rawSourceRepository.test.ts:51:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-db-'))
+backend-spike/tests/kboClient.test.ts:6:import { fetchKboGameDate, fetchKboGameList, fetchKboLiveTextView, KboSourceError } from '../src/clients/kboClient.js'
+backend-spike/tests/kboClient.test.ts:54:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-client-db-'))
+backend-spike/tests/kboClient.test.ts:82:    const html = await fetchKboLiveTextView({
+backend-spike/tests/kboClient.test.ts:94:    await expect(fetchKboLiveTextView({
+backend-spike/tests/teamRecordRepository.test.ts:22:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-team-records-'))
+backend-spike/tests/gameService.cache.test.ts:9:  fetchKboLiveTextView: vi.fn(),
+backend-spike/tests/gameService.cache.test.ts:104:    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-standings-fallback-'))
+backend-spike/tests/gameService.misc.test.ts:6:  fetchKboLiveTextView: vi.fn(),
 KboLiveApp/Shared/TeamBrandAssets/manifest.json:2:  {"teamID":"HT","category":"logo","sourcePage":"https://tigers.co.kr/tigers/bi/intro","sourceURL":"https://tigers.co.kr/img/download/bi/initial-logo.jpg","filename":"logo__initial-logo.jpg","path":"KboLiveApp/Shared/TeamBrandAssets/HT/raw/logo__initial-logo.jpg","sha256":"52e943a7ca9e9bc2c404ab9ab4f3d6b5337a8dfed7b8d23d2f8c022bd46b9d75","bytes":15637,"contentType":"image/jpeg","fetchedAt":"2026-06-16T06:38:38Z","note":""},
 KboLiveApp/Shared/TeamBrandAssets/manifest.json:3:  {"teamID":"HT","category":"wordmark","sourcePage":"https://tigers.co.kr/tigers/bi/intro","sourceURL":"https://tigers.co.kr/img/download/bi/wordmark.jpg","filename":"wordmark__wordmark.jpg","path":"KboLiveApp/Shared/TeamBrandAssets/HT/raw/wordmark__wordmark.jpg","sha256":"94a0fa3ec5cc0612fc4c4eb42a3830224642d922383bc9f606dceba303426d1a","bytes":30772,"contentType":"image/jpeg","fetchedAt":"2026-06-16T06:38:39Z","note":""},
 KboLiveApp/Shared/TeamBrandAssets/manifest.json:4:  {"teamID":"HT","category":"emblem","sourcePage":"https://tigers.co.kr/tigers/bi/intro","sourceURL":"https://tigers.co.kr/img/download/emblem/emblem.jpg","filename":"emblem__emblem.jpg","path":"KboLiveApp/Shared/TeamBrandAssets/HT/raw/emblem__emblem.jpg","sha256":"446984ceb7a36a00b02712cad042a6419024d85c260362fbe2e86190b72214b5","bytes":25654,"contentType":"image/jpeg","fetchedAt":"2026-06-16T06:38:39Z","note":""},

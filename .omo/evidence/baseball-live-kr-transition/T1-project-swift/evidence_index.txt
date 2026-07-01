@@ -20,5 +20,6 @@ Manual QA / data artifacts:
 - residual_broad_search_post_t1.txt: remaining broad KboLive/kbo-live hits for integration/T2/T3/T4 classification.
 - dirty_worktree_probe.txt: dirty worktree baseline, including pre-existing unrelated files.
 - stale_state_probe.txt: main team state confirms bound A thread/cwd.
-- cleanup_receipt.txt: process/job cleanup check after verification.
+- cleanup_receipt.txt: post-verification process/job cleanup status; legacy xcodebuild PIDs are no longer running and no active verification processes remain.
 - shell_syntax_scripts.txt: bash -n passed for touched helper scripts.
+- code_review_programming_slop_audit.txt: explicit T1 code-review, programming, and remove-ai-slops audit requested by the gate.
