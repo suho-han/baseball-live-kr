@@ -392,23 +392,6 @@ private struct TeamLogoImage: View {
     @Environment(\.kboFontScale) private var fontScale
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 7, style: .continuous)
-                .fill(TeamColorResolver.color(forTeamID: teamID))
-
-            Text(String(teamID.trimmingCharacters(in: .whitespacesAndNewlines).prefix(2)).uppercased())
-                .font(KboTypographyToken.system(size: 13, weight: .black, scaledBy: fontScale))
-                .foregroundStyle(tokenColor)
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
-        }
-    }
-
-    private var tokenColor: Color {
-        if TeamColorResolver.usesLightForeground(forTeamID: teamID) {
-            return .white
-        }
-
-        return KboColorToken.textPrimary
+        TeamLogoTokenView(teamID: teamID, fallbackName: teamID, cornerRadius: 7)
     }
 }
