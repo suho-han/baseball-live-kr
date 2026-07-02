@@ -48,7 +48,7 @@ MVP 1차 범위:
 ## 3. 권장 루트 구조
 
 ```text
-kbo-live/
+baseball-live-kr/
 ├── KboLive.xcworkspace
 ├── BaseballLiveKRApp/
 │   ├── BaseballLiveKRApp.xcodeproj

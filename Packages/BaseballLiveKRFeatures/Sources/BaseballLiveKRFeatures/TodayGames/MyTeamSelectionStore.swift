@@ -7,7 +7,7 @@ protocol MyTeamSelectionStore: Sendable {
 
 struct UserDefaultsMyTeamSelectionStore: MyTeamSelectionStore, @unchecked Sendable {
     static let selectedTeamIDKey = "baseball-live-kr.selected-team-id"
-    static let legacySelectedTeamIDKey = "kbo-live.selected-team-id"
+    static let legacySelectedTeamIDKey = "baseball-live-kr.legacy-selected-team-id"
 
     private let defaults: UserDefaults
     private let key: String

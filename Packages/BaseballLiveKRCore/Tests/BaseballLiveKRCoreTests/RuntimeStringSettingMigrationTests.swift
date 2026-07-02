@@ -84,24 +84,24 @@ struct RuntimeStringSettingMigrationTests {
     @Test func environmentUsesNewValueBeforeLegacyValue() {
         let result = RuntimeStringSettingMigration.resolveEnvironmentValue(
             newName: "BASEBALL_LIVE_KR_BASE_URL",
-            legacyName: "KBO_LIVE_BASE_URL",
+            legacyName: "BASEBALL_LIVE_KR_LEGACY_BASE_URL",
             environment: [
-                "BASEBALL_LIVE_KR_BASE_URL": "https://api.suhohan.kr",
-                "KBO_LIVE_BASE_URL": "http://127.0.0.1:17361"
+                "BASEBALL_LIVE_KR_BASE_URL": "https://api.example.test",
+                "BASEBALL_LIVE_KR_LEGACY_BASE_URL": "http://127.0.0.1:17361"
             ],
             isValid: { $0.hasPrefix("https://") || $0.hasPrefix("http://") }
         )
 
-        #expect(result.value == "https://api.suhohan.kr")
+        #expect(result.value == "https://api.example.test")
     }
 
     @Test func malformedNewEnvironmentFallsBackToValidLegacyValue() {
         let result = RuntimeStringSettingMigration.resolveEnvironmentValue(
             newName: "BASEBALL_LIVE_KR_BASE_URL",
-            legacyName: "KBO_LIVE_BASE_URL",
+            legacyName: "BASEBALL_LIVE_KR_LEGACY_BASE_URL",
             environment: [
                 "BASEBALL_LIVE_KR_BASE_URL": "not a url",
-                "KBO_LIVE_BASE_URL": "http://127.0.0.1:17361"
+                "BASEBALL_LIVE_KR_LEGACY_BASE_URL": "http://127.0.0.1:17361"
             ],
             isValid: { $0.hasPrefix("https://") || $0.hasPrefix("http://") }
         )

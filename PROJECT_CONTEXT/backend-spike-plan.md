@@ -102,7 +102,7 @@
 backend spike는 앱 repo 안에 같이 두되, 독립 실행 가능하게 분리한다.
 
 ```text
-kbo-live/
+baseball-live-kr/
 ├── backend-spike/
 │   ├── package.json
 │   ├── tsconfig.json

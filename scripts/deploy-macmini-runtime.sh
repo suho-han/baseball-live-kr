@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SSH_TARGET="${SSH_TARGET:-suhohan@100.114.89.25}"
-REMOTE_DIR="${REMOTE_DIR:-/Users/suhohan/Projects/kbo-live}"
+REMOTE_DIR="${REMOTE_DIR:-/Users/suhohan/Projects/baseball-live-kr}"
 PORT="${PORT:-17361}"
 SMOKE_PORT="${SMOKE_PORT:-3019}"
 ARCHIVE_PATH="${ARCHIVE_PATH:-$ROOT_DIR/.build/transfer/baseball-live-kr-macmini-runtime.tar.gz}"

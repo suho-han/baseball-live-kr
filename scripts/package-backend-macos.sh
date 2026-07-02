@@ -11,7 +11,17 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v npm >/dev/null 2>&1; then
+  echo "npm is required to build the packaged backend." >&2
+  exit 1
+fi
+
 cd "${BACKEND_DIR}"
+
+if [[ ! -x "${BACKEND_DIR}/node_modules/.bin/tsc" || "${BACKEND_DIR}/package-lock.json" -nt "${BACKEND_DIR}/node_modules/.package-lock.json" ]]; then
+  npm ci
+fi
+
 npm run build
 
 rm -rf "${TEMP_OUTPUT_DIR}"

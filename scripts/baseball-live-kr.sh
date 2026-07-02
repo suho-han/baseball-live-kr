@@ -9,11 +9,13 @@ print_help() {
 Baseball LIVE KR helper
 
 Usage:
-  ./scripts/kbo-live.sh run      Build and open the macOS app with game data
-  ./scripts/kbo-live.sh live     Open the macOS app with a sample live game
-  ./scripts/kbo-live.sh open     Build and open only the macOS app
-  ./scripts/kbo-live.sh verify   Run local verification
-  ./scripts/kbo-live.sh package  Build the Mac mini test package
+  ./scripts/baseball-live-kr.sh run      Build and open the macOS app with game data
+  ./scripts/baseball-live-kr.sh live     Open the macOS app with a sample live game
+  ./scripts/baseball-live-kr.sh open     Build and open only the macOS app
+  ./scripts/baseball-live-kr.sh verify   Run local verification
+  ./scripts/baseball-live-kr.sh package  Build the Mac mini test package
+  ./scripts/baseball-live-kr.sh deploy-backend
+                                Build and deploy the remote backend service
 
 Environment:
   FORCE_RESTART=1   Restart the local game data process
@@ -52,6 +54,9 @@ case "$command" in
   package)
     build_macos_app
     "$ROOT_DIR/scripts/package-macmini-runtime.sh"
+    ;;
+  deploy-backend)
+    "$ROOT_DIR/scripts/deploy-remote-backend.sh"
     ;;
   help|-h|--help)
     print_help

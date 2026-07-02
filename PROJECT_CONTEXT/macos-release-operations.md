@@ -71,7 +71,7 @@ runtime archive를 Mac mini에 업로드하고 backend health smoke를 실행:
 
 ```bash
 SSH_TARGET=suhohan@100.114.89.25 \
-REMOTE_DIR=/Users/suhohan/Projects/kbo-live \
+REMOTE_DIR=/Users/suhohan/Projects/baseball-live-kr \
 PORT=3019 \
 ./scripts/deploy-macmini-runtime.sh
 ```
@@ -79,11 +79,44 @@ PORT=3019 \
 원격 실행:
 
 ```bash
-cd /Users/suhohan/Projects/kbo-live
+cd /Users/suhohan/Projects/baseball-live-kr
 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
 ```
 
-## 6. Signing And Notarization
+## 6. Remote Backend Server Deploy
+
+backend만 원격 서버에 올리고 `systemd --user` service로 자동 시작/재시작한다:
+
+```bash
+SSH_TARGET=suhohan@140.245.66.62 \
+REMOTE_DIR=/home/suhohan/baseball-live-kr-backend \
+PORT=17361 \
+./scripts/baseball-live-kr.sh deploy-backend
+```
+
+배포 루틴:
+
+- `backend-spike` 의존성이 없거나 오래됐으면 `npm ci` 실행
+- `npm run build`로 `dist` 생성
+- `dist`, `package.json`, `package-lock.json`, `run-backend.command`를 archive로 묶음
+- 원격 서버에서 `npm ci --omit=dev` 실행
+- `~/.config/systemd/user/baseball-live-kr-backend.service` 설치
+- service restart 후 `http://127.0.0.1:17361/v1/health` smoke 실행
+
+원격 서버에서 상태 확인:
+
+```bash
+systemctl --user status baseball-live-kr-backend.service
+journalctl --user -u baseball-live-kr-backend.service -f
+```
+
+명령만 확인하는 dry run:
+
+```bash
+DRY_RUN=1 ./scripts/deploy-remote-backend.sh
+```
+
+## 7. Signing And Notarization
 
 현재 상태:
 
@@ -133,7 +166,7 @@ Credentials required:
 - notarization 자동화 위치
 - Sparkle 또는 자체 업데이트 채널 도입 여부
 
-## 7. Versioning And Changelog
+## 8. Versioning And Changelog
 
 현재 XcodeGen 기준:
 
@@ -146,7 +179,7 @@ Credentials required:
 - 기능 변경은 `feat`, 버그 수정은 `fix`, 운영 스크립트 변경은 `chore` prefix로 changelog 후보를 남긴다.
 - remote smoke를 통과한 archive만 공유 대상으로 삼는다.
 
-## 8. Pre-release Checklist
+## 9. Pre-release Checklist
 
 - backend `npm run typecheck` 통과
 - backend `npm test` 통과
@@ -157,5 +190,6 @@ Credentials required:
 - archive 안에 `BaseballLiveKR.app`, packaged backend, run script 포함
 - local `PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh` 실행 가능
 - remote `deploy-macmini-runtime.sh` health smoke 통과
+- remote `deploy-remote-backend.sh` service restart와 health smoke 통과
 - 실제 경기 데이터 또는 live fixture로 메뉴바/메인 화면 확인
 - release 후보는 `TeamBrandAssets`, `TeamWordmarks`, `TeamLogos`, logo, wordmark, emblem, mascot, team-ID PNG 파일명을 포함하지 않음

@@ -99,7 +99,7 @@ npm run poll -- --date 2026-06-10 --interval 15 --iterations 20 --save-raw
 repo root wrapper:
 
 ```bash
-../scripts/run-kbo-live-fixture-capture.sh 20260616
+../scripts/run-baseball-live-kr-fixture-capture.sh 20260616
 ```
 
 기본값:

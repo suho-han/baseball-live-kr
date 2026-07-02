@@ -52,7 +52,7 @@ final class BackendSettingsModel: ObservableObject {
 
     private let defaults: UserDefaults
     private let presetKey = "baseball-live-kr.backend-preset"
-    private let legacyPresetKey = "kbo-live.backend-preset"
+    private let legacyPresetKey = "baseball-live-kr.legacy-backend-preset"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

@@ -48,7 +48,7 @@ Mac에서 아래가 모두 통과하면 1차 성공으로 본다.
 ### Step 1. 저장소 최신화
 
 ```bash
-cd /path/to/kbo-live
+cd /path/to/baseball-live-kr
 git pull --ff-only origin main
 git log --oneline -3
 ```
@@ -80,7 +80,7 @@ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 ### Step 3. Core package build
 
 ```bash
-cd /path/to/kbo-live/Packages/BaseballLiveKRCore
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRCore
 swift package reset
 swift build
 ```
@@ -97,7 +97,7 @@ swift build
 ### Step 4. Core package test
 
 ```bash
-cd /path/to/kbo-live/Packages/BaseballLiveKRCore
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRCore
 swift test
 ```
 
@@ -114,7 +114,7 @@ swift test
 ### Step 5. DesignSystem package build
 
 ```bash
-cd /path/to/kbo-live/Packages/BaseballLiveKRDesignSystem
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRDesignSystem
 swift package reset
 swift build
 ```
@@ -142,18 +142,18 @@ Finder 또는 Xcode로 아래 중 하나를 연다.
 
 ### Core 한 번에
 ```bash
-cd /path/to/kbo-live/Packages/BaseballLiveKRCore && swift package reset && swift build && swift test
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRCore && swift package reset && swift build && swift test
 ```
 
 ### DesignSystem 한 번에
 ```bash
-cd /path/to/kbo-live/Packages/BaseballLiveKRDesignSystem && swift package reset && swift build
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRDesignSystem && swift package reset && swift build
 ```
 
 ### 둘 다 순차 실행
 ```bash
-cd /path/to/kbo-live/Packages/BaseballLiveKRCore && swift package reset && swift build && swift test && \
-cd /path/to/kbo-live/Packages/BaseballLiveKRDesignSystem && swift package reset && swift build
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRCore && swift package reset && swift build && swift test && \
+cd /path/to/baseball-live-kr/Packages/BaseballLiveKRDesignSystem && swift package reset && swift build
 ```
 
 ---

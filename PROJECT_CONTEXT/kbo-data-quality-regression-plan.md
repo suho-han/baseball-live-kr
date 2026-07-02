@@ -14,7 +14,7 @@ KBO 공식 웹 원천은 공개 개발자 API가 아니므로 필드명, 상태 
 
 이미 구현된 기준:
 
-- `scripts/run-kbo-live-fixture-capture.sh`로 live polling fixture를 수집한다.
+- `scripts/run-baseball-live-kr-fixture-capture.sh`로 live polling fixture를 수집한다.
 - `backend-spike/fixtures/catalog/`에 장기 보관 edge-case fixture를 raw + normalized 쌍으로 승격한다.
 - backend contract test가 `makeTestLiveGame` 결과와 Swift DTO fixture `live-test-game-response.json`의 JSON shape 일치를 검증한다.
 - Swift Core DTO test가 live fixture의 score/count/base/current/teamRecords/boxScore/recentPlay decode와 mapping을 검증한다.
@@ -61,13 +61,13 @@ backend-spike/fixtures/catalog/<status>/<YYYYMMDD>-<gameId>.json
 경기 중 live fixture 수집:
 
 ```bash
-./scripts/run-kbo-live-fixture-capture.sh 20260620
+./scripts/run-baseball-live-kr-fixture-capture.sh 20260620
 ```
 
 권장 환경변수:
 
 ```bash
-INTERVAL_SECONDS=30 ITERATIONS=480 ./scripts/run-kbo-live-fixture-capture.sh 20260620
+INTERVAL_SECONDS=30 ITERATIONS=480 ./scripts/run-baseball-live-kr-fixture-capture.sh 20260620
 ```
 
 수집 후 확인:

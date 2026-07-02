@@ -19,7 +19,7 @@ describe('teamRecordRepository', () => {
 
   it('upserts team season records and keeps one row per season date team', () => {
     process.env.BASEBALL_LIVE_KR_DB_ENABLED = '1'
-    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-team-records-'))
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-team-records-'))
     tempDirs.push(dir)
     const db = openDatabase(join(dir, 'test.sqlite'))
 

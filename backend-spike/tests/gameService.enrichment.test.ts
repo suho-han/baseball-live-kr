@@ -36,7 +36,7 @@ describe('gameService enrichment', () => {
   })
 
   it('loads source endpoints in KBO date format and enriches games with schedule metadata', async () => {
-    seedPitcherRecord(tempDirs, 'kbo-live-game-service-probable-')
+    seedPitcherRecord(tempDirs, 'baseball-live-kr-game-service-probable-')
 
     const result = await getTodayGames(TEST_INPUT_DATE)
 
@@ -53,7 +53,7 @@ describe('gameService enrichment', () => {
   })
 
   it('enriches probable starter records when the live source includes named starters', async () => {
-    seedPitcherRecord(tempDirs, 'kbo-live-game-service-starters-', { teamId: 'HT', teamName: 'KIA' })
+    seedPitcherRecord(tempDirs, 'baseball-live-kr-game-service-starters-', { teamId: 'HT', teamName: 'KIA' })
     mockGameList.mockResolvedValue(buildStarterGameList())
     mockScheduleList.mockResolvedValue(buildStarterScheduleList())
 
