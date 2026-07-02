@@ -908,23 +908,10 @@ private struct TeamStandingLogoCellView: View {
             if isHeader {
                 Color.clear
             } else {
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(accentColor.opacity(0.18))
-                    .overlay {
-                        Text(teamToken)
-                            .font(KboTypographyToken.system(size: 12, weight: .semibold, scaledBy: fontScale))
-                            .foregroundStyle(accentColor)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                    }
+                TeamLogoTokenView(teamID: teamID, fallbackName: "", cornerRadius: 6)
             }
         }
         .frame(width: 26, height: 26)
-    }
-
-    private var teamToken: String {
-        guard let teamID else { return "" }
-        return String(teamID.trimmingCharacters(in: .whitespacesAndNewlines).prefix(2)).uppercased()
     }
 }
 

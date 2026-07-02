@@ -72,30 +72,95 @@ public struct TeamBadgeView: View {
 
     @ViewBuilder
     private var teamLogoView: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(accentColor)
-
-            Text(teamToken)
-                .font(KboTypographyToken.system(size: max(9, logoSize * 0.42), weight: .black, scaledBy: fontScale))
-                .foregroundStyle(teamTokenColor)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
+        TeamLogoTokenView(teamID: teamID, fallbackName: shortName)
         .frame(width: logoSize, height: logoSize)
     }
+}
 
-    private var teamToken: String {
-        let source = teamID?.trimmingCharacters(in: .whitespacesAndNewlines)
-        ?? shortName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return String(source.prefix(2)).uppercased()
+public struct TeamLogoTokenView: View {
+    private let teamID: String?
+    private let fallbackName: String
+    private let cornerRadius: CGFloat
+    private let borderWidth: CGFloat
+    @Environment(\.kboFontScale) private var fontScale
+
+    public init(
+        teamID: String?,
+        fallbackName: String = "",
+        cornerRadius: CGFloat = 6,
+        borderWidth: CGFloat = 1
+    ) {
+        self.teamID = teamID
+        self.fallbackName = fallbackName
+        self.cornerRadius = cornerRadius
+        self.borderWidth = borderWidth
     }
 
-    private var teamTokenColor: Color {
-        guard let teamID, TeamColorResolver.usesLightForeground(forTeamID: teamID) else {
-            return KboColorToken.textPrimary
-        }
+    public var body: some View {
+        GeometryReader { proxy in
+            let side = min(proxy.size.width, proxy.size.height)
+            let style = TeamColorResolver.logoTokenStyle(forTeamID: teamID, fallbackName: fallbackName)
 
-        return .white
+            ZStack {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(style.background)
+
+                tokenGlyph(style: style, side: side)
+                    .frame(width: side * 0.72, height: side * 0.72)
+                    .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(style.stroke, lineWidth: borderWidth)
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+    }
+
+    @ViewBuilder
+    private func tokenGlyph(style: TeamColorResolver.LogoTokenStyle, side: CGFloat) -> some View {
+        if style.letter == "K" {
+            StylizedK()
+                .stroke(style.stroke, style: StrokeStyle(lineWidth: max(1.2, side * 0.075), lineCap: .round, lineJoin: .round))
+                .overlay {
+                    StylizedK()
+                        .stroke(style.fill, style: StrokeStyle(lineWidth: max(0.8, side * 0.048), lineCap: .round, lineJoin: .round))
+                }
+        } else {
+            outlinedText(style: style, side: side)
+        }
+    }
+
+    private func outlinedText(style: TeamColorResolver.LogoTokenStyle, side: CGFloat) -> some View {
+        Text(style.letter)
+            .font(KboTypographyToken.system(size: max(11, side * 0.62), weight: .black, scaledBy: fontScale))
+            .foregroundStyle(style.fill)
+            .lineLimit(1)
+            .minimumScaleFactor(0.55)
+            .shadow(color: style.stroke, radius: 0, x: 1, y: 0)
+            .shadow(color: style.stroke, radius: 0, x: -1, y: 0)
+            .shadow(color: style.stroke, radius: 0, x: 0, y: 1)
+            .shadow(color: style.stroke, radius: 0, x: 0, y: -1)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+    }
+}
+
+private struct StylizedK: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let leftX = rect.minX + rect.width * 0.25
+        let centerX = rect.minX + rect.width * 0.48
+        let rightX = rect.minX + rect.width * 0.78
+        let topY = rect.minY + rect.height * 0.08
+        let midY = rect.midY
+        let bottomY = rect.minY + rect.height * 0.92
+
+        path.move(to: CGPoint(x: leftX, y: topY))
+        path.addLine(to: CGPoint(x: leftX, y: bottomY))
+        path.move(to: CGPoint(x: rightX, y: topY))
+        path.addLine(to: CGPoint(x: centerX, y: midY))
+        path.addLine(to: CGPoint(x: rightX, y: bottomY))
+
+        return path
     }
 }

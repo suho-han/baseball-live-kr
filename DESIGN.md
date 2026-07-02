@@ -87,11 +87,11 @@ All spacing derives from a 4pt base.
 
 ### TeamBadgeView
 
-- Structure: optional team logo plus short team name in a pill.
+- Structure: white team logo token plus short team name in a pill.
 - Variants: normal and highlighted.
 - Spacing: `KboSpacingToken.small` horizontal/inline spacing, 6pt vertical compact padding.
 - States: normal and highlighted differ by fill opacity and stroke width.
-- Accessibility: text contrast must switch to white for dark team primary colors.
+- Accessibility: token glyph fill and outline use two team/logo colors while the token background stays white; K-shaped tokens use a custom vector K so the outline does not cover the letter.
 - Motion: no intrinsic motion.
 
 ### KboGlassPanel
