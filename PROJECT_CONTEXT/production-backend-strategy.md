@@ -156,7 +156,7 @@ production backend로 승격할 것:
 - `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`은 staging/production preset의 초기 URL로 사용한다.
 - 현재 앱의 내장 local/staging 기본 URL은 `http://127.0.0.1:17361`이다.
 - 현재 앱의 내장 production 기본 URL은 `http://140.245.66.62:17361`이다.
-- `suhohan.kr` 기반 staging/production URL 전환은 향후 배포 계획에서 처리한다.
+- 퍼블릭 도메인 기반 staging/production URL 전환은 향후 배포 계획에서 처리한다.
 - 별도 `custom` preset은 두지 않는다. 각 preset의 URL 입력값을 저장할 수 있으므로 임시 endpoint 검증은 선택한 preset의 URL override로 처리한다.
 
 권장 config:
