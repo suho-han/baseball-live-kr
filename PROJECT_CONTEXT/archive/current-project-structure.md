@@ -1,6 +1,6 @@
 # Current Project Structure
 
-이 문서는 2026-06-13 기준 `kbo-live` 저장소의 실제 구성과 빌드 진입점을 정리한 현재 시점 스냅샷이다.
+이 문서는 2026-06-13 기준 `baseball-live-kr` 저장소의 실제 구성과 빌드 진입점을 정리한 현재 시점 스냅샷이다.
 
 ## 목적
 
@@ -81,16 +81,16 @@ BaseballLiveKRApp targets
 - `BaseballLiveKRiOS`
   - iOS application target
   - product name: `BaseballLiveKRiOS`
-  - bundle id: `com.suhohan.kbo-live.ios`
+  - bundle id: `kr.suhohan.baseballlivekr.ios`
   - Live Activities 활성화
 - `BaseballLiveKRmacOS`
   - macOS application target
   - product name: `BaseballLiveKRApp`
-  - bundle id: `com.suhohan.kbo-live.macos`
+  - bundle id: `kr.suhohan.baseballlivekr.macos`
   - Menu Bar 앱 진입점 포함
 - `BaseballLiveKRWidgetExtension`
   - iOS widget extension target
-  - bundle id: `com.suhohan.kbo-live.ios.widget`
+  - bundle id: `kr.suhohan.baseballlivekr.ios.widget`
   - Today widget + Live Activity widget 포함
 
 배포 타깃:

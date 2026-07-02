@@ -44,7 +44,7 @@ extension BackendSettingsModel {
         let storedPreset = RuntimeStringSettingMigration.resolve(
             store: defaults,
             newKey: "baseball-live-kr.backend-preset",
-            legacyKey: "kbo-live.backend-preset"
+            legacyKey: "baseball-live-kr.legacy-backend-preset"
         ).value
             .flatMap(BackendPreset.init(rawValue:)) ?? defaultPreset
         let preset = resolvedPreset(from: storedPreset)
@@ -71,7 +71,7 @@ extension BackendSettingsModel {
                 ?? migratedDefaultsString(
                     defaults: defaults,
                     newKey: "baseball-live-kr.backend-local-base-url",
-                    legacyKey: "kbo-live.backend-local-base-url"
+                    legacyKey: "baseball-live-kr.legacy-backend-local-base-url"
                 )
                 ?? defaultBaseURLString
         case .staging:
@@ -82,7 +82,7 @@ extension BackendSettingsModel {
                 ?? migratedDefaultsString(
                     defaults: defaults,
                     newKey: "baseball-live-kr.backend-staging-base-url",
-                    legacyKey: "kbo-live.backend-staging-base-url"
+                    legacyKey: "baseball-live-kr.legacy-backend-staging-base-url"
                 )
                 ?? defaultStagingBaseURLString
         case .production:
@@ -93,7 +93,7 @@ extension BackendSettingsModel {
                 ?? migratedDefaultsString(
                     defaults: defaults,
                     newKey: "baseball-live-kr.backend-production-base-url",
-                    legacyKey: "kbo-live.backend-production-base-url"
+                    legacyKey: "baseball-live-kr.legacy-backend-production-base-url"
                 )
                 ?? productionBaseURLString
         }

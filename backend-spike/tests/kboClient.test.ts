@@ -51,7 +51,7 @@ describe('kboClient', () => {
   it('stores successful source responses when DB persistence is enabled', async () => {
     delete process.env.BASEBALL_LIVE_KR_DB_DISABLED
     process.env.BASEBALL_LIVE_KR_DB_ENABLED = '1'
-    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-client-db-'))
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-client-db-'))
     tempDirs.push(dir)
     process.env.BASEBALL_LIVE_KR_DB_PATH = join(dir, 'test.sqlite')
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({

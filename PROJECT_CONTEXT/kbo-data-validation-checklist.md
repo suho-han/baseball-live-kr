@@ -90,7 +90,7 @@ Linux host에는 Swift toolchain이 없으므로 Swift 검증은 Mac-mini에서 
 경기 진행 중에는 polling fixture를 수집한다.
 
 ```bash
-./scripts/run-kbo-live-fixture-capture.sh <YYYYMMDD>
+./scripts/run-baseball-live-kr-fixture-capture.sh <YYYYMMDD>
 ```
 
 수집물:

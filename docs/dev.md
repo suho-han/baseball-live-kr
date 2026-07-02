@@ -1,15 +1,16 @@
 # 개발 및 검증
 
-이 문서는 Baseball LIVE KR을 직접 개발하거나 배포 준비를 확인할 때 필요한 명령만 모아둡니다. 앱을 실행해 보고 싶은 경우에는 README의 `./scripts/kbo-live.sh run`을 먼저 사용하세요.
+이 문서는 Baseball LIVE KR을 직접 개발하거나 배포 준비를 확인할 때 필요한 명령만 모아둡니다. 앱을 실행해 보고 싶은 경우에는 README의 `./scripts/baseball-live-kr.sh run`을 먼저 사용하세요.
 
 ## 빠른 명령
 
 ```bash
-./scripts/kbo-live.sh run
-./scripts/kbo-live.sh live
-./scripts/kbo-live.sh open
-./scripts/kbo-live.sh verify
-./scripts/kbo-live.sh package
+./scripts/baseball-live-kr.sh run
+./scripts/baseball-live-kr.sh live
+./scripts/baseball-live-kr.sh open
+./scripts/baseball-live-kr.sh verify
+./scripts/baseball-live-kr.sh package
+./scripts/baseball-live-kr.sh deploy-backend
 ```
 
 ## 전체 로컬 검증
@@ -69,10 +70,14 @@ xcodebuild -scheme BaseballLiveKRiOS -project BaseballLiveKR.xcodeproj -destinat
 macOS 앱 기본 동작:
 
 - `BASEBALL_LIVE_KR_BASE_URL`을 지정하지 않으면 앱 설정 또는 `http://127.0.0.1:17361`의 경기 데이터를 사용합니다.
+- 현재 내장 `Local`, `Staging` preset의 기본 URL은 `http://127.0.0.1:17361`입니다.
+- 현재 내장 `Production` preset의 기본 URL은 `http://140.245.66.62:17361`입니다.
+- macOS 앱은 `suhohan.kr` HTTPS 전환 전까지 현재 HTTP backend 접속을 위해 ATS 예외를 포함합니다.
 - 앱은 기본적으로 최신 경기 정보용 주소를 호출합니다.
 - iOS/macOS 앱의 설정 화면에서 `Local`, `Staging`, `Production` 데이터 주소를 선택하고 저장할 수 있습니다.
 - `BASEBALL_LIVE_KR_BASE_URL` 환경변수가 있으면 앱 설정값보다 우선합니다.
 - `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`을 지정하면 설정 화면의 Staging/Production preset 초기 URL로 사용합니다.
+- `suhohan.kr` 기반 production URL 전환은 향후 배포 계획으로 둡니다.
 
 ## 데이터 서버만 실행
 
@@ -98,7 +103,7 @@ tail -f backend-spike/logs/backend.log
 Xcode 실행 전에 자동으로 백엔드를 켜고 싶으면 scheme의 `Run > Pre-actions`에 아래 스크립트를 넣습니다.
 
 ```bash
-/Users/suhohan/Projects/kbo-live/scripts/backend-start.sh
+/Users/suhohan/Projects/baseball-live-kr/scripts/backend-start.sh
 ```
 
 ## 테스트용 경기 데이터 수집
@@ -106,7 +111,7 @@ Xcode 실행 전에 자동으로 백엔드를 켜고 싶으면 scheme의 `Run > 
 경기 중 상황을 나중에 다시 확인할 수 있도록 저장:
 
 ```bash
-./scripts/run-kbo-live-fixture-capture.sh 20260616
+./scripts/run-baseball-live-kr-fixture-capture.sh 20260616
 ```
 
 저장 위치:
@@ -136,7 +141,22 @@ Mac mini 테스트용 실행 파일 묶기:
 Mac mini로 올리고 기본 실행 확인까지 진행:
 
 ```bash
-SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/kbo-live ./scripts/deploy-macmini-runtime.sh
+SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/baseball-live-kr ./scripts/deploy-macmini-runtime.sh
+```
+
+원격 backend 서버에 systemd user service로 자동 배포:
+
+```bash
+SSH_TARGET=suhohan@140.245.66.62 \
+REMOTE_DIR=/home/suhohan/baseball-live-kr-backend \
+PORT=17361 \
+./scripts/baseball-live-kr.sh deploy-backend
+```
+
+원격에 쓰기 전에 로컬에서 실행될 명령만 확인:
+
+```bash
+DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 ```
 
 0.1.0 배포 준비 계획:

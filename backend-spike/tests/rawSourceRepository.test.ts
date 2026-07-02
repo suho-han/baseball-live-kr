@@ -21,7 +21,7 @@ describe('rawSourceRepository', () => {
 
   it('runs migrations and stores deduplicated raw source bodies', () => {
     process.env.BASEBALL_LIVE_KR_DB_ENABLED = '1'
-    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-db-'))
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-db-'))
     tempDirs.push(dir)
     const db = openDatabase(join(dir, 'test.sqlite'))
 
@@ -49,7 +49,7 @@ describe('rawSourceRepository', () => {
 
   it('skips persistence when DB is disabled', () => {
     process.env.BASEBALL_LIVE_KR_DB_DISABLED = '1'
-    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-db-'))
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-db-'))
     tempDirs.push(dir)
     const db = openDatabase(join(dir, 'test.sqlite'))
 

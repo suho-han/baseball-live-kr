@@ -21,7 +21,7 @@ describe('games routes players', () => {
 
   it('returns player search and season records through v1 player routes', async () => {
     process.env.BASEBALL_LIVE_KR_DB_ENABLED = '1'
-    const dir = mkdtempSync(join(tmpdir(), 'kbo-live-player-routes-'))
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-player-routes-'))
     tempDirs.push(dir)
     process.env.BASEBALL_LIVE_KR_DB_PATH = join(dir, 'test.sqlite')
     upsertBattingSeasonRecords('20260618', [{
