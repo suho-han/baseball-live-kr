@@ -85,14 +85,6 @@ final class BackendSettingsModel: ObservableObject {
         GameFeedClient.live(baseURL: effectiveBaseURL)
     }
 
-    func hasConfiguredBaseURL(for preset: BackendPreset) -> Bool {
-        Self.baseURLString(for: preset, defaults: defaults) != nil
-    }
-
-    func baseURLDescription(for preset: BackendPreset) -> String {
-        Self.baseURLString(for: preset, defaults: defaults) ?? "URL 미설정"
-    }
-
     func isPresetSelectable(_ preset: BackendPreset) -> Bool {
         Self.presetPolicy.isSelectable(preset)
     }

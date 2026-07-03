@@ -1,6 +1,8 @@
 import Foundation
 #if canImport(AppKit)
 import AppKit
+#elseif canImport(UIKit)
+import UIKit
 #endif
 #if canImport(BaseballLiveKRCore)
 import BaseballLiveKRCore
@@ -37,6 +39,7 @@ final class AppUpdateCheckModel: ObservableObject {
     }
 
     private let latestReleaseURL = URL(string: "https://api.github.com/repos/suho-han/baseball-live-kr/releases/latest")!
+    private let repositoryPageURL = URL(string: "https://github.com/suho-han/baseball-live-kr")!
     private let releasesPageURL = URL(string: "https://github.com/suho-han/baseball-live-kr/releases")!
     private var releasePageURL: URL?
     private var hasCheckedThisLaunch = false
@@ -51,6 +54,15 @@ final class AppUpdateCheckModel: ObservableObject {
         }
 
         return Self.lastCheckedFormatter.string(from: lastCheckedAt)
+    }
+
+    var currentVersionText: String {
+        guard currentBuildNumber.isEmpty == false,
+              currentBuildNumber != currentVersion else {
+            return currentVersion
+        }
+
+        return "\(currentVersion) (\(currentBuildNumber))"
     }
 
     func checkOnLaunch() async {
@@ -111,13 +123,27 @@ final class AppUpdateCheckModel: ObservableObject {
 
     func openReleasePage() {
         guard let releasePageURL else { return }
+        openURL(releasePageURL)
+    }
+
+    func openRepositoryPage() {
+        openURL(repositoryPageURL)
+    }
+
+    private func openURL(_ url: URL) {
 #if canImport(AppKit)
-        NSWorkspace.shared.open(releasePageURL)
+        NSWorkspace.shared.open(url)
+#elseif canImport(UIKit)
+        UIApplication.shared.open(url)
 #endif
     }
 
     private var currentVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
+    }
+
+    private var currentBuildNumber: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
     }
 
     private func fetchLatestRelease() async throws -> GitHubRelease {

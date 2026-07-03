@@ -7,6 +7,7 @@ OUT_DIR="${OUT_DIR:-$ROOT_DIR/.build/transfer}"
 STAGING_DIR="${ROOT_DIR}/.build/remote-backend"
 ARCHIVE_PATH="${ARCHIVE_PATH:-$OUT_DIR/baseball-live-kr-backend-server.tar.gz}"
 SSH_TARGET="${SSH_TARGET:-suhohan@140.245.66.62}"
+SSH_PORT="${SSH_PORT:-22}"
 REMOTE_DIR="${REMOTE_DIR:-/home/suhohan/baseball-live-kr-backend}"
 SERVICE_NAME="${SERVICE_NAME:-baseball-live-kr-backend}"
 PORT="${PORT:-17361}"
@@ -29,11 +30,11 @@ remote_sh() {
   local script="$1"
 
   if [[ "${DRY_RUN}" == "1" ]]; then
-    printf '+ ssh %q %q\n' "${SSH_TARGET}" "${script}"
+    printf '+ ssh -p %q %q %q\n' "${SSH_PORT}" "${SSH_TARGET}" "${script}"
     return 0
   fi
 
-  ssh "${SSH_TARGET}" "${script}"
+  ssh -p "${SSH_PORT}" "${SSH_TARGET}" "${script}"
 }
 
 if ! command -v node >/dev/null 2>&1; then
@@ -67,6 +68,10 @@ set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ -d "${HOME}/.hermes/node/bin" ]]; then
+  export PATH="${HOME}/.hermes/node/bin:${PATH}"
+fi
+
 if ! command -v node >/dev/null 2>&1; then
   echo "Node.js 22+ is required to run Baseball LIVE KR backend." >&2
   exit 1
@@ -85,7 +90,7 @@ tar -czf "${ARCHIVE_PATH}" -C "${STAGING_DIR}" .
 printf 'Deploying backend archive %s to %s:%s\n' "${ARCHIVE_PATH}" "${SSH_TARGET}" "${REMOTE_DIR}"
 
 remote_sh "mkdir -p '${REMOTE_DIR}'"
-run scp "${ARCHIVE_PATH}" "${SSH_TARGET}:${REMOTE_DIR}/baseball-live-kr-backend-server.tar.gz"
+run scp -P "${SSH_PORT}" "${ARCHIVE_PATH}" "${SSH_TARGET}:${REMOTE_DIR}/baseball-live-kr-backend-server.tar.gz"
 remote_sh "cd '${REMOTE_DIR}' && tar -xzf baseball-live-kr-backend-server.tar.gz && npm ci --omit=dev && chmod +x run-backend.command"
 
 remote_sh "mkdir -p ~/.config/systemd/user && cat > ~/.config/systemd/user/${SERVICE_NAME}.service <<'SERVICE'
