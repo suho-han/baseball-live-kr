@@ -47,7 +47,7 @@ struct GameFeedClientTests {
 
         #expect(client.pollingInterval == BaseballLiveKREnvironment.defaultPollingInterval)
         #expect(BaseballLiveKREnvironment().baseURL == BaseballLiveKREnvironment.defaultBaseURL)
-        #expect(BaseballLiveKREnvironment.stagingBaseURL == BaseballLiveKREnvironment.defaultBaseURL)
+        #expect(BaseballLiveKREnvironment.stagingBaseURL == BaseballLiveKREnvironment.productionBaseURL)
         #expect(BaseballLiveKREnvironment.productionBaseURL.absoluteString == "http://140.245.66.62:17361")
         #expect(BaseballLiveKREnvironment().apiPathPrefix == BaseballLiveKREnvironment.defaultAPIPathPrefix)
     }

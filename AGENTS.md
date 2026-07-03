@@ -32,3 +32,13 @@ codex --sandbox danger-full-access --ask-for-approval never --search
 ```bash
 ./scripts/codex-full-access.sh
 ```
+
+## Remote Backend Access
+
+- Production backend public URL: `http://140.245.66.62:17361`
+- Production backend host: OCI instance `oct-e2`
+- Tailscale address: `100.91.69.81`
+- SSH port: `2650`
+- Current Tailscale peer endpoint can show as `140.245.66.62:41641`; verify with `tailscale status` before deploy.
+- SSH target account: `ubuntu@100.91.69.81`
+- Do not store the SSH password in repository files. Ask the user for it when needed, or use the password supplied in the current session only.

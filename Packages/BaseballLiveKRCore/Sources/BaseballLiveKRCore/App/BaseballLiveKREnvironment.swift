@@ -2,16 +2,14 @@ import Foundation
 
 public struct BaseballLiveKREnvironment: Sendable, Equatable {
     public static let defaultBaseURL = URL(string: "http://127.0.0.1:17361")!
-    public static let stagingBaseURL = URL(string: "http://127.0.0.1:17361")!
     public static let productionBaseURL = URL(string: "http://140.245.66.62:17361")!
+    public static let stagingBaseURL = productionBaseURL
     public static let defaultAPIPathPrefix = "/v1"
     public static let defaultPollingInterval: Duration = .seconds(15)
     public static let backendBaseURLDefaultsKey = "baseball-live-kr.backend-base-url"
     public static let legacyBackendBaseURLDefaultsKey = "baseball-live-kr.legacy-backend-base-url"
     public static let backendBaseURLEnvironmentName = "BASEBALL_LIVE_KR_BASE_URL"
     public static let legacyBackendBaseURLEnvironmentName = "BASEBALL_LIVE_KR_LEGACY_BASE_URL"
-    public static let stagingBaseURLEnvironmentName = "BASEBALL_LIVE_KR_STAGING_BASE_URL"
-    public static let legacyStagingBaseURLEnvironmentName = "BASEBALL_LIVE_KR_LEGACY_STAGING_BASE_URL"
     public static let productionBaseURLEnvironmentName = "BASEBALL_LIVE_KR_PRODUCTION_BASE_URL"
     public static let legacyProductionBaseURLEnvironmentName = "BASEBALL_LIVE_KR_LEGACY_PRODUCTION_BASE_URL"
 

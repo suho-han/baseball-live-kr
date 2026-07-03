@@ -8,10 +8,6 @@ extension BackendSettingsModel {
         BaseballLiveKREnvironment.defaultBaseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
-    nonisolated static var defaultStagingBaseURLString: String {
-        BaseballLiveKREnvironment.stagingBaseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-    }
-
     nonisolated static func resolvedBaseURL(defaults: UserDefaults = .standard) -> URL {
         if let url = normalizedURL(from: resolvedBaseURLString(defaults: defaults)) {
             return url
@@ -75,16 +71,7 @@ extension BackendSettingsModel {
                 )
                 ?? defaultBaseURLString
         case .staging:
-            return environmentBaseURLString(
-                named: BaseballLiveKREnvironment.stagingBaseURLEnvironmentName,
-                legacyName: BaseballLiveKREnvironment.legacyStagingBaseURLEnvironmentName
-            )
-                ?? migratedDefaultsString(
-                    defaults: defaults,
-                    newKey: "baseball-live-kr.backend-staging-base-url",
-                    legacyKey: "baseball-live-kr.legacy-backend-staging-base-url"
-                )
-                ?? defaultStagingBaseURLString
+            return baseURLString(for: .production, defaults: defaults)
         case .production:
             return environmentBaseURLString(
                 named: BaseballLiveKREnvironment.productionBaseURLEnvironmentName,
