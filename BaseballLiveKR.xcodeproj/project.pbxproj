@@ -58,6 +58,8 @@
 		3C3F151ED9E320108C5BD4F6 /* GameFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B19334A8BD3D1E6FA9239 /* GameFeed.swift */; };
 		3F692F2D19C5B138D99B44FD /* TeamStandingsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F59EFFA0682B099AB3779A /* TeamStandingsDTO.swift */; };
 		440BDE4697569945FE28B344 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794CD06FD26339AF8669E73A /* AppSettingsView.swift */; };
+		BF2222222222222222222222 /* TeamSettingsCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1111111111111111111111 /* TeamSettingsCards.swift */; };
+		BF3333333333333333333333 /* TeamSettingsCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1111111111111111111111 /* TeamSettingsCards.swift */; };
 		4427C6B46CF48126D7BC197C /* TeamStandingsDTOMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8820E4E84682C2561A535C5 /* TeamStandingsDTOMapper.swift */; };
 		4523B980FCBEE89DEDEB9DA5 /* KboMetricRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A2797A218DC238F5103948 /* KboMetricRow.swift */; };
 		46BC39B7E6E2EDFA512D7340 /* MenuBarGameSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF3F366EA8804F7D73DE8E1 /* MenuBarGameSummary.swift */; };
@@ -274,6 +276,7 @@
 		6B58E4B9D019EF0B53B2774E /* InningStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InningStateView.swift; sourceTree = "<group>"; };
 		7783C973C3917429042E0E9F /* KboAppearanceMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboAppearanceMode.swift; sourceTree = "<group>"; };
 		794CD06FD26339AF8669E73A /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
+		BF1111111111111111111111 /* TeamSettingsCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSettingsCards.swift; sourceTree = "<group>"; };
 		7B59F86B589D3AD809D96B67 /* KboSemanticColorToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboSemanticColorToken.swift; sourceTree = "<group>"; };
 		7C97E3FD1F7C6E80B2DDC298 /* MenuBarGameSummaryMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarGameSummaryMapper.swift; sourceTree = "<group>"; };
 		7E786A533D28E0FB41643168 /* BackendSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSettingsView.swift; sourceTree = "<group>"; };
@@ -350,6 +353,7 @@
 				A0DCEA5F62BD16543B381DFA /* AppNavigationModel.swift */,
 				8DD67F55C67FFD451ADA6CB3 /* AppRuntime.swift */,
 				794CD06FD26339AF8669E73A /* AppSettingsView.swift */,
+				BF1111111111111111111111 /* TeamSettingsCards.swift */,
 				7F56FB1C6BC048E7E855A29A /* BackendPresetRow.swift */,
 				A09F768894B7B87FB854B4E8 /* BackendSettingsModel.swift */,
 				62D33BC9399AC31AC6D1CE18 /* BackendSettingsModel+Resolution.swift */,
@@ -718,6 +722,7 @@
 				99B4AD8447D95903EE3C8542 /* AppNavigationModel.swift in Sources */,
 				E59530A4B0AA4EB0FEBB5165 /* AppRuntime.swift in Sources */,
 				C7649F6D445207F944AB870A /* AppSettingsView.swift in Sources */,
+				BF2222222222222222222222 /* TeamSettingsCards.swift in Sources */,
 				90CD5A8CD12815E1B93D2C23 /* BackendPresetPolicy.swift in Sources */,
 				1B6D8C28A64C47E43CE0BA0B /* BackendPresetRow.swift in Sources */,
 				1DC8DFD635127EAD3669A020 /* BackendSettingsModel+Resolution.swift in Sources */,
@@ -859,6 +864,7 @@
 				83B8CAC22D1B7C95440C38BE /* AppNavigationModel.swift in Sources */,
 				F92610F49BD7AB17A4EC9407 /* AppRuntime.swift in Sources */,
 				440BDE4697569945FE28B344 /* AppSettingsView.swift in Sources */,
+				BF3333333333333333333333 /* TeamSettingsCards.swift in Sources */,
 				E2E4B9A2E2BFE4339A6EEEB7 /* BackendPresetPolicy.swift in Sources */,
 				5BF487D158EA67CD4DA2F964 /* BackendPresetRow.swift in Sources */,
 				5050016BB6F6BEB0C185BBF7 /* BackendSettingsModel+Resolution.swift in Sources */,
