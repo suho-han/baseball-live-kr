@@ -98,6 +98,7 @@ describe('schedule and game mapping smoke', () => {
     }, '2026')
     expect(futureGames.map((game) => game.date)).toEqual(['20260707', '20260708'])
     expect(futureGames.map((game) => game.gameId)).toEqual(['20260707SKOB0', '20260708LGSS0'])
+    expect(futureGames.map((game) => game.broadcastChannels)).toEqual([['-'], ['-']])
   })
 
   it('enriches mapped games and recent play fields', () => {
