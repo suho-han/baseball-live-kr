@@ -22,11 +22,8 @@ struct MenuBarDashboardView: View {
         static let cardPadding: CGFloat = 14
         static let cardCornerRadius = KboRadiusToken.large
         static let controlCornerRadius = KboRadiusToken.medium
-        static let compactControlHeight: CGFloat = 48
-        static let controlColumns = [
-            GridItem(.flexible(), spacing: controlSpacing),
-            GridItem(.flexible(), spacing: controlSpacing)
-        ]
+        static let compactControlHeight: CGFloat = 46
+        static let statusRowHeight: CGFloat = 32
     }
 
     @ObservedObject var viewModel: TodayGamesViewModel
@@ -47,42 +44,11 @@ struct MenuBarDashboardView: View {
                 emptySummary
             }
 
+            primaryActionsSection
+
+            backendTrustRow
+
             backendIssueCallout
-
-            LazyVGrid(columns: Layout.controlColumns, spacing: Layout.controlSpacing) {
-                Button {
-                    refreshAll()
-                } label: {
-                    compactActionButton(
-                        title: isRefreshing ? "갱신 중" : "새로고침",
-                        systemImage: isRefreshing ? "arrow.triangle.2.circlepath" : "arrow.clockwise"
-                    )
-                }
-                .buttonStyle(.plain)
-                .disabled(isRefreshing)
-
-                SettingsLink {
-                    compactActionButton(title: "설정", systemImage: "gearshape")
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    openWindow(id: "main-window")
-                } label: {
-                    compactActionButton(title: "메인으로", systemImage: "macwindow")
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    Task {
-                        await refreshBackendStatus()
-                    }
-                } label: {
-                    compactStatusButton
-                }
-                .buttonStyle(.plain)
-            }
-            .frame(maxWidth: .infinity)
 
             Text(lastUpdatedStatusText)
                 .font(.caption2.weight(.semibold))
@@ -96,6 +62,34 @@ struct MenuBarDashboardView: View {
             await viewModel.loadIfNeeded()
             await monitorBackendStatus()
         }
+    }
+
+    private var primaryActionsSection: some View {
+        HStack(spacing: Layout.controlSpacing) {
+            Button {
+                refreshAll()
+            } label: {
+                compactActionButton(
+                    title: isRefreshing ? "갱신 중" : "새로고침",
+                    systemImage: isRefreshing ? "arrow.triangle.2.circlepath" : "arrow.clockwise"
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(isRefreshing)
+
+            SettingsLink {
+                compactActionButton(title: "설정", systemImage: "gearshape")
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                openWindow(id: "main-window")
+            } label: {
+                compactActionButton(title: "메인으로", systemImage: "macwindow")
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var headerSection: some View {
@@ -270,6 +264,68 @@ struct MenuBarDashboardView: View {
         }
     }
 
+    private var backendTrustRow: some View {
+        HStack(spacing: 8) {
+            Text("Backend")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(KboTheme.secondaryText)
+
+            backendStatusChip
+
+            Spacer(minLength: 8)
+
+            Button {
+                Task {
+                    await refreshBackendStatus()
+                }
+            } label: {
+                Image(systemName: "arrow.clockwise")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(KboTheme.secondaryText)
+                    .frame(width: 24, height: 24)
+                    .background(KboSurfaceToken.glassControl.opacity(0.68))
+                    .clipShape(Circle())
+                    .overlay {
+                        Circle()
+                            .stroke(KboSurfaceToken.glassBorder.opacity(0.55), lineWidth: 1)
+                    }
+            }
+            .buttonStyle(.plain)
+            .help("서버 상태 다시 확인")
+        }
+        .frame(maxWidth: .infinity, minHeight: Layout.statusRowHeight)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(KboSurfaceToken.glassControl.opacity(0.56))
+        .clipShape(RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous)
+                .stroke(KboSurfaceToken.glassBorder.opacity(0.48), lineWidth: 1)
+        }
+        .help(backendStatus.helpText)
+    }
+
+    private var backendStatusChip: some View {
+        HStack(spacing: 5) {
+            Image(systemName: backendStatus.systemImage)
+                .font(.caption2.weight(.bold))
+
+            Text(backendStatus.title)
+                .font(.caption2.weight(.bold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+        }
+        .foregroundStyle(backendStatus.color)
+        .padding(.horizontal, 8)
+        .frame(minHeight: 22)
+        .background(backendStatus.color.opacity(0.12))
+        .clipShape(Capsule(style: .continuous))
+        .overlay {
+            Capsule(style: .continuous)
+                .stroke(backendStatus.color.opacity(0.34), lineWidth: 1)
+        }
+    }
+
     private func compactActionButton(title: String, systemImage: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: systemImage)
@@ -289,28 +345,6 @@ struct MenuBarDashboardView: View {
             RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous)
                 .stroke(KboSurfaceToken.glassBorder.opacity(0.68), lineWidth: 1)
         }
-    }
-
-    private var compactStatusButton: some View {
-        HStack(spacing: 8) {
-            Image(systemName: backendStatus.systemImage)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(backendStatus.color)
-
-            Text(backendStatus.title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(KboTheme.primaryText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.72)
-        }
-        .frame(maxWidth: .infinity, minHeight: Layout.compactControlHeight)
-        .background(backendStatus.color.opacity(0.12))
-        .clipShape(RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: Layout.controlCornerRadius, style: .continuous)
-                .stroke(backendStatus.color.opacity(0.35), lineWidth: 1)
-        }
-        .help(backendStatus.helpText)
     }
 
     private func refreshAll() {
@@ -445,13 +479,17 @@ private struct MenuBarFeaturedGameCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Spacer(minLength: 0)
+            HStack(alignment: .center, spacing: 8) {
+                gameStatusPill
+
                 Text(gameDateVenueText)
                     .font(KboTypographyToken.caption(scaledBy: fontScale))
                     .foregroundStyle(KboTheme.secondaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
+                    .layoutPriority(1)
+
+                Spacer(minLength: 4)
 
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.semibold))
@@ -491,6 +529,46 @@ private struct MenuBarFeaturedGameCardView: View {
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(KboSurfaceToken.cardBorder, lineWidth: 1)
+        }
+    }
+
+    private var gameStatusPill: some View {
+        KboStatusPill(
+            text: gameStatusText,
+            style: gameStatusStyle,
+            showsPulse: game.status == .live
+        )
+    }
+
+    private var gameStatusText: String {
+        switch game.status {
+        case .scheduled:
+            return "예정"
+        case .live:
+            return GameProjectionFormatter.inningText(for: game) ?? "LIVE"
+        case .final:
+            return "종료"
+        case .delayed:
+            return "지연"
+        case .cancelled:
+            return "취소"
+        case .unknown:
+            return "상태 확인"
+        }
+    }
+
+    private var gameStatusStyle: KboStatusPill.Style {
+        switch game.status {
+        case .scheduled:
+            return .scheduled
+        case .live:
+            return .live
+        case .final:
+            return .final
+        case .delayed, .cancelled:
+            return .delayed
+        case .unknown:
+            return .neutral
         }
     }
 

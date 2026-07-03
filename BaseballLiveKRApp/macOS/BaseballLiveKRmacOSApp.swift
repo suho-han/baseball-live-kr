@@ -24,6 +24,7 @@ struct BaseballLiveKRmacOSApp: App {
     @StateObject private var updateChecker = AppUpdateCheckModel()
     @AppStorage("kboLiveFontScale") private var fontScale = Double(KboFontScale.defaultValue)
     @AppStorage(KboAppearanceMode.storageKey) private var appearanceModeRawValue = KboAppearanceMode.defaultValue.rawValue
+    @AppStorage("kboLiveMenuBarEnabled") private var isMenuBarEnabled = true
 
     init() {
         let settings = BackendSettingsModel()
@@ -37,13 +38,20 @@ struct BaseballLiveKRmacOSApp: App {
     }
 
     var body: some Scene {
+        mainWindowScene
+        menuBarScene
+        settingsScene
+    }
+
+    private var mainWindowScene: some Scene {
         Window("Baseball LIVE KR", id: "main-window") {
             BaseballLiveKRHomeRootView(
                 viewModel: viewModel,
                 settings: settings,
                 navigationModel: navigationModel,
                 updateChecker: updateChecker,
-                appearanceMode: appearanceModeBinding
+                appearanceMode: appearanceModeBinding,
+                isMenuBarEnabled: $isMenuBarEnabled
             )
                 .frame(
                     width: MainWindowLayout.minWidth
@@ -91,8 +99,11 @@ struct BaseballLiveKRmacOSApp: App {
                 .disabled(CGFloat(fontScale) <= KboFontScale.minimum)
             }
         }
+    }
 
-        MenuBarExtra {
+    @SceneBuilder
+    private var menuBarScene: some Scene {
+        MenuBarExtra(isInserted: $isMenuBarEnabled) {
             MenuBarDashboardView(
                 viewModel: viewModel,
                 navigationModel: navigationModel
@@ -103,13 +114,16 @@ struct BaseballLiveKRmacOSApp: App {
             Label(menuBarTitle, systemImage: "baseball.fill")
         }
         .menuBarExtraStyle(.window)
+    }
 
+    private var settingsScene: some Scene {
         Settings {
             SettingsView(
                 viewModel: viewModel,
                 settings: settings,
                 updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
+                isMenuBarEnabled: $isMenuBarEnabled,
                 onApplyBackendSettings: applyBackendSettings
             )
             .environment(\.kboFontScale, CGFloat(fontScale))

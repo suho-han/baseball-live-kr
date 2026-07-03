@@ -5,6 +5,7 @@ struct SettingsView: View {
     @ObservedObject var settings: BackendSettingsModel
     @ObservedObject var updateChecker: AppUpdateCheckModel
     @Binding var appearanceMode: KboAppearanceMode
+    @Binding var isMenuBarEnabled: Bool
     let onApplyBackendSettings: () -> Void
 
     var body: some View {
@@ -13,6 +14,7 @@ struct SettingsView: View {
             settings: settings,
             updateChecker: updateChecker,
             appearanceMode: $appearanceMode,
+            isMenuBarEnabled: $isMenuBarEnabled,
             onApplyBackendSettings: onApplyBackendSettings
         )
         .frame(width: 620, height: 620)

@@ -19,6 +19,7 @@ struct BaseballLiveKRHomeRootView: View {
     @ObservedObject private var navigationModel: AppNavigationModel
     @ObservedObject private var updateChecker: AppUpdateCheckModel
     @Binding private var appearanceMode: KboAppearanceMode
+    @Binding private var isMenuBarEnabled: Bool
     @State private var isShowingSettings = false
 
     init(
@@ -26,12 +27,14 @@ struct BaseballLiveKRHomeRootView: View {
         settings: BackendSettingsModel = BackendSettingsModel(),
         navigationModel: AppNavigationModel = AppNavigationModel(),
         updateChecker: AppUpdateCheckModel = AppUpdateCheckModel(),
-        appearanceMode: Binding<KboAppearanceMode> = .constant(.defaultValue)
+        appearanceMode: Binding<KboAppearanceMode> = .constant(.defaultValue),
+        isMenuBarEnabled: Binding<Bool> = .constant(false)
     ) {
         _settings = ObservedObject(wrappedValue: settings)
         _navigationModel = ObservedObject(wrappedValue: navigationModel)
         _updateChecker = ObservedObject(wrappedValue: updateChecker)
         _appearanceMode = appearanceMode
+        _isMenuBarEnabled = isMenuBarEnabled
         if let viewModel {
             _viewModel = StateObject(wrappedValue: viewModel)
         } else {
@@ -89,6 +92,7 @@ struct BaseballLiveKRHomeRootView: View {
                         settings: settings,
                         updateChecker: updateChecker,
                         appearanceMode: $appearanceMode,
+                        isMenuBarEnabled: $isMenuBarEnabled,
                         onApplyBackendSettings: applyBackendSettings
                     )
                     .navigationTitle("설정")

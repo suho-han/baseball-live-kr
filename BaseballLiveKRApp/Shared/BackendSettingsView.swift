@@ -7,6 +7,7 @@ struct BackendSettingsView: View {
         static let cardSpacing = KboSpacingToken.medium
         static let cardPadding = KboSpacingToken.large
         static let cardCornerRadius: CGFloat = 22
+        static let summaryCornerRadius: CGFloat = 18
     }
 
     @ObservedObject var settings: BackendSettingsModel
@@ -69,45 +70,78 @@ struct BackendSettingsView: View {
 
     private var actionSection: some View {
         settingsCard {
-            VStack(alignment: .leading, spacing: Layout.cardSpacing) {
-                HStack(spacing: KboSpacingToken.small) {
-                    Text("연결 상태")
-                        .font(KboTypographyToken.headline)
-                        .foregroundStyle(KboTheme.primaryText)
+            VStack(alignment: .leading, spacing: Layout.cardSpacing + 2) {
+                sectionTitle("현재 연결", subtitle: "선택한 preset을 저장하면 앱 전체 backend 주소가 갱신됩니다.")
 
-                    Spacer(minLength: 0)
+                currentConnectionSummary
 
-                    statusLabel
+                KboPrimaryActionButton(
+                    title: "선택한 설정 적용",
+                    systemImage: "checkmark.circle.fill",
+                    tint: KboSemanticColorToken.accentBlue,
+                    isDisabled: false
+                ) {
+                    applySettings()
                 }
 
                 HStack(spacing: KboSpacingToken.small) {
-                    Button {
-                        settings.reset()
-                        onApply()
-                    } label: {
-                        actionButtonLabel(title: "기본값", systemImage: "arrow.uturn.backward")
-                    }
-                    .buttonStyle(.plain)
-
                     Button {
                         Task {
                             await settings.checkHealth()
                         }
                     } label: {
-                        actionButtonLabel(title: "상태 확인", systemImage: "wave.3.right.circle")
+                        secondaryActionButtonLabel(title: "상태 확인", systemImage: "wave.3.right.circle")
                     }
                     .buttonStyle(.plain)
 
-                    KboPrimaryActionButton(
-                        title: "적용",
-                        systemImage: "checkmark.circle.fill",
-                        tint: KboSemanticColorToken.accentBlue,
-                        isDisabled: false
-                    ) {
-                        applySettings()
+                    Button {
+                        settings.reset()
+                        onApply()
+                    } label: {
+                        secondaryActionButtonLabel(title: "기본값 복원", systemImage: "arrow.uturn.backward")
                     }
+                    .buttonStyle(.plain)
                 }
             }
+        }
+    }
+
+    private var currentConnectionSummary: some View {
+        HStack(alignment: .top, spacing: KboSpacingToken.medium) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(statusAccentColor.opacity(0.14))
+
+                Image(systemName: "network")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(statusAccentColor)
+            }
+            .frame(width: 42, height: 42)
+
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: KboSpacingToken.small) {
+                    Text(settings.selectedPresetTitle)
+                        .font(KboTypographyToken.headline)
+                        .foregroundStyle(KboTheme.primaryText)
+
+                    statusLabel
+                }
+                .fixedSize(horizontal: false, vertical: true)
+
+                Text("주소 세부 정보는 보안상 숨김 처리됩니다.")
+                    .font(KboTypographyToken.caption)
+                    .foregroundStyle(KboTheme.secondaryText)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(KboSpacingToken.medium)
+        .background(KboSurfaceToken.glassControl)
+        .clipShape(RoundedRectangle(cornerRadius: Layout.summaryCornerRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: Layout.summaryCornerRadius, style: .continuous)
+                .stroke(statusAccentColor.opacity(0.32), lineWidth: 1)
         }
     }
 
@@ -193,7 +227,7 @@ struct BackendSettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func actionButtonLabel(title: String, systemImage: String) -> some View {
+    private func secondaryActionButtonLabel(title: String, systemImage: String) -> some View {
         HStack(spacing: 7) {
             Image(systemName: systemImage)
                 .font(.system(size: 13, weight: .bold))

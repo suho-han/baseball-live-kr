@@ -19,7 +19,24 @@ struct AppSettingsView: View {
     @ObservedObject var settings: BackendSettingsModel
     @ObservedObject var updateChecker: AppUpdateCheckModel
     @Binding var appearanceMode: KboAppearanceMode
+    @Binding var isMenuBarEnabled: Bool
     let onApplyBackendSettings: () -> Void
+
+    init(
+        viewModel: TodayGamesViewModel,
+        settings: BackendSettingsModel,
+        updateChecker: AppUpdateCheckModel,
+        appearanceMode: Binding<KboAppearanceMode>,
+        isMenuBarEnabled: Binding<Bool> = .constant(true),
+        onApplyBackendSettings: @escaping () -> Void
+    ) {
+        self.viewModel = viewModel
+        self.settings = settings
+        self.updateChecker = updateChecker
+        _appearanceMode = appearanceMode
+        _isMenuBarEnabled = isMenuBarEnabled
+        self.onApplyBackendSettings = onApplyBackendSettings
+    }
 
     var body: some View {
         TabView {
@@ -41,6 +58,13 @@ struct AppSettingsView: View {
                     Label("표시", systemImage: "circle.lefthalf.filled")
                 }
 
+#if os(macOS)
+            menuBarSettingsView
+                .tabItem {
+                    Label("메뉴바", systemImage: "menubar.rectangle")
+                }
+#endif
+
             updateSettingsView
                 .tabItem {
                     Label("업데이트", systemImage: "arrow.down.circle")
@@ -50,10 +74,10 @@ struct AppSettingsView: View {
 
     private var teamSettingsView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: KboSpacingToken.large) {
                 teamSettingsHeader
 
-                LazyVGrid(columns: teamGridColumns, spacing: 10) {
+                LazyVGrid(columns: teamGridColumns, spacing: KboSpacingToken.medium) {
                     TeamClearSelectionCard(
                         isSelected: viewModel.selectedTeamID == nil
                     ) {
@@ -70,7 +94,7 @@ struct AppSettingsView: View {
                     }
                 }
             }
-            .padding(20)
+            .padding(KboSpacingToken.xLarge)
         }
         .background(settingsBackground)
     }
@@ -123,8 +147,7 @@ struct AppSettingsView: View {
 
     private var teamGridColumns: [GridItem] {
         [
-            GridItem(.flexible(minimum: 210), spacing: 10),
-            GridItem(.flexible(minimum: 210), spacing: 10)
+            GridItem(.adaptive(minimum: 240), spacing: KboSpacingToken.medium)
         ]
     }
 
@@ -133,20 +156,20 @@ struct AppSettingsView: View {
         let accentColor = selectedTeam.map { TeamColorResolver.color(forTeamID: $0.id) } ?? KboSemanticColorToken.accentBlue
 
         return KboGlassPanel(style: .navigation, cornerRadius: 22) {
-            HStack(spacing: 14) {
+            HStack(spacing: KboSpacingToken.medium) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(accentColor.opacity(0.22))
+                        .fill(accentColor.opacity(0.16))
 
                     Image(systemName: selectedTeam == nil ? "star" : "star.fill")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(accentColor)
                 }
                 .frame(width: 46, height: 46)
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("응원팀")
-                        .font(.system(size: 24, weight: .black))
+                    Text(selectedTeam.map(\.koreanFullName) ?? "전체 경기")
+                        .font(KboTypographyToken.headline)
                         .foregroundStyle(KboTheme.primaryText)
 
                     Text(selectedTeam.map { "\($0.name) 중심으로 경기와 알림을 정렬합니다." } ?? "응원팀을 고르면 오늘 화면과 메뉴바에서 먼저 보여줍니다.")
@@ -158,19 +181,29 @@ struct AppSettingsView: View {
 
                 Spacer(minLength: 0)
 
-                if let selectedTeam {
-                    TeamBadgeView(
-                        shortName: selectedTeam.name,
-                        fullName: selectedTeam.id,
-                        accentColor: accentColor,
-                        emphasis: .highlighted,
-                        fixedWidth: 88,
-                        logoSize: 22,
-                        nameWidth: 34
-                    )
-                }
+                selectedTeamStatusPill(selectedTeam: selectedTeam, accentColor: accentColor)
             }
-            .padding(16)
+            .padding(KboSpacingToken.large)
+        }
+    }
+
+    private func selectedTeamStatusPill(selectedTeam: KboTeamOption?, accentColor: Color) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: selectedTeam == nil ? "circle" : "checkmark.circle.fill")
+                .font(.system(size: 13, weight: .semibold))
+
+            Text(selectedTeam?.name ?? "전체")
+                .font(KboTypographyToken.caption)
+                .lineLimit(1)
+        }
+        .foregroundStyle(selectedTeam == nil ? KboTheme.secondaryText : accentColor)
+        .padding(.horizontal, KboSpacingToken.medium)
+        .padding(.vertical, KboSpacingToken.small)
+        .background(accentColor.opacity(selectedTeam == nil ? 0.08 : 0.14))
+        .clipShape(Capsule())
+        .overlay {
+            Capsule()
+                .stroke(accentColor.opacity(selectedTeam == nil ? 0.18 : 0.38), lineWidth: 1)
         }
     }
 
@@ -209,6 +242,110 @@ struct AppSettingsView: View {
         }
         .formStyle(.grouped)
     }
+
+#if os(macOS)
+    private var menuBarSettingsView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: KboSpacingToken.large) {
+                KboCommandBar(
+                    eyebrow: "Menu Bar",
+                    title: "메뉴바",
+                    subtitle: "상단 메뉴바의 Baseball LIVE KR 상태 아이콘을 수동으로 시작하거나 종료합니다."
+                ) {
+                    Image(systemName: "menubar.rectangle")
+                        .font(.system(size: 21, weight: .bold))
+                        .foregroundStyle(menuBarAccentColor)
+                        .frame(width: 44, height: 44)
+                        .background(menuBarAccentColor.opacity(0.14))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                } actions: {
+                    menuBarStatusPill
+                }
+
+                KboGlassPanel(style: .card, cornerRadius: 22) {
+                    VStack(alignment: .leading, spacing: KboSpacingToken.large) {
+                        Toggle(isOn: $isMenuBarEnabled) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("메뉴바 아이콘 표시")
+                                    .font(KboTypographyToken.headline)
+                                    .foregroundStyle(KboTheme.primaryText)
+
+                                Text("끄면 상단 메뉴바의 Baseball LIVE KR 아이콘과 대시보드가 사라집니다.")
+                                    .font(KboTypographyToken.caption)
+                                    .foregroundStyle(KboTheme.secondaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .toggleStyle(.switch)
+
+                        HStack(spacing: KboSpacingToken.small) {
+                            KboPrimaryActionButton(
+                                title: "시작",
+                                systemImage: "play.circle.fill",
+                                tint: KboSemanticColorToken.success,
+                                isDisabled: isMenuBarEnabled
+                            ) {
+                                isMenuBarEnabled = true
+                            }
+
+                            Button {
+                                isMenuBarEnabled = false
+                            } label: {
+                                secondaryMenuBarButtonLabel(title: "종료", systemImage: "stop.circle")
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(isMenuBarEnabled == false)
+                            .opacity(isMenuBarEnabled ? 1 : 0.5)
+                        }
+                    }
+                    .padding(KboSpacingToken.large)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding(KboSpacingToken.xLarge)
+        }
+        .background(settingsBackground)
+    }
+
+    private var menuBarStatusPill: some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(menuBarAccentColor)
+                .frame(width: 8, height: 8)
+
+            Text(isMenuBarEnabled ? "실행 중" : "중지됨")
+                .font(KboTypographyToken.caption)
+                .foregroundStyle(KboTheme.primaryText)
+        }
+        .padding(.horizontal, KboSpacingToken.medium)
+        .padding(.vertical, KboSpacingToken.small)
+        .background(menuBarAccentColor.opacity(0.14))
+        .clipShape(Capsule())
+    }
+
+    private var menuBarAccentColor: Color {
+        isMenuBarEnabled ? KboSemanticColorToken.success : KboTheme.secondaryText
+    }
+
+    private func secondaryMenuBarButtonLabel(title: String, systemImage: String) -> some View {
+        HStack(spacing: 7) {
+            Image(systemName: systemImage)
+                .font(.system(size: 13, weight: .bold))
+
+            Text(title)
+                .font(KboTypographyToken.caption)
+                .lineLimit(1)
+        }
+        .foregroundStyle(KboTheme.primaryText)
+        .frame(maxWidth: .infinity, minHeight: KboControlToken.primaryButtonHeight)
+        .background(KboSurfaceToken.glassControl)
+        .clipShape(RoundedRectangle(cornerRadius: KboRadiusToken.large, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: KboRadiusToken.large, style: .continuous)
+                .stroke(KboSurfaceToken.glassBorder.opacity(0.7), lineWidth: 1)
+        }
+    }
+#endif
 
     private func systemImage(for mode: KboAppearanceMode) -> String {
         switch mode {
@@ -255,143 +392,5 @@ struct AppSettingsView: View {
             Label(message, systemImage: "xmark.circle.fill")
                 .foregroundStyle(.red)
         }
-    }
-}
-
-private struct TeamClearSelectionCard: View {
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 13, style: .continuous)
-                        .fill(KboSurfaceToken.glassControl)
-
-                    Image(systemName: "slash.circle")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(KboTheme.secondaryText)
-                }
-                .frame(width: 36, height: 36)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("선택 안 함")
-                        .font(KboTypographyToken.headline)
-                        .foregroundStyle(KboTheme.primaryText)
-
-                    Text("전체 경기 기준")
-                        .font(KboTypographyToken.caption)
-                        .foregroundStyle(KboTheme.secondaryText)
-                }
-
-                Spacer(minLength: 0)
-
-                selectionMark
-            }
-            .padding(13)
-            .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
-            .background(KboSurfaceToken.card.opacity(isSelected ? 0.92 : 0.62))
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(isSelected ? KboSurfaceToken.focusBorder : KboSurfaceToken.cardBorder, lineWidth: isSelected ? 1.5 : 1)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-
-    @ViewBuilder
-    private var selectionMark: some View {
-        if isSelected {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(KboSemanticColorToken.accentMint)
-        }
-    }
-}
-
-private struct TeamSelectionCard: View {
-    let team: KboTeamOption
-    let isSelected: Bool
-    let action: () -> Void
-
-    private var accentColor: Color {
-        TeamColorResolver.color(forTeamID: team.id)
-    }
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                teamLogo
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(team.koreanFullName)
-                        .font(KboTypographyToken.headline)
-                        .foregroundStyle(KboTheme.primaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Spacer(minLength: 0)
-
-                selectionMark
-            }
-            .padding(13)
-            .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
-            .background(cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(isSelected ? accentColor.opacity(0.82) : KboSurfaceToken.cardBorder, lineWidth: isSelected ? 1.5 : 1)
-            }
-            .shadow(color: isSelected ? accentColor.opacity(0.20) : .clear, radius: 10, x: 0, y: 5)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var teamLogo: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(accentColor.opacity(isSelected ? 0.24 : 0.14))
-
-            TeamLogoImage(teamID: team.id)
-                .frame(width: 34, height: 34)
-        }
-        .frame(width: 48, height: 48)
-        .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(accentColor.opacity(isSelected ? 0.72 : 0.38), lineWidth: isSelected ? 1.5 : 1)
-        }
-    }
-
-    private var cardBackground: some View {
-        LinearGradient(
-            colors: [
-                accentColor.opacity(isSelected ? 0.28 : 0.12),
-                KboSurfaceToken.card.opacity(isSelected ? 0.92 : 0.68)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-
-    @ViewBuilder
-    private var selectionMark: some View {
-        if isSelected {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(accentColor)
-        }
-    }
-}
-
-private struct TeamLogoImage: View {
-    let teamID: String
-    @Environment(\.kboFontScale) private var fontScale
-
-    var body: some View {
-        TeamLogoTokenView(teamID: teamID, fallbackName: teamID, cornerRadius: 7)
     }
 }

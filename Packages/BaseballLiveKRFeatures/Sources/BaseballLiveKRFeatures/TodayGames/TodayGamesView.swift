@@ -29,10 +29,10 @@ public struct TodayGamesView: View {
 
         static let standingsTableWidth: CGFloat = 774
         static let commandBarWidth = standingsTableWidth
-        static let favoriteInfoWidth: CGFloat = 236
-        static let favoriteColumnSpacing: CGFloat = 14
+        static let favoriteInfoWidth: CGFloat = 220
+        static let favoriteColumnSpacing: CGFloat = 16
         static let featuredGameWidth: CGFloat = standingsTableWidth - favoriteInfoWidth - favoriteColumnSpacing
-        static let favoriteBlockHeight: CGFloat = 250
+        static let favoriteBlockHeight: CGFloat = 270
     }
 
     @ObservedObject private var viewModel: TodayGamesViewModel
@@ -92,6 +92,7 @@ public struct TodayGamesView: View {
                             commandBar(width: standingsWidth)
                             gamesFailureBanner
                             favoriteSection(availableWidth: availableWidth)
+                                .padding(.bottom, 8)
                             standingsSection(availableWidth: availableWidth)
                             leagueSection(sectionWidth: sectionWidth)
                         }
@@ -114,9 +115,9 @@ public struct TodayGamesView: View {
         ) {
             Image(systemName: "baseball.fill")
                 .font(KboTypographyToken.system(size: 21, weight: .bold, scaledBy: fontScale))
-                .foregroundStyle(KboSemanticColorToken.accentMint)
+                .foregroundStyle(KboSemanticColorToken.statusScheduled)
                 .frame(width: 44, height: 44)
-                .background(KboSemanticColorToken.accentMint.opacity(0.14))
+                .background(KboSemanticColorToken.statusScheduled.opacity(0.14))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         } actions: {
             HStack(spacing: 8) {
@@ -400,7 +401,7 @@ public struct TodayGamesView: View {
     private var favoriteSectionHeader: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .center, spacing: 12) {
-                Text("나의 팀")
+                Text("오늘의 초점")
                     .font(KboTypographyToken.headline(scaledBy: fontScale))
                     .foregroundStyle(KboTheme.primaryText)
 
@@ -419,19 +420,24 @@ public struct TodayGamesView: View {
                 Spacer(minLength: 0)
             }
 
-            if viewModel.selectedTeam == nil {
-                Text("응원팀을 고르면 오늘 화면과 메뉴바에서 먼저 보여줍니다.")
-                    .font(KboTypographyToken.footnote(scaledBy: fontScale))
-                    .foregroundStyle(KboTheme.secondaryText)
-                    .lineLimit(2)
-            } else if viewModel.favoriteGame == nil {
-                Text("오늘은 응원팀 경기가 없습니다. 리그 전체 경기로 이어서 확인하세요.")
-                    .font(KboTypographyToken.footnote(scaledBy: fontScale))
-                    .foregroundStyle(KboTheme.secondaryText)
-                    .lineLimit(2)
-            }
+            Text(favoriteSectionSubtitle)
+                .font(KboTypographyToken.footnote(scaledBy: fontScale))
+                .foregroundStyle(KboTheme.secondaryText)
+                .lineLimit(2)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var favoriteSectionSubtitle: String {
+        if viewModel.selectedTeam == nil {
+            return "응원팀을 고르면 오늘 화면과 메뉴바에서 먼저 보여줍니다."
+        }
+
+        if viewModel.favoriteGame == nil {
+            return "오늘은 응원팀 경기가 없습니다. 리그 전체 경기로 이어서 확인하세요."
+        }
+
+        return "응원팀 현황 · 대표 경기"
     }
 
     private var filterPicker: some View {
@@ -697,10 +703,31 @@ private struct MyTeamSummaryCardView: View {
     let team: KboTeamOption
     let record: TeamRecordSummary?
     let game: Game?
+    @Environment(\.kboFontScale) private var fontScale
 
     var body: some View {
         KboGlassPanel(style: .elevated, cornerRadius: 24) {
-            VStack(alignment: .leading, spacing: 9) {
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("응원팀 현황")
+                        .font(KboTypographyToken.caption(scaledBy: fontScale))
+                        .foregroundStyle(KboTheme.secondaryText)
+
+                    HStack(spacing: 8) {
+                        TeamLogoTokenView(teamID: team.id, fallbackName: team.name, cornerRadius: 7)
+                            .frame(width: 28, height: 28)
+
+                        Text(team.koreanFullName)
+                            .font(KboTypographyToken.headline(scaledBy: fontScale))
+                            .foregroundStyle(KboTheme.primaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                }
+
+                Divider()
+                    .overlay(accentColor.opacity(0.42))
+
                 KboMetricRow(metrics, layout: .vertical)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -746,12 +773,22 @@ private struct MyTeamSummaryCardView: View {
     }
 
     private func streakTint(for streak: String) -> Color? {
+        StreakTintResolver.tint(for: streak)
+    }
+}
+
+private enum StreakTintResolver {
+    static func tint(for streak: String?) -> Color? {
+        guard let streak, streak.isEmpty == false else {
+            return nil
+        }
+
         if streak.contains("승") {
-            return KboColorToken.success
+            return KboSemanticColorToken.accentRed
         }
 
         if streak.contains("패") {
-            return Color(red: 1.0, green: 0.36, blue: 0.42)
+            return KboSemanticColorToken.statusScheduled
         }
 
         return nil
@@ -775,6 +812,7 @@ private struct TeamStandingHeaderRowView: View {
             rankColor: KboTheme.secondaryText,
             teamColor: KboTheme.secondaryText,
             valueColor: KboTheme.secondaryText,
+            streakColor: KboTheme.secondaryText,
             isHeader: true
         )
     }
@@ -800,6 +838,7 @@ private struct TeamStandingRowView: View {
             rankColor: isFavorite ? accentColor : KboTheme.primaryText,
             teamColor: isFavorite ? accentColor : KboTheme.primaryText,
             valueColor: KboTheme.primaryText,
+            streakColor: streakTint ?? KboTheme.primaryText,
             isHeader: false
         )
         .background(isFavorite ? accentColor.opacity(0.12) : Color.clear)
@@ -811,6 +850,10 @@ private struct TeamStandingRowView: View {
 
     private var rankText: String {
         standing.rank.map { "\($0)" } ?? "-"
+    }
+
+    private var streakTint: Color? {
+        StreakTintResolver.tint(for: standing.streak)
     }
 
     private func valueText(_ value: String?) -> String {
@@ -852,6 +895,7 @@ private struct TeamStandingTableRowLayout: View {
     let rankColor: Color
     let teamColor: Color
     let valueColor: Color
+    let streakColor: Color
     let isHeader: Bool
     @Environment(\.kboFontScale) private var fontScale
 
@@ -874,7 +918,7 @@ private struct TeamStandingTableRowLayout: View {
             valueCell(gamesBack, width: 52)
             valueCell(battingAverage, width: 52)
             cell(recentTen, width: 96, alignment: .center, color: isHeader ? KboTheme.secondaryText : valueColor)
-            cell(streak, width: 96, alignment: .center, color: isHeader ? KboTheme.secondaryText : valueColor)
+            cell(streak, width: 96, alignment: .center, color: streakColor)
         }
         .padding(.vertical, isHeader ? 9 : 10)
     }
@@ -990,23 +1034,7 @@ private struct FeaturedGameCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center, spacing: 10) {
-                Text("대표 경기")
-                    .font(KboTypographyToken.caption(scaledBy: fontScale))
-                    .foregroundStyle(cardAccent)
-                    .textCase(.uppercase)
-                    .tracking(0.7)
-
-                Spacer()
-
-                Text(gameDateTimeText)
-                    .font(KboTypographyToken.caption(scaledBy: fontScale))
-                    .foregroundStyle(cardSecondaryText)
-                    .lineLimit(1)
-
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(cardSecondaryText)
-            }
+            featuredHeader
 
             HStack(alignment: .top, spacing: 12) {
                 featuredTeamRow(
@@ -1048,6 +1076,30 @@ private struct FeaturedGameCardView: View {
         }
     }
 
+    private var featuredHeader: some View {
+        HStack(alignment: .center, spacing: 9) {
+            LiveBadgeView(text: statusPillText, style: badgeStyle)
+
+            Text(gameDateTimeText)
+                .font(KboTypographyToken.caption(scaledBy: fontScale))
+                .foregroundStyle(cardSecondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+                .layoutPriority(1)
+
+            Spacer(minLength: 8)
+
+            Text("대표 경기")
+                .font(KboTypographyToken.caption(scaledBy: fontScale))
+                .foregroundStyle(featuredHighlightColor)
+                .lineLimit(1)
+
+            Image(systemName: "chevron.right")
+                .font(KboTypographyToken.caption(scaledBy: fontScale))
+                .foregroundStyle(cardSecondaryText)
+        }
+    }
+
     private var gameDateTimeText: String {
         let date = GameDateSection(date: game.date, games: []).formattedDate
         let time = game.startTime.map { Self.cardTimeFormatter.string(from: $0) } ?? "시간 미정"
@@ -1063,29 +1115,15 @@ private struct FeaturedGameCardView: View {
     }
 
     private var cardGradientColors: [Color] {
-        switch game.status {
-        case .live:
-            return [
-                Color(red: 0.14, green: 0.31, blue: 0.28).opacity(0.96),
-                Color(red: 0.08, green: 0.10, blue: 0.18).opacity(0.98),
-                KboColorToken.statusLive.opacity(0.30)
-            ]
-        case .scheduled:
-            return [
-                Color(red: 0.08, green: 0.24, blue: 0.35).opacity(0.96),
-                Color(red: 0.06, green: 0.09, blue: 0.16).opacity(0.98)
-            ]
-        case .final:
-            return [
-                Color(red: 0.17, green: 0.20, blue: 0.25).opacity(0.96),
-                Color(red: 0.07, green: 0.08, blue: 0.12).opacity(0.98)
-            ]
-        case .delayed, .cancelled, .unknown:
-            return [
-                Color(red: 0.28, green: 0.21, blue: 0.10).opacity(0.92),
-                Color(red: 0.08, green: 0.08, blue: 0.12).opacity(0.98)
-            ]
-        }
+        let awayColor = TeamColorResolver.color(forTeamID: game.awayTeam.id)
+        let homeColor = TeamColorResolver.color(forTeamID: game.homeTeam.id)
+
+        return [
+            awayColor.opacity(0.68),
+            awayColor.opacity(0.50),
+            homeColor.opacity(0.50),
+            homeColor.opacity(0.68)
+        ]
     }
 
     private var cardAccent: Color {
@@ -1101,6 +1139,10 @@ private struct FeaturedGameCardView: View {
         case .cancelled, .unknown:
             return KboTheme.secondaryText
         }
+    }
+
+    private var featuredHighlightColor: Color {
+        Color.white.opacity(0.92)
     }
 
     private var cardPrimaryText: Color {
@@ -1129,6 +1171,19 @@ private struct FeaturedGameCardView: View {
             return "취소"
         case .unknown:
             return "확인 중"
+        }
+    }
+
+    private var badgeStyle: LiveBadgeView.Style {
+        switch game.status {
+        case .live:
+            return .live
+        case .scheduled:
+            return .scheduled
+        case .final:
+            return .final
+        case .delayed, .cancelled, .unknown:
+            return .delayed
         }
     }
 
@@ -1174,7 +1229,7 @@ private struct FeaturedGameCardView: View {
         VStack(spacing: 8) {
             Text(centerLabel)
                 .font(KboTypographyToken.system(size: game.status == .live ? 14 : 13, weight: .black, scaledBy: fontScale))
-                .foregroundStyle(game.status == .live ? cardSecondaryText : cardAccent)
+                .foregroundStyle(game.status == .live ? cardSecondaryText : featuredHighlightColor)
                 .lineLimit(1)
 
             if game.status == .live, game.count != nil || game.bases != nil || game.inning != nil {
@@ -1206,7 +1261,12 @@ private struct FeaturedGameCardView: View {
     }
 
     private var showsScore: Bool {
-        game.status == .live || game.status == .final
+        switch game.status {
+        case .live, .final, .delayed:
+            return true
+        case .scheduled, .cancelled, .unknown:
+            return false
+        }
     }
 
     @ViewBuilder
@@ -1344,15 +1404,15 @@ private struct FeaturedGameCardView: View {
     private func situationChip(title: String, value: String, systemImage: String, allowMultilineValue: Bool = false) -> some View {
         HStack(spacing: 6) {
             Image(systemName: systemImage)
-                .font(KboTypographyToken.system(size: 10, weight: .bold, scaledBy: fontScale))
-                .foregroundStyle(cardAccent)
+                .font(KboTypographyToken.system(size: 9, weight: .bold, scaledBy: fontScale))
+                .foregroundStyle(featuredHighlightColor)
 
             Text(title)
-                .font(KboTypographyToken.system(size: 10, weight: .black, scaledBy: fontScale))
+                .font(KboTypographyToken.system(size: 9, weight: .black, scaledBy: fontScale))
                 .foregroundStyle(cardChipText.opacity(0.62))
 
             Text(value)
-                .font(KboTypographyToken.system(size: 12, weight: .semibold, scaledBy: fontScale))
+                .font(KboTypographyToken.system(size: 11, weight: .semibold, scaledBy: fontScale))
                 .foregroundStyle(cardChipText)
                 .lineLimit(allowMultilineValue ? 2 : 1)
                 .fixedSize(horizontal: false, vertical: allowMultilineValue)
@@ -1360,12 +1420,12 @@ private struct FeaturedGameCardView: View {
         }
         .frame(maxWidth: allowMultilineValue ? .infinity : nil, alignment: .leading)
         .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background(Color.white.opacity(0.66))
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.52))
         .clipShape(Capsule())
         .overlay {
             Capsule()
-                .stroke(Color.white.opacity(0.24), lineWidth: 1)
+                .stroke(Color.white.opacity(0.18), lineWidth: 1)
         }
     }
 
@@ -1600,9 +1660,9 @@ private struct TodayGameCardView: View {
     @ViewBuilder
     private var metaRow: some View {
         if metaItems.isEmpty == false {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 ForEach(Array(metaItems.enumerated()), id: \.offset) { _, item in
-                    HStack(alignment: .center, spacing: 10) {
+                    HStack(alignment: .center, spacing: 8) {
                         Image(systemName: item.systemImage)
                             .frame(width: Layout.metaIconWidth, alignment: .center)
 
@@ -1614,22 +1674,15 @@ private struct TodayGameCardView: View {
                 }
             }
             .font(KboTypographyToken.caption(scaledBy: fontScale))
-            .foregroundStyle(KboTheme.secondaryText)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 9)
-            .background(KboTheme.elevatedBackground.opacity(0.72))
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(KboTheme.mutedBorder.opacity(0.55), lineWidth: 1)
-            }
+            .foregroundStyle(KboTheme.secondaryText.opacity(0.86))
+            .padding(.top, 2)
         }
     }
 
     private var metaItems: [(systemImage: String, text: String)] {
         var items: [(systemImage: String, text: String)] = []
 
-        if let startTime = game.startTime {
+        if game.status != .scheduled, let startTime = game.startTime {
             items.append(("clock", startTime.formatted(.dateTime.hour().minute())))
         }
 
@@ -1656,8 +1709,15 @@ private struct TodayGameCardView: View {
                 nameWidth: Layout.nameWidth
             )
 
-            ScoreDigitsView(score: score, mode: .scoreboardCompact)
-                .frame(minWidth: Layout.scoreWidth, alignment: .trailing)
+            if showsScore {
+                ScoreDigitsView(score: score, mode: .scoreboardCompact)
+                    .frame(minWidth: Layout.scoreWidth, alignment: .trailing)
+            } else {
+                Text("–")
+                    .font(KboTypographyToken.system(size: 24, weight: .bold, scaledBy: fontScale))
+                    .foregroundStyle(KboTheme.secondaryText.opacity(0.42))
+                    .frame(minWidth: Layout.scoreWidth, alignment: .trailing)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -1684,8 +1744,28 @@ private struct TodayGameCardView: View {
     }
 
     private var rightStatusText: String? {
-        guard game.status == .live else { return nil }
-        return GameProjectionFormatter.inningText(for: game)
+        switch game.status {
+        case .scheduled:
+            return game.startTime.map { $0.formatted(.dateTime.hour().minute()) } ?? "시간 미정"
+        case .live:
+            return GameProjectionFormatter.inningText(for: game)
+        case .final:
+            let inningText = GameProjectionFormatter.inningText(for: game)
+            return inningText == statusBadgeText ? nil : inningText
+        case .delayed:
+            return game.startTime.map { $0.formatted(.dateTime.hour().minute()) } ?? "지연"
+        case .cancelled, .unknown:
+            return nil
+        }
+    }
+
+    private var showsScore: Bool {
+        switch game.status {
+        case .live, .final, .delayed:
+            return true
+        case .scheduled, .cancelled, .unknown:
+            return false
+        }
     }
 
     private var statusBadgeText: String {
