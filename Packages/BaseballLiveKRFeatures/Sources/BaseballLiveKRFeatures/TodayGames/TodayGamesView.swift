@@ -114,9 +114,9 @@ public struct TodayGamesView: View {
         ) {
             Image(systemName: "baseball.fill")
                 .font(KboTypographyToken.system(size: 21, weight: .bold, scaledBy: fontScale))
-                .foregroundStyle(KboSemanticColorToken.accentMint)
+                .foregroundStyle(KboSemanticColorToken.statusScheduled)
                 .frame(width: 44, height: 44)
-                .background(KboSemanticColorToken.accentMint.opacity(0.14))
+                .background(KboSemanticColorToken.statusScheduled.opacity(0.14))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         } actions: {
             HStack(spacing: 8) {
@@ -746,12 +746,22 @@ private struct MyTeamSummaryCardView: View {
     }
 
     private func streakTint(for streak: String) -> Color? {
+        StreakTintResolver.tint(for: streak)
+    }
+}
+
+private enum StreakTintResolver {
+    static func tint(for streak: String?) -> Color? {
+        guard let streak, streak.isEmpty == false else {
+            return nil
+        }
+
         if streak.contains("승") {
-            return KboColorToken.success
+            return KboSemanticColorToken.accentRed
         }
 
         if streak.contains("패") {
-            return Color(red: 1.0, green: 0.36, blue: 0.42)
+            return KboSemanticColorToken.statusScheduled
         }
 
         return nil
@@ -775,6 +785,7 @@ private struct TeamStandingHeaderRowView: View {
             rankColor: KboTheme.secondaryText,
             teamColor: KboTheme.secondaryText,
             valueColor: KboTheme.secondaryText,
+            streakColor: KboTheme.secondaryText,
             isHeader: true
         )
     }
@@ -800,6 +811,7 @@ private struct TeamStandingRowView: View {
             rankColor: isFavorite ? accentColor : KboTheme.primaryText,
             teamColor: isFavorite ? accentColor : KboTheme.primaryText,
             valueColor: KboTheme.primaryText,
+            streakColor: streakTint ?? KboTheme.primaryText,
             isHeader: false
         )
         .background(isFavorite ? accentColor.opacity(0.12) : Color.clear)
@@ -811,6 +823,10 @@ private struct TeamStandingRowView: View {
 
     private var rankText: String {
         standing.rank.map { "\($0)" } ?? "-"
+    }
+
+    private var streakTint: Color? {
+        StreakTintResolver.tint(for: standing.streak)
     }
 
     private func valueText(_ value: String?) -> String {
@@ -852,6 +868,7 @@ private struct TeamStandingTableRowLayout: View {
     let rankColor: Color
     let teamColor: Color
     let valueColor: Color
+    let streakColor: Color
     let isHeader: Bool
     @Environment(\.kboFontScale) private var fontScale
 
@@ -874,7 +891,7 @@ private struct TeamStandingTableRowLayout: View {
             valueCell(gamesBack, width: 52)
             valueCell(battingAverage, width: 52)
             cell(recentTen, width: 96, alignment: .center, color: isHeader ? KboTheme.secondaryText : valueColor)
-            cell(streak, width: 96, alignment: .center, color: isHeader ? KboTheme.secondaryText : valueColor)
+            cell(streak, width: 96, alignment: .center, color: streakColor)
         }
         .padding(.vertical, isHeader ? 9 : 10)
     }
@@ -993,7 +1010,7 @@ private struct FeaturedGameCardView: View {
             HStack(alignment: .center, spacing: 10) {
                 Text("대표 경기")
                     .font(KboTypographyToken.caption(scaledBy: fontScale))
-                    .foregroundStyle(cardAccent)
+                    .foregroundStyle(featuredHighlightColor)
                     .textCase(.uppercase)
                     .tracking(0.7)
 
@@ -1063,29 +1080,15 @@ private struct FeaturedGameCardView: View {
     }
 
     private var cardGradientColors: [Color] {
-        switch game.status {
-        case .live:
-            return [
-                Color(red: 0.14, green: 0.31, blue: 0.28).opacity(0.96),
-                Color(red: 0.08, green: 0.10, blue: 0.18).opacity(0.98),
-                KboColorToken.statusLive.opacity(0.30)
-            ]
-        case .scheduled:
-            return [
-                Color(red: 0.08, green: 0.24, blue: 0.35).opacity(0.96),
-                Color(red: 0.06, green: 0.09, blue: 0.16).opacity(0.98)
-            ]
-        case .final:
-            return [
-                Color(red: 0.17, green: 0.20, blue: 0.25).opacity(0.96),
-                Color(red: 0.07, green: 0.08, blue: 0.12).opacity(0.98)
-            ]
-        case .delayed, .cancelled, .unknown:
-            return [
-                Color(red: 0.28, green: 0.21, blue: 0.10).opacity(0.92),
-                Color(red: 0.08, green: 0.08, blue: 0.12).opacity(0.98)
-            ]
-        }
+        let awayColor = TeamColorResolver.color(forTeamID: game.awayTeam.id)
+        let homeColor = TeamColorResolver.color(forTeamID: game.homeTeam.id)
+
+        return [
+            awayColor.opacity(0.68),
+            awayColor.opacity(0.50),
+            homeColor.opacity(0.50),
+            homeColor.opacity(0.68)
+        ]
     }
 
     private var cardAccent: Color {
@@ -1101,6 +1104,10 @@ private struct FeaturedGameCardView: View {
         case .cancelled, .unknown:
             return KboTheme.secondaryText
         }
+    }
+
+    private var featuredHighlightColor: Color {
+        Color.white.opacity(0.92)
     }
 
     private var cardPrimaryText: Color {
@@ -1174,7 +1181,7 @@ private struct FeaturedGameCardView: View {
         VStack(spacing: 8) {
             Text(centerLabel)
                 .font(KboTypographyToken.system(size: game.status == .live ? 14 : 13, weight: .black, scaledBy: fontScale))
-                .foregroundStyle(game.status == .live ? cardSecondaryText : cardAccent)
+                .foregroundStyle(game.status == .live ? cardSecondaryText : featuredHighlightColor)
                 .lineLimit(1)
 
             if game.status == .live, game.count != nil || game.bases != nil || game.inning != nil {
@@ -1345,7 +1352,7 @@ private struct FeaturedGameCardView: View {
         HStack(spacing: 6) {
             Image(systemName: systemImage)
                 .font(KboTypographyToken.system(size: 10, weight: .bold, scaledBy: fontScale))
-                .foregroundStyle(cardAccent)
+                .foregroundStyle(featuredHighlightColor)
 
             Text(title)
                 .font(KboTypographyToken.system(size: 10, weight: .black, scaledBy: fontScale))
