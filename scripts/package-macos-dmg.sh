@@ -84,12 +84,32 @@ stroke(arrowHead, color: color(255, 255, 255, 0.45), width: 2)
 
 let captionAttributes: [NSAttributedString.Key: Any] = [
     .font: NSFont.systemFont(ofSize: 18, weight: .semibold),
-    .foregroundColor: color(255, 255, 255, 0.82),
+    .foregroundColor: color(255, 255, 255, 0.92),
     .kern: 0.2
 ]
 let caption = "Drag to Applications"
 let captionSize = caption.size(withAttributes: captionAttributes)
-caption.draw(at: NSPoint(x: (canvas.width - captionSize.width) / 2, y: 46), withAttributes: captionAttributes)
+
+let hintAttributes: [NSAttributedString.Key: Any] = [
+    .font: NSFont.systemFont(ofSize: 13, weight: .regular),
+    .foregroundColor: color(255, 255, 255, 0.80),
+    .kern: 0.1
+]
+let hint = "처음 실행 시 보안 경고가 나오면: 시스템 설정 > 개인정보 보호 및 보안 > \"그래도 열기\""
+let hintSize = hint.size(withAttributes: hintAttributes)
+
+// Translucent panel keeps the captions legible over both light and dark
+// Finder window backgrounds.
+let panelWidth = max(captionSize.width, hintSize.width) + 48
+let panel = NSBezierPath(
+    roundedRect: NSRect(x: (canvas.width - panelWidth) / 2, y: 22, width: panelWidth, height: 68),
+    xRadius: 14,
+    yRadius: 14
+)
+fill(panel, color: color(20, 24, 34, 0.55))
+
+caption.draw(at: NSPoint(x: (canvas.width - captionSize.width) / 2, y: 58), withAttributes: captionAttributes)
+hint.draw(at: NSPoint(x: (canvas.width - hintSize.width) / 2, y: 32), withAttributes: hintAttributes)
 
 image.unlockFocus()
 
@@ -121,6 +141,14 @@ rm -rf "$STAGING_DIR" "$WORK_DIR" "$DMG_PATH" "$DMG_PATH.sha256"
 mkdir -p "$BACKGROUND_DIR" "$WORK_DIR" "$OUT_DIR"
 
 cp -R "$APP_PATH" "$STAGING_DIR/BaseballLiveKR.app"
+
+# Re-sign the staged copy ad-hoc so quarantine on the user's Mac shows the
+# standard "Open Anyway" path instead of an unrecoverable "damaged" error.
+STAGED_APP="$STAGING_DIR/BaseballLiveKR.app"
+xattr -cr "$STAGED_APP"
+codesign --force --sign - "$STAGED_APP"
+codesign --verify --strict --deep "$STAGED_APP"
+
 ln -s /Applications "$STAGING_DIR/Applications"
 generate_background
 
@@ -193,3 +221,4 @@ printf '%s  %s\n' "$DMG_SHA256" "$(basename "$DMG_PATH")" > "$DMG_PATH.sha256"
 
 printf 'Packaged macOS DMG: %s\n' "$DMG_PATH"
 printf 'SHA-256: %s\n' "$DMG_SHA256"
+printf 'Signing: ad-hoc (Gatekeeper warning expected until notarization)\n'

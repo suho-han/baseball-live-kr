@@ -71,7 +71,7 @@ DMG 포함 항목:
 1. DMG를 연다.
 2. 왼쪽의 큰 `BaseballLiveKR.app` 아이콘을 오른쪽의 `Applications` 폴더로 드래그한다.
 3. `Applications`에서 앱을 연다.
-4. notarization 전 빌드에서 Gatekeeper가 차단하면 `Done`을 누른 뒤 `System Settings` > `Privacy & Security` > `Security`에서 `Open Anyway`를 선택한다.
+4. notarization 전 빌드에서는 첫 실행 시 Gatekeeper 경고가 나온다. 경고 창에서 `완료`를 누르고 `시스템 설정` > `개인정보 보호 및 보안` > `보안`에서 `그래도 열기`를 선택한 뒤 재확인 창에서 다시 `그래도 열기`를 누르고 관리자 인증을 한다. 터미널 대안: `xattr -d com.apple.quarantine /Applications/BaseballLiveKR.app`
 
 ## 4. Local App + Backend 실행
 
@@ -149,6 +149,7 @@ DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 - Debug/local 검증은 Xcode `Sign to Run Locally` 기준이다.
 - notarization은 아직 release 필수 경로가 아니다.
 - 외부 사용자 테스트용 `.dmg`는 `scripts/package-macos-dmg.sh`로 생성한다.
+- DMG 패키징 시 스테이징된 앱을 ad-hoc으로 재서명(`codesign --force --sign -`)하고 `codesign --verify --strict --deep`로 검증한다. 서명 seal이 깨진 채 배포되면 사용자 Mac에서 `Open Anyway` 경로가 없는 "손상됨" 오류가 나기 때문이다. ad-hoc 서명이므로 Gatekeeper "확인할 수 없음" 경고 자체는 notarization 전까지 계속 나온다.
 - public distribution용 signed/notarized archive는 별도 후속 작업으로 둔다.
 
 Release readiness procedure when Developer ID credentials are available:
@@ -217,6 +218,7 @@ Credentials required:
 - `./scripts/verify-release-assets.sh .xcode/DerivedData/Build/Products .build/macmini-runtime .build/transfer` 통과
 - archive 안에 `BaseballLiveKR.app`, packaged backend, run script 포함
 - DMG Finder 창에 왼쪽 `BaseballLiveKR.app`, 오른쪽 `/Applications` symlink, 드래그 화살표 배경 이미지 표시
+- DMG 내 앱이 `codesign --verify --strict --deep` 통과
 - local `PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh` 실행 가능
 - remote `deploy-macmini-runtime.sh` health smoke 통과
 - remote `deploy-remote-backend.sh` service restart와 health smoke 통과
