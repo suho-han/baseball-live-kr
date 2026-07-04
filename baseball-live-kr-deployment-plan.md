@@ -3,7 +3,7 @@
 **배포명:** Baseball LIVE KR
 **한국어 표시명:** 한국 야구 라이브
 **현재 local backend URL:** http://127.0.0.1:17361
-**현재 production backend URL:** http://140.245.66.62:17361
+**현재 production backend URL:** https://api.baseball-live.kro.kr
 **향후 대표 도메인 계획:** suhohan.kr
 
 ---
@@ -17,7 +17,7 @@
 1. 앱명, 아이콘, 패키지명, 번들 ID, GitHub repo, MCP, Skill 이름에서 `KBO`를 사용하지 않는다.
 2. `KBO`는 필요한 경우 설명 문구에서만 제한적으로 사용한다.
 3. 공식 리그, 구단, 단체와 제휴 또는 보증 관계가 있는 것처럼 보이지 않게 한다.
-4. 현재 production backend 기본 URL은 `http://140.245.66.62:17361`로 유지하고, `suhohan.kr` 전환은 향후 배포 계획으로 둔다.
+4. 현재 production backend 기본 URL은 `https://api.baseball-live.kro.kr`로 유지한다.
 5. reverse-DNS 식별자는 `kr.suhohan...` 형태로 통일한다.
 6. 출시 전 한국 상표, App Store, Google Play, GitHub, 패키지명, MCP, Skill 충돌 여부를 재확인한다.
 
@@ -51,7 +51,7 @@
 
 ## 3. 향후 도메인 및 식별자 정책
 
-`suhohan.kr`은 향후 공개 배포 시 기준 도메인으로 삼는 계획이다. 현재 앱의 production backend 기본 URL은 `http://140.245.66.62:17361`을 유지한다.
+`suhohan.kr`은 향후 공개 배포 시 제품 페이지, 지원, 약관 URL의 기준 도메인으로 삼는 계획이다. 현재 앱의 production backend 기본 URL은 `https://api.baseball-live.kro.kr`을 유지한다.
 
 | 대상 | 권장 식별자 |
 |---|---|
@@ -235,7 +235,7 @@ suho-han/baseball-live-kr
 
 ## 9. 향후 도메인 / HTTPS / API 배포안
 
-현재 local backend 기본 URL은 `http://127.0.0.1:17361`이고 production backend 기본 URL은 `http://140.245.66.62:17361`이다. 공개 배포 단계에서 IP 직접 접근과 HTTP 예외를 제거하고, Production은 HTTPS-only로 구성한다.
+현재 local backend 기본 URL은 `http://127.0.0.1:17361`이고 production backend 기본 URL은 `https://api.baseball-live.kro.kr`이다. 공개 배포 단계에서 Production은 HTTPS-only로 구성하고, HTTP 예외는 로컬 개발용 loopback 범위로 제한한다.
 
 | 목적 | URL |
 |---|---|
@@ -308,7 +308,7 @@ description: Use this skill when working on the Baseball LIVE KR app, backend, r
 Use the public brand name `Baseball LIVE KR`.
 Use the Korean display name `한국 야구 라이브`.
 Keep the current local backend default on `http://127.0.0.1:17361`.
-Keep the current production backend default on `http://140.245.66.62:17361` until the production domain is ready.
+Keep the current production backend default on `https://api.baseball-live.kro.kr`.
 Treat `suhohan.kr` as the future canonical domain plan.
 Use reverse-DNS identifiers under `kr.suhohan`.
 
@@ -324,7 +324,7 @@ Use `KBO` only in limited explanatory text when necessary to describe compatible
 - Widget: `kr.suhohan.baseballlivekr.widget`
 - Android: `kr.suhohan.baseballlivekr`
 - Current local backend: `http://127.0.0.1:17361`
-- Current production backend: `http://140.245.66.62:17361`
+- Current production backend: `https://api.baseball-live.kro.kr`
 
 ## Release checks
 
@@ -442,7 +442,7 @@ PROJECT_CONTEXT/*
 | 제품명 | `Baseball LIVE KR` |
 | 한국어명 | `한국 야구 라이브` |
 | 현재 local backend | `http://127.0.0.1:17361` |
-| 현재 production backend | `http://140.245.66.62:17361` |
+| 현재 production backend | `https://api.baseball-live.kro.kr` |
 | 향후 도메인 | `suhohan.kr` |
 | Privacy | `https://suhohan.kr/baseball-live-kr/privacy` |
 | Support | `https://suhohan.kr/baseball-live-kr/support` |
@@ -527,7 +527,7 @@ PROJECT_CONTEXT/*
 
 ## 17. 최종 판단
 
-`Baseball LIVE KR`은 `KBO`를 직접 앱명에 쓰지 않으면서도 한국 야구, 실시간성, 지역성을 전달할 수 있는 이름이다. 현재 production backend URL은 `http://140.245.66.62:17361`로 유지하고, 공개 배포 전략에서는 `suhohan.kr`을 기준으로 외부 식별자를 통일하는 방향이 적합하다.
+`Baseball LIVE KR`은 `KBO`를 직접 앱명에 쓰지 않으면서도 한국 야구, 실시간성, 지역성을 전달할 수 있는 이름이다. 현재 production backend URL은 `https://api.baseball-live.kro.kr`로 유지하고, 공개 배포 전략에서는 `suhohan.kr`을 기준으로 외부 식별자를 통일하는 방향이 적합하다.
 
 가장 중요한 선행 작업은 다음 세 가지다.
 

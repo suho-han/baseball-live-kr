@@ -3,7 +3,7 @@ import Foundation
 public struct BaseballLiveKREnvironment: Sendable, Equatable {
     public static let defaultBaseURL = URL(string: "http://127.0.0.1:17361")!
     public static let stagingBaseURL = URL(string: "http://127.0.0.1:17361")!
-    public static let productionBaseURL = URL(string: "http://140.245.66.62:17361")!
+    public static let productionBaseURL = URL(string: "https://api.baseball-live.kro.kr")!
     public static let defaultAPIPathPrefix = "/v1"
     public static let defaultPollingInterval: Duration = .seconds(15)
     public static let backendBaseURLDefaultsKey = "baseball-live-kr.backend-base-url"

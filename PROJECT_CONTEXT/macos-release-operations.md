@@ -47,6 +47,32 @@ archive 포함 항목:
 - `.build/baseball-live-kr-backend-macos`
 - `scripts/run-macos-app-with-packaged-backend.sh`
 
+사용자 배포용 DMG 생성:
+
+```bash
+./scripts/package-macos-dmg.sh
+```
+
+생성물:
+
+```text
+.build/transfer/BaseballLiveKR-0.1.0-macOS.dmg
+.build/transfer/BaseballLiveKR-0.1.0-macOS.dmg.sha256
+```
+
+DMG 포함 항목:
+
+- `BaseballLiveKR.app`
+- `/Applications` symlink
+- `.background/dmg-background.png` Finder 배경 이미지
+
+사용자 설치 흐름:
+
+1. DMG를 연다.
+2. 왼쪽의 큰 `BaseballLiveKR.app` 아이콘을 오른쪽의 `Applications` 폴더로 드래그한다.
+3. `Applications`에서 앱을 연다.
+4. notarization 전 빌드에서 Gatekeeper가 차단하면 `Done`을 누른 뒤 `System Settings` > `Privacy & Security` > `Security`에서 `Open Anyway`를 선택한다.
+
 ## 4. Local App + Backend 실행
 
 ```bash
@@ -70,7 +96,7 @@ KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-
 runtime archive를 Mac mini에 업로드하고 backend health smoke를 실행:
 
 ```bash
-SSH_TARGET=suhohan@100.114.89.25 \
+SSH_TARGET=user@macmini.local \
 REMOTE_DIR=/Users/suhohan/Projects/baseball-live-kr \
 PORT=3019 \
 ./scripts/deploy-macmini-runtime.sh
@@ -88,7 +114,7 @@ PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
 backend만 원격 서버에 올리고 `systemd --user` service로 자동 시작/재시작한다:
 
 ```bash
-SSH_TARGET=suhohan@140.245.66.62 \
+SSH_TARGET=user@backend.example.com \
 REMOTE_DIR=/home/suhohan/baseball-live-kr-backend \
 PORT=17361 \
 ./scripts/baseball-live-kr.sh deploy-backend
@@ -122,7 +148,8 @@ DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 
 - Debug/local 검증은 Xcode `Sign to Run Locally` 기준이다.
 - notarization은 아직 release 필수 경로가 아니다.
-- 외부 배포용 `.dmg` 또는 signed archive는 별도 후속 작업으로 둔다.
+- 외부 사용자 테스트용 `.dmg`는 `scripts/package-macos-dmg.sh`로 생성한다.
+- public distribution용 signed/notarized archive는 별도 후속 작업으로 둔다.
 
 Release readiness procedure when Developer ID credentials are available:
 
@@ -186,8 +213,10 @@ Credentials required:
 - backend `npm run build` 통과
 - `BaseballLiveKRmacOS` xcodebuild 통과
 - `./scripts/package-macmini-runtime.sh` 통과
+- `./scripts/package-macos-dmg.sh` 통과
 - `./scripts/verify-release-assets.sh .xcode/DerivedData/Build/Products .build/macmini-runtime .build/transfer` 통과
 - archive 안에 `BaseballLiveKR.app`, packaged backend, run script 포함
+- DMG Finder 창에 왼쪽 `BaseballLiveKR.app`, 오른쪽 `/Applications` symlink, 드래그 화살표 배경 이미지 표시
 - local `PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh` 실행 가능
 - remote `deploy-macmini-runtime.sh` health smoke 통과
 - remote `deploy-remote-backend.sh` service restart와 health smoke 통과

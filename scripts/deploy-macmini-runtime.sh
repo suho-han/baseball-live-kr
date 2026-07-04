@@ -2,11 +2,16 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SSH_TARGET="${SSH_TARGET:-suhohan@100.114.89.25}"
+SSH_TARGET="${SSH_TARGET:-}"
 REMOTE_DIR="${REMOTE_DIR:-/Users/suhohan/Projects/baseball-live-kr}"
 PORT="${PORT:-17361}"
 SMOKE_PORT="${SMOKE_PORT:-3019}"
 ARCHIVE_PATH="${ARCHIVE_PATH:-$ROOT_DIR/.build/transfer/baseball-live-kr-macmini-runtime.tar.gz}"
+
+if [[ -z "${SSH_TARGET}" ]]; then
+  echo "SSH_TARGET is required." >&2
+  exit 1
+fi
 
 "$ROOT_DIR/scripts/package-macmini-runtime.sh"
 

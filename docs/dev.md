@@ -71,13 +71,13 @@ macOS 앱 기본 동작:
 
 - `BASEBALL_LIVE_KR_BASE_URL`을 지정하지 않으면 앱 설정 또는 `http://127.0.0.1:17361`의 경기 데이터를 사용합니다.
 - 현재 내장 `Local`, `Staging` preset의 기본 URL은 `http://127.0.0.1:17361`입니다.
-- 현재 내장 `Production` preset의 기본 URL은 `http://140.245.66.62:17361`입니다.
-- macOS 앱은 `suhohan.kr` HTTPS 전환 전까지 현재 HTTP backend 접속을 위해 ATS 예외를 포함합니다.
+- 현재 내장 `Production` preset의 기본 URL은 `https://api.baseball-live.kro.kr`입니다.
+- macOS 앱은 로컬 개발 backend 접속을 위해 HTTP loopback ATS 예외를 포함합니다.
 - 앱은 기본적으로 최신 경기 정보용 주소를 호출합니다.
 - iOS/macOS 앱의 설정 화면에서 `Local`, `Staging`, `Production` 데이터 주소를 선택하고 저장할 수 있습니다.
 - `BASEBALL_LIVE_KR_BASE_URL` 환경변수가 있으면 앱 설정값보다 우선합니다.
 - `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`을 지정하면 설정 화면의 Staging/Production preset 초기 URL로 사용합니다.
-- `suhohan.kr` 기반 production URL 전환은 향후 배포 계획으로 둡니다.
+- Production preset은 `https://api.baseball-live.kro.kr`를 기본 URL로 사용합니다.
 
 ## 데이터 서버만 실행
 
@@ -141,13 +141,13 @@ Mac mini 테스트용 실행 파일 묶기:
 Mac mini로 올리고 기본 실행 확인까지 진행:
 
 ```bash
-SSH_TARGET=suhohan@100.114.89.25 REMOTE_DIR=/Users/suhohan/Projects/baseball-live-kr ./scripts/deploy-macmini-runtime.sh
+SSH_TARGET=user@macmini.local REMOTE_DIR=/Users/suhohan/Projects/baseball-live-kr ./scripts/deploy-macmini-runtime.sh
 ```
 
 원격 backend 서버에 systemd user service로 자동 배포:
 
 ```bash
-SSH_TARGET=suhohan@140.245.66.62 \
+SSH_TARGET=user@backend.example.com \
 REMOTE_DIR=/home/suhohan/baseball-live-kr-backend \
 PORT=17361 \
 ./scripts/baseball-live-kr.sh deploy-backend
@@ -157,6 +157,33 @@ PORT=17361 \
 
 ```bash
 DRY_RUN=1 ./scripts/deploy-remote-backend.sh
+```
+
+Production API 도메인을 backend로 연결하는 nginx proxy 설치:
+
+```bash
+sudo certbot certonly --nginx -d api.baseball-live.kro.kr
+
+DOMAIN=api.baseball-live.kro.kr \
+BACKEND_URL=http://127.0.0.1:17361 \
+CERT_NAME=api.baseball-live.kro.kr \
+./scripts/install-nginx-proxy.sh
+```
+
+로컬에서 원격 서버로 설정만 배포:
+
+```bash
+SSH_TARGET=user@backend.example.com \
+DOMAIN=api.baseball-live.kro.kr \
+BACKEND_URL=http://127.0.0.1:17361 \
+CERT_NAME=api.baseball-live.kro.kr \
+./scripts/deploy-nginx-proxy.sh
+```
+
+설치 후 확인:
+
+```bash
+curl -fsS https://api.baseball-live.kro.kr/v1/health
 ```
 
 0.1.0 배포 준비 계획:

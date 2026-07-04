@@ -32,3 +32,5 @@ codex --sandbox danger-full-access --ask-for-approval never --search
 ```bash
 ./scripts/codex-full-access.sh
 ```
+
+- Outside those cases, launch Codex with default sandbox and approval settings.
