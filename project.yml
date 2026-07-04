@@ -46,6 +46,8 @@ targets:
           - TeamWordmarks/**
           - TeamBrandAssets/**
       - path: BaseballLiveKRApp/macOS
+      - path: BaseballLiveKRApp/macOS/BaseballLiveKR.icns
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: kr.suhohan.baseballlivekr.macos

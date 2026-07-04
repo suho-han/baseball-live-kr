@@ -83,8 +83,42 @@ for target in "$@"; do
           fi
         done < <(unzip -Z1 "$archive" 2>/dev/null || true)
         ;;
+      *.dmg)
+        if command -v hdiutil >/dev/null 2>&1; then
+          mount_path=''
+          attach_output="$(hdiutil attach -nobrowse -readonly "$archive" 2>/dev/null || true)"
+          mount_path="$(printf '%s\n' "$attach_output" | awk 'index($0, "/Volumes/") {print substr($0, index($0, "/Volumes/"))}' | tail -n 1)"
+          if [[ -n "$mount_path" && -d "$mount_path" ]]; then
+            while IFS= read -r member; do
+              if is_official_asset_path "$member"; then
+                printf '%s:%s\n' "$archive" "$member"
+                found=1
+              fi
+            done < <(find "$mount_path" \( \
+              -iname '*TeamBrandAssets*' -o \
+              -iname '*TeamWordmarks*' -o \
+              -iname '*TeamLogos*' -o \
+              -iname '*logo*' -o \
+              -iname '*wordmark*' -o \
+              -iname '*emblem*' -o \
+              -iname '*mascot*' -o \
+              -iname 'HH.png' -o \
+              -iname 'HT.png' -o \
+              -iname 'KT.png' -o \
+              -iname 'LG.png' -o \
+              -iname 'LT.png' -o \
+              -iname 'NC.png' -o \
+              -iname 'OB.png' -o \
+              -iname 'SK.png' -o \
+              -iname 'SS.png' -o \
+              -iname 'WO.png' \
+            \) -print 2>/dev/null | sort)
+            hdiutil detach "$mount_path" >/dev/null 2>&1 || true
+          fi
+        fi
+        ;;
     esac
-  done < <(find "$target" -type f \( -iname '*.tar.gz' -o -iname '*.tgz' -o -iname '*.zip' \) -print 2>/dev/null | sort)
+  done < <(find "$target" -type f \( -iname '*.tar.gz' -o -iname '*.tgz' -o -iname '*.zip' -o -iname '*.dmg' \) -print 2>/dev/null | sort)
 done
 
 if ((found)); then

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		004413A1778A83569ED5AD3D /* TodayGameWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE2C3A3C954100A71A79A4E /* TodayGameWidget.swift */; };
+		F0A9B8104F2C4E62A7210101 /* BaseballLiveKR.icns in Resources */ = {isa = PBXBuildFile; fileRef = F0A9B8104F2C4E62A7210102 /* BaseballLiveKR.icns */; };
 		0108516B4C16AB97F6DF4E9D /* OutCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFF1B56315D329BC01748E8 /* OutCountView.swift */; };
 		02F47B6A0D83AAB322F99579 /* BaseballLiveKRHomeRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC722B7BFCBAF5DB7937F59 /* BaseballLiveKRHomeRootView.swift */; };
 		046E42603D95E96CC48A8035 /* KboSurfaceToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72AE8AF73AA813C41B91AB7 /* KboSurfaceToken.swift */; };
@@ -241,6 +242,7 @@
 		0E4F6B7162EE3FE39D96EAE7 /* WidgetGameSnapshotMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGameSnapshotMapper.swift; sourceTree = "<group>"; };
 		0F2C513576CB16FFA4DFFB71 /* GameFeedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFeedClient.swift; sourceTree = "<group>"; };
 		1AB65776440191E837775270 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F0A9B8104F2C4E62A7210102 /* BaseballLiveKR.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseballLiveKR.icns; sourceTree = "<group>"; };
 		1AFF9D8958B16BC79BAE460A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E54EDD5D622B4520DADB248 /* SampleGameFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleGameFactory.swift; sourceTree = "<group>"; };
 		1FD42ABBF563D52ACFEE7804 /* BaseballLiveKRWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BaseballLiveKRWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -483,6 +485,7 @@
 			isa = PBXGroup;
 			children = (
 				B12B695ADC1AB0A832F223E0 /* BaseballLiveKRmacOSApp.swift */,
+				F0A9B8104F2C4E62A7210102 /* BaseballLiveKR.icns */,
 				1AB65776440191E837775270 /* Info.plist */,
 				939FEF51317FF1A6114BCC21 /* MenuBarDashboardView.swift */,
 				4029E390E7C3CB2E90A5B026 /* SettingsView.swift */,
@@ -620,6 +623,7 @@
 			buildConfigurationList = 62AB39DB04B3DEB2C49BD312 /* Build configuration list for PBXNativeTarget "BaseballLiveKRmacOS" */;
 			buildPhases = (
 				2B8C662F24895BF6826E8A0B /* Sources */,
+				F0A9B8104F2C4E62A7210103 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -707,6 +711,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A42AA779576B864BE7F7A75A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0A9B8104F2C4E62A7210103 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0A9B8104F2C4E62A7210101 /* BaseballLiveKR.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
