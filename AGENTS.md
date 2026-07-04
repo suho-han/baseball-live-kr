@@ -45,7 +45,7 @@
 
 ## Deploy And Secrets
 
-- Do not put deploy hosts, IP addresses, endpoint URLs, port numbers, SSH passwords, tokens, or credentials in tracked repo files.
+- Existing tracked docs may contain historical deploy examples; do not copy those values into `AGENTS.md` or add new/current secret deploy hosts, IP addresses, endpoint URLs, port numbers, SSH passwords, tokens, or credentials to tracked repo files.
 - Keep local deploy host and port values in `.env.local`. The repo `.gitignore` ignores `.env.*`, so `.env.local` must stay untracked.
 - Before remote backend deploys, source the local secret file in the shell that runs the deploy script:
 
