@@ -222,6 +222,8 @@ struct AppSettingsView: View {
     private var updateSettingsView: some View {
         Form {
             Section {
+                LabeledContent("현재 버전", value: updateChecker.currentVersionText)
+
                 LabeledContent("마지막 확인", value: updateChecker.lastCheckedText)
 
                 LabeledContent("상태") {
@@ -236,6 +238,12 @@ struct AppSettingsView: View {
                     Label("업데이트 확인", systemImage: "arrow.clockwise")
                 }
                 .disabled(updateChecker.state == .checking)
+
+                Button {
+                    updateChecker.openRepositoryPage()
+                } label: {
+                    Label("Repository", systemImage: "arrow.up.right.square")
+                }
             } header: {
                 Text("버전 업데이트")
             }
