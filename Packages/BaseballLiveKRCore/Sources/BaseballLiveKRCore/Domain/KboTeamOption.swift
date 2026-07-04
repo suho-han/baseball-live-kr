@@ -48,7 +48,7 @@ public extension KboTeamOption {
         case "SS":
             return "삼성 라이온즈"
         case "HT":
-            return "기아 타이거즈"
+            return "KIA 타이거즈"
         case "KT":
             return "KT 위즈"
         case "LT":

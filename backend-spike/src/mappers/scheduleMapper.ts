@@ -126,11 +126,13 @@ function nonEmptyCellTexts(cells: RawKboScheduleListResponse['rows'][number]['ro
 }
 
 function parseBroadcastChannels(value: string | null | undefined): string[] {
-  return stripHtml(value)
+  const channels = stripHtml(value)
     .replace(/\s*,\s*/g, ',')
     .split(/[,\s]+/)
     .map((channel) => channel.trim())
     .filter(Boolean)
+
+  return channels.length > 0 ? channels : ['-']
 }
 
 function parseTeamIDs(gameId: string): { away: string, home: string } {
@@ -229,7 +231,7 @@ function parseScheduleRow(
     },
     startTime: normalizeStartTime(date, timeCell?.Text),
     venue: firstNonEmpty([infoTexts.length >= 3 ? infoTexts.at(-2) : infoTexts.at(-1), afterLinks.at(-2)?.Text]),
-    broadcastChannels: parseBroadcastChannels(infoTexts[0]),
+    broadcastChannels: parseBroadcastChannels(infoTexts.length >= 2 ? infoTexts[0] : null),
     note,
     links: {
       gameCenter: primaryLink?.href ?? null,
