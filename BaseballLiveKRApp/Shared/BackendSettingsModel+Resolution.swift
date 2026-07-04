@@ -41,6 +41,14 @@ extension BackendSettingsModel {
             return environmentBaseURLString
         }
 
+        if let configuredBaseURLString = migratedDefaultsString(
+            defaults: defaults,
+            newKey: BaseballLiveKREnvironment.backendBaseURLDefaultsKey,
+            legacyKey: BaseballLiveKREnvironment.legacyBackendBaseURLDefaultsKey
+        ) {
+            return configuredBaseURLString
+        }
+
         let storedPreset = RuntimeStringSettingMigration.resolve(
             store: defaults,
             newKey: "baseball-live-kr.backend-preset",
@@ -128,6 +136,10 @@ extension BackendSettingsModel {
             newKey: newKey,
             legacyKey: legacyKey
         ).value
+    }
+
+    nonisolated static func persistedBaseURLString(from url: URL) -> String {
+        url.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
     nonisolated static func normalizedURL(from text: String) -> URL? {

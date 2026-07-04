@@ -111,7 +111,10 @@ final class BackendSettingsModel: ObservableObject {
 
     func save() -> Bool {
         defaults.set(selectedPreset.rawValue, forKey: presetKey)
-        defaults.removeObject(forKey: BaseballLiveKREnvironment.backendBaseURLDefaultsKey)
+        defaults.set(
+            Self.persistedBaseURLString(from: effectiveBaseURL),
+            forKey: BaseballLiveKREnvironment.backendBaseURLDefaultsKey
+        )
 
         validationState = .idle
         return true
