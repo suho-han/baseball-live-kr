@@ -60,7 +60,7 @@ struct BackendSettingsView: View {
                 }
 
                 if settings.hasEnvironmentBaseURL {
-                    Label("BASEBALL_LIVE_KR_BASE_URL 환경변수가 있으면 모든 preset보다 우선합니다.", systemImage: "info.circle.fill")
+                    Label("BASEBALL_LIVE_KR_BASE_URL 환경변수는 Local preset 주소에만 사용됩니다.", systemImage: "info.circle.fill")
                         .font(KboTypographyToken.caption)
                         .foregroundStyle(KboSemanticColorToken.warning)
                 }

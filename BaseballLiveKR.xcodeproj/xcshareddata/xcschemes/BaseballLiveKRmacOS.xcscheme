@@ -37,6 +37,17 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C914FC03BB840B8B1F415768"
+               BuildableName = "BaseballLiveKRmacOSTests.xctest"
+               BlueprintName = "BaseballLiveKRmacOSTests"
+               ReferencedContainer = "container:BaseballLiveKR.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

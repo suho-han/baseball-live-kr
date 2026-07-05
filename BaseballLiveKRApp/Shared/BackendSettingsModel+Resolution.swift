@@ -37,18 +37,6 @@ extension BackendSettingsModel {
     }
 
     nonisolated static func resolvedBaseURLString(defaults: UserDefaults) -> String {
-        if let environmentBaseURLString {
-            return environmentBaseURLString
-        }
-
-        if let configuredBaseURLString = migratedDefaultsString(
-            defaults: defaults,
-            newKey: BaseballLiveKREnvironment.backendBaseURLDefaultsKey,
-            legacyKey: BaseballLiveKREnvironment.legacyBackendBaseURLDefaultsKey
-        ) {
-            return configuredBaseURLString
-        }
-
         let storedPreset = RuntimeStringSettingMigration.resolve(
             store: defaults,
             newKey: "baseball-live-kr.backend-preset",
@@ -61,14 +49,18 @@ extension BackendSettingsModel {
             return presetURL
         }
 
+        if let configuredBaseURLString = migratedDefaultsString(
+            defaults: defaults,
+            newKey: BaseballLiveKREnvironment.backendBaseURLDefaultsKey,
+            legacyKey: BaseballLiveKREnvironment.legacyBackendBaseURLDefaultsKey
+        ) {
+            return configuredBaseURLString
+        }
+
         return productionBaseURLString
     }
 
     nonisolated static func resolvedPreset(from storedPreset: BackendPreset) -> BackendPreset {
-        if environmentBaseURLString != nil {
-            return .local
-        }
-
         return presetPolicy.isSelectable(storedPreset) ? storedPreset : .production
     }
 
@@ -112,7 +104,7 @@ extension BackendSettingsModel {
     }
 
     nonisolated static var defaultPreset: BackendPreset {
-        environmentBaseURLString == nil ? .production : .local
+        .production
     }
 
     nonisolated static var environmentBaseURLString: String? {

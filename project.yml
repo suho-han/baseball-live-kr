@@ -54,6 +54,18 @@ targets:
         PRODUCT_NAME: BaseballLiveKR
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: BaseballLiveKRApp/macOS/Info.plist
+  BaseballLiveKRmacOSTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: BaseballLiveKRApp/Tests
+    dependencies:
+      - target: BaseballLiveKRmacOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: kr.suhohan.baseballlivekr.macos.tests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/BaseballLiveKR.app/Contents/MacOS/BaseballLiveKR"
+        BUNDLE_LOADER: "$(TEST_HOST)"
   BaseballLiveKRWidgetExtension:
     type: app-extension
     platform: iOS
@@ -95,6 +107,9 @@ schemes:
     build:
       targets:
         BaseballLiveKRmacOS: all
+    test:
+      targets:
+        - BaseballLiveKRmacOSTests
     run:
       config: Debug
   BaseballLiveKRWidgetExtension:

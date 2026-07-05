@@ -1,7 +1,7 @@
 import Foundation
 
 public struct BaseballLiveKREnvironment: Sendable, Equatable {
-    public static let defaultBaseURL = URL(string: "http://127.0.0.1:17361")!
+    public static let defaultBaseURL = URL(string: "https://api.baseball-live.kro.kr")!
     public static let stagingBaseURL = URL(string: "http://127.0.0.1:17361")!
     public static let productionBaseURL = URL(string: "https://api.baseball-live.kro.kr")!
     public static let defaultAPIPathPrefix = "/v1"
