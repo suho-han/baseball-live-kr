@@ -30,7 +30,9 @@ public final class TodayGamesViewModel: ObservableObject {
     }
 
     public let title: String
-    @Published public var filter: GameListFilter
+    @Published public var filter: GameListFilter {
+        didSet { updateDerivedState() }
+    }
     @Published public private(set) var selectedTeamID: String?
     @Published public private(set) var state: State
     @Published public private(set) var games: [Game]
@@ -48,6 +50,7 @@ public final class TodayGamesViewModel: ObservableObject {
     private var pollingDate: String?
     private var hasAppliedInitialFilter = false
     private var hasUserSelectedFilter = false
+    private var derivedState = DerivedState.empty
 
     public convenience init(
         client: GameFeedClient,
@@ -97,17 +100,99 @@ public final class TodayGamesViewModel: ObservableObject {
         self.pollingTask = nil
         self.pollingDate = nil
         self.now = now
+        updateDerivedState()
     }
 
     deinit {
         pollingTask?.cancel()
     }
+    @MainActor
+    private struct DerivedState {
+        let visibleGames: [Game]
+        let allTeams: [KboTeamOption]
+        let favoriteGame: Game?
+        let leagueGames: [Game]
+        let dashboardSummary: TodayDashboardSummary
+
+        static let empty = DerivedState(
+            games: [],
+            filter: .all,
+            selectedTeamID: nil,
+            requestDate: nil,
+            responseDate: nil
+        )
+
+        init(
+            games: [Game],
+            filter: GameListFilter,
+            selectedTeamID: String?,
+            requestDate: String?,
+            responseDate: String?
+        ) {
+            let activeDate = requestDate ?? responseDate ?? ""
+            let visibleGames = TodayGames(date: requestDate ?? "", games: games).orderedGames(
+                filter: filter,
+                preferredTeamID: selectedTeamID
+            )
+            let leagueGames = TodayGames(date: activeDate, games: games).orderedGames(
+                filter: filter,
+                preferredTeamID: selectedTeamID
+            )
+            let allOrderedGames = TodayGames(date: activeDate, games: games).orderedGames(
+                filter: .all,
+                preferredTeamID: selectedTeamID
+            )
+            let allTeams = KboTeamOption.sortedByStandings(games: games)
+            let selectedTeam = selectedTeamID.flatMap { teamID in
+                allTeams.first(where: { $0.id == teamID })
+            }
+            let favoriteGame = selectedTeamID.flatMap { teamID in
+                allOrderedGames.first(where: { $0.involves(teamID: teamID) })
+            }
+
+            let liveGames = games.filter { $0.status == .live }.count
+            let scheduledGames = games.filter { $0.status == .scheduled || $0.status == .delayed }.count
+            let finalGames = games.filter { $0.status == .final || $0.status == .cancelled }.count
+            let countsText = TodayGamesViewModel.countsText(
+                totalGames: games.count,
+                liveGames: liveGames,
+                scheduledGames: scheduledGames,
+                finalGames: finalGames
+            )
+
+            let headline: String
+            let detail: String
+            if let favoriteGame {
+                headline = TodayGamesViewModel.headline(for: favoriteGame)
+                detail = TodayGamesViewModel.detail(for: favoriteGame, countsText: countsText)
+            } else if let selectedTeam {
+                headline = "오늘은 \(selectedTeam.name) 경기가 없습니다"
+                detail = countsText
+            } else if let spotlightGame = allOrderedGames.first {
+                headline = TodayGamesViewModel.headline(for: spotlightGame)
+                detail = TodayGamesViewModel.detail(for: spotlightGame, countsText: countsText)
+            } else {
+                headline = "오늘 편성된 경기가 없습니다"
+                detail = countsText
+            }
+
+            self.visibleGames = visibleGames
+            self.allTeams = allTeams
+            self.favoriteGame = favoriteGame
+            self.leagueGames = leagueGames
+            self.dashboardSummary = TodayDashboardSummary(
+                totalGames: games.count,
+                liveGames: liveGames,
+                scheduledGames: scheduledGames,
+                finalGames: finalGames,
+                headline: headline,
+                detail: detail
+            )
+        }
+    }
 
     public var visibleGames: [Game] {
-        TodayGames(date: requestDate ?? "", games: games).orderedGames(
-            filter: filter,
-            preferredTeamID: selectedTeamID
-        )
+        derivedState.visibleGames
     }
 
     public var isLoading: Bool {
@@ -115,7 +200,7 @@ public final class TodayGamesViewModel: ObservableObject {
     }
 
     public var allTeams: [KboTeamOption] {
-        KboTeamOption.sortedByStandings(games: games)
+        derivedState.allTeams
     }
 
     public var selectedTeam: KboTeamOption? {
@@ -124,56 +209,15 @@ public final class TodayGamesViewModel: ObservableObject {
     }
 
     public var favoriteGame: Game? {
-        guard let selectedTeamID else { return nil }
-        return TodayGames(date: activeDateString, games: games)
-            .orderedGames(filter: .all, preferredTeamID: selectedTeamID)
-            .first(where: { $0.involves(teamID: selectedTeamID) })
+        derivedState.favoriteGame
     }
 
     public var leagueGames: [Game] {
-        TodayGames(date: activeDateString, games: games).orderedGames(
-            filter: filter,
-            preferredTeamID: selectedTeamID
-        )
+        derivedState.leagueGames
     }
 
     public var dashboardSummary: TodayDashboardSummary {
-        let liveGames = games.filter { $0.status == .live }.count
-        let scheduledGames = games.filter { $0.status == .scheduled || $0.status == .delayed }.count
-        let finalGames = games.filter { $0.status == .final || $0.status == .cancelled }.count
-        let countsText = Self.countsText(
-            totalGames: games.count,
-            liveGames: liveGames,
-            scheduledGames: scheduledGames,
-            finalGames: finalGames
-        )
-        let headline: String
-        let detail: String
-
-        if let favoriteGame {
-            headline = Self.headline(for: favoriteGame)
-            detail = Self.detail(for: favoriteGame, countsText: countsText)
-        } else if let selectedTeam {
-            headline = "오늘은 \(selectedTeam.name) 경기가 없습니다"
-            detail = countsText
-        } else if let spotlightGame = TodayGames(date: activeDateString, games: games)
-            .orderedGames(filter: .all, preferredTeamID: selectedTeamID)
-            .first {
-            headline = Self.headline(for: spotlightGame)
-            detail = Self.detail(for: spotlightGame, countsText: countsText)
-        } else {
-            headline = "오늘 편성된 경기가 없습니다"
-            detail = countsText
-        }
-
-        return TodayDashboardSummary(
-            totalGames: games.count,
-            liveGames: liveGames,
-            scheduledGames: scheduledGames,
-            finalGames: finalGames,
-            headline: headline,
-            detail: detail
-        )
+        derivedState.dashboardSummary
     }
 
     public var standingsErrorMessage: String? {
@@ -192,6 +236,7 @@ public final class TodayGamesViewModel: ObservableObject {
 
     public func selectTeam(_ teamID: String?) {
         selectedTeamID = teamID
+        updateDerivedState()
         saveSelectedTeamID(teamID)
     }
 
@@ -208,6 +253,7 @@ public final class TodayGamesViewModel: ObservableObject {
     public func load(date: String? = nil) async {
         if let date {
             requestDate = date
+            updateDerivedState()
         }
         let effectiveRequestDate = requestDate
 
@@ -220,11 +266,8 @@ public final class TodayGamesViewModel: ObservableObject {
 
         do {
             let response = try await client.fetchTodayGames(date: effectiveRequestDate)
-            games = response.games
-            responseDate = response.date
-            lastUpdatedAt = now()
+            applyTodayGames(response, timestamp: now())
             applyInitialFilterIfNeeded()
-            state = .loaded
             restartPollingIfNeeded(date: effectiveRequestDate)
         } catch {
             state = .failed(message: Self.message(for: error))
@@ -248,6 +291,7 @@ public final class TodayGamesViewModel: ObservableObject {
         standings = []
         lastUpdatedAt = nil
         responseDate = nil
+        updateDerivedState()
         hasAppliedInitialFilter = false
         await load(date: requestDate)
     }
@@ -261,6 +305,15 @@ public final class TodayGamesViewModel: ObservableObject {
         )
     }
 
+    private func updateDerivedState() {
+        derivedState = DerivedState(
+            games: games,
+            filter: filter,
+            selectedTeamID: selectedTeamID,
+            requestDate: requestDate,
+            responseDate: responseDate
+        )
+    }
     private static func message(for error: Error) -> String {
         if error is URLError {
             return "백엔드 서버에 연결할 수 없습니다. 설정에서 Backend URL을 확인해 주세요."
@@ -275,7 +328,7 @@ public final class TodayGamesViewModel: ObservableObject {
         return "경기 데이터를 불러오지 못했습니다."
     }
 
-    private static func headline(for game: Game) -> String {
+    nonisolated private static func headline(for game: Game) -> String {
         switch game.status {
         case .scheduled, .delayed, .cancelled, .unknown:
             return "\(game.awayTeam.name) vs \(game.homeTeam.name)"
@@ -284,7 +337,7 @@ public final class TodayGamesViewModel: ObservableObject {
         }
     }
 
-    private static func detail(for game: Game, countsText: String) -> String {
+    nonisolated private static func detail(for game: Game, countsText: String) -> String {
         var parts: [String] = []
 
         if game.status == .live, game.inning == nil {
@@ -303,11 +356,11 @@ public final class TodayGamesViewModel: ObservableObject {
         return parts.joined(separator: " · ")
     }
 
-    private static func countsText(totalGames: Int, liveGames: Int, scheduledGames: Int, finalGames: Int) -> String {
+    nonisolated private static func countsText(totalGames: Int, liveGames: Int, scheduledGames: Int, finalGames: Int) -> String {
         "전체 \(totalGames)경기 · 진행 \(liveGames) · 예정 \(scheduledGames) · 종료 \(finalGames)"
     }
 
-    private static func shortStatusText(for status: GameStatus) -> String {
+    nonisolated private static func shortStatusText(for status: GameStatus) -> String {
         switch status {
         case .scheduled:
             return "예정"
@@ -391,6 +444,20 @@ public final class TodayGamesViewModel: ObservableObject {
         filter = hasLiveGame ? .live : .scheduled
     }
 
+    private func applyTodayGames(_ todayGames: TodayGames, timestamp: @autoclosure () -> Date) {
+        let isUnchangedPayload = games == todayGames.games && responseDate == todayGames.date
+        if isUnchangedPayload {
+            state = .loaded
+            return
+        }
+
+        games = todayGames.games
+        responseDate = todayGames.date
+        lastUpdatedAt = timestamp()
+        updateDerivedState()
+        state = .loaded
+    }
+
     private func restartPollingIfNeeded(date: String?) {
         guard pollingDate != date || pollingTask == nil else { return }
 
@@ -402,10 +469,7 @@ public final class TodayGamesViewModel: ObservableObject {
                     guard let self else { return }
                     guard Task.isCancelled == false else { break }
 
-                    self.games = update.games
-                    self.responseDate = update.date
-                    self.lastUpdatedAt = now()
-                    self.state = .loaded
+                    self.applyTodayGames(update, timestamp: now())
                 }
             } catch {
                 guard let self else { return }

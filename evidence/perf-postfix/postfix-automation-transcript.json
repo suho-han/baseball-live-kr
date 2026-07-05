@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-desktop-performance-transcript",
+  "goalId": "G003",
+  "surface": "native",
+  "app": "BaseballLiveKR",
+  "build": "Release",
+  "dataSource": "Production live KBO API",
+  "capturedAt": "2026-07-05T21:12:34+09:00/2026-07-05T21:33:30+09:00",
+  "liveGameEvidence": {
+    "date": "20260705",
+    "liveCount": 2,
+    "gameIds": [
+      "20260705LTKT0",
+      "20260705SSSK0"
+    ]
+  },
+  "actions": [
+    {
+      "type": "xcodebuild",
+      "command": "xcodebuild -scheme BaseballLiveKRmacOS -project BaseballLiveKR.xcodeproj -configuration Release -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build",
+      "result": "passed before post-fix live profiling",
+      "timestamp": "2026-07-05T21:13:00+09:00"
+    },
+    {
+      "type": "native-ui-automation",
+      "surface": "menubar-popover",
+      "result": "Opened BaseballLiveKR menubar popover during live-game window for three post-fix runs",
+      "timestamp": "2026-07-05T21:14:00+09:00",
+      "selector": "AXMenuBarExtra:menu bar item 1 of menu bar 2"
+    },
+    {
+      "type": "native-ui-automation",
+      "surface": "today-games-live-polling",
+      "result": "Exercised TodayGames live polling/list surface during live-game window for three post-fix runs",
+      "timestamp": "2026-07-05T21:15:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1"
+    },
+    {
+      "type": "native-ui-automation",
+      "surface": "game-detail-live",
+      "result": "Opened live GameDetail for game 20260705LTKT0 during live-game window for three post-fix runs",
+      "timestamp": "2026-07-05T21:16:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1 > live game detail button"
+    },
+    {
+      "type": "xctrace",
+      "command": "xcrun xctrace record --template 'Animation Hitches' --attach <BaseballLiveKR pid> --time-limit 10s",
+      "result": "Three post-fix Animation Hitches traces saved per surface under artifacts/perf-postfix/<surface>/",
+      "timestamp": "2026-07-05T21:17:00+09:00",
+      "selector": "AXApplication:BaseballLiveKR"
+    },
+    {
+      "type": "xctrace",
+      "command": "xcrun xctrace record --template 'Time Profiler' --attach <BaseballLiveKR pid> --time-limit 10s",
+      "result": "Three post-fix Time Profiler traces saved per surface under artifacts/perf-postfix/<surface>/",
+      "timestamp": "2026-07-05T21:18:00+09:00",
+      "selector": "AXApplication:BaseballLiveKR"
+    },
+    {
+      "type": "xctrace-export",
+      "command": "xcrun xctrace export --xpath /trace-toc/run[@number='1']/data/table[@schema='hitches-frame-lifetimes']",
+      "result": "Exported explicit hitches-frame-lifetimes durations and regenerated evidence/perf-postfix/comparison.md",
+      "timestamp": "2026-07-05T21:19:00+09:00",
+      "selector": "AXApplication:BaseballLiveKR"
+    }
+  ],
+  "artifactRefs": [
+    "artifacts/perf-postfix/menubar-popover/",
+    "artifacts/perf-postfix/today-games-live-polling/",
+    "artifacts/perf-postfix/game-detail-live/",
+    "evidence/perf-postfix/comparison.md",
+    "evidence/perf-postfix/offender-ranking.md",
+    "evidence/perf-postfix/menubar-popover.md",
+    "evidence/perf-postfix/today-games-live-polling.md",
+    "evidence/perf-postfix/game-detail-live.md"
+  ],
+  "verdict": "passed",
+  "tool": "osascript+xctrace",
+  "surfaceName": "g003-postfix-live-surfaces"
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "package-test-report",
+  "goalId": "G003",
+  "commands": [
+    {"command": "swift test", "cwd": "Packages/BaseballLiveKRCore", "status": "passed"},
+    {"command": "swift test", "cwd": "Packages/BaseballLiveKRFeatures", "status": "passed", "notes": "31 tests including unchanged no-republish, changed publish, and unchanged successful reload recovery."},
+    {"command": "swift test", "cwd": "Packages/BaseballLiveKRDesignSystem", "status": "passed"},
+    {"command": "./scripts/verify-local.sh", "cwd": ".", "status": "passed", "notes": "npm test, npm run build, Core swift test, DesignSystem swift build, Features swift test, macOS xcodebuild, iOS simulator xcodebuild all passed after final fix."}
+  ],
+  "reviewLanes": [
+    {"id": "21-G003SlopSweep3", "status": "passed", "blockers": []},
+    {"id": "22-G003ArchitectReview2", "status": "approved", "blockers": []},
+    {"id": "24-G003ExecutorQA4", "status": "passed", "blockers": []}
+  ]
+}

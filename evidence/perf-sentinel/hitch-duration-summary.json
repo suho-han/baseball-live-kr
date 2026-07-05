@@ -1,0 +1,95 @@
+{
+  "menubar-popover": {
+    "runs": [
+      {
+        "run": 1,
+        "hitchFrameCount": 198,
+        "maxDurationMs": 64.61,
+        "averageDurationMs": 47.62,
+        "p95DurationMs": 48.1
+      },
+      {
+        "run": 2,
+        "hitchFrameCount": 194,
+        "maxDurationMs": 64.22,
+        "averageDurationMs": 47.59,
+        "p95DurationMs": 48.26
+      },
+      {
+        "run": 3,
+        "hitchFrameCount": 195,
+        "maxDurationMs": 80.63,
+        "averageDurationMs": 47.43,
+        "p95DurationMs": 48.28
+      }
+    ],
+    "aggregate": {
+      "hitchFrameCount": 587,
+      "maxDurationMs": 80.63,
+      "averageDurationMs": 47.55,
+      "p95DurationMs": 48.24
+    }
+  },
+  "today-games-live-polling": {
+    "runs": [
+      {
+        "run": 1,
+        "hitchFrameCount": 196,
+        "maxDurationMs": 64.59,
+        "averageDurationMs": 47.72,
+        "p95DurationMs": 48.34
+      },
+      {
+        "run": 2,
+        "hitchFrameCount": 196,
+        "maxDurationMs": 80.74,
+        "averageDurationMs": 48.39,
+        "p95DurationMs": 49.21
+      },
+      {
+        "run": 3,
+        "hitchFrameCount": 194,
+        "maxDurationMs": 64.5,
+        "averageDurationMs": 47.69,
+        "p95DurationMs": 48.34
+      }
+    ],
+    "aggregate": {
+      "hitchFrameCount": 586,
+      "maxDurationMs": 80.74,
+      "averageDurationMs": 47.93,
+      "p95DurationMs": 48.57
+    }
+  },
+  "game-detail-live": {
+    "runs": [
+      {
+        "run": 1,
+        "hitchFrameCount": 196,
+        "maxDurationMs": 49.24,
+        "averageDurationMs": 47.51,
+        "p95DurationMs": 48.22
+      },
+      {
+        "run": 2,
+        "hitchFrameCount": 193,
+        "maxDurationMs": 64.74,
+        "averageDurationMs": 47.51,
+        "p95DurationMs": 48.34
+      },
+      {
+        "run": 3,
+        "hitchFrameCount": 195,
+        "maxDurationMs": 64.94,
+        "averageDurationMs": 47.55,
+        "p95DurationMs": 48.46
+      }
+    ],
+    "aggregate": {
+      "hitchFrameCount": 584,
+      "maxDurationMs": 64.94,
+      "averageDurationMs": 47.52,
+      "p95DurationMs": 48.36
+    }
+  }
+}

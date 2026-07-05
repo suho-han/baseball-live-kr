@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "goalId": "G007",
+  "phase": "staging-live-simulation-sentinel",
+  "generatedAt": "2026-07-05T23:34:30+09:00",
+  "steering": {
+    "supersededGoal": "G006",
+    "replacementGoal": "G007",
+    "decision": "Use staging live simulation for Phase 7 now; import to production later."
+  },
+  "simulation": {
+    "endpoint": "http://127.0.0.1:17361/v1/games/today",
+    "env": { "KBO_USE_TEST_LIVE_GAME": "1" },
+    "appOverride": "kr.suhohan.baseballlivekr.macos baseball-live-kr.backend-production-base-url=http://127.0.0.1:17361",
+    "date": "20260705",
+    "liveCount": 1,
+    "gameIds": ["20260705LTHH0"],
+    "statuses": ["live"],
+    "visibleProof": "evidence/perf-sentinel/staging-live-simulation-screenshot.png shows LIVE 롯데 12 / 한화 9, 7회말, TEST."
+  },
+  "performanceGate": {
+    "metric": "average exported Animation Hitches duration sum from hitches-frame-lifetimes",
+    "source": "evidence/perf-sentinel/comparison.md",
+    "surfaces": [
+      { "id": "menubar-popover", "phase4PostFixMs": 25974.24, "sentinelMs": 9303.43, "gate": "PASS" },
+      { "id": "today-games-live-polling", "phase4PostFixMs": 26193.92, "sentinelMs": 9363.11, "gate": "PASS" },
+      { "id": "game-detail-live", "phase4PostFixMs": 24237.04, "sentinelMs": 9251.25, "gate": "PASS" }
+    ]
+  },
+  "commands": [
+    { "command": "xcodebuild -scheme BaseballLiveKRmacOS -project BaseballLiveKR.xcodeproj -configuration Release -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build", "status": "passed" },
+    { "command": "defaults write kr.suhohan.baseballlivekr.macos baseball-live-kr.backend-production-base-url http://127.0.0.1:17361", "status": "passed" },
+    { "command": "KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 APP_PATH=.xcode/DerivedData/Build/Products/Release/BaseballLiveKR.app ./scripts/run-macos-app-with-packaged-backend.sh", "status": "passed" },
+    { "command": "swift test (Packages/BaseballLiveKRCore)", "status": "passed" },
+    { "command": "swift test (Packages/BaseballLiveKRFeatures)", "status": "passed" },
+    { "command": "swift test (Packages/BaseballLiveKRDesignSystem)", "status": "passed" },
+    { "command": "./scripts/verify-local.sh", "status": "passed" }
+  ],
+  "artifactRefs": [
+    { "id": "sentinel-comparison", "kind": "native-performance-test-report", "path": "evidence/perf-sentinel/comparison.md" },
+    { "id": "sentinel-transcript", "kind": "native-automation-transcript", "path": "evidence/perf-sentinel/sentinel-automation-transcript.json" },
+    { "id": "sentinel-screenshot", "kind": "native-desktop-screenshot", "path": "evidence/perf-sentinel/staging-live-simulation-screenshot.png" },
+    { "id": "production-import-followup", "kind": "follow-up-record", "path": "evidence/perf-sentinel/production-import-follow-up.md" }
+  ],
+  "latestRerun": {
+    "verifiedAt": "2026-07-06T00:55:00+09:00",
+    "commands": [
+      { "command": "swift test (Packages/BaseballLiveKRCore)", "status": "passed" },
+      { "command": "swift test (Packages/BaseballLiveKRFeatures)", "status": "passed" },
+      { "command": "swift test (Packages/BaseballLiveKRDesignSystem)", "status": "passed" },
+      { "command": "./scripts/verify-local.sh", "status": "passed" }
+    ]
+  },
+  "status": "passed"
+}

@@ -190,27 +190,35 @@ public enum GameDTOMapper {
 
     static func parseStartTime(_ value: String?) -> Date? {
         guard let value = nilIfBlank(value) else { return nil }
-        return makeKboStartTimeDateFormatter().date(from: value)
-            ?? makeKboBasicDateFormatter().date(from: value)
-            ?? makeKboExtendedDateFormatter().date(from: value)
+        return KBOStartTimeParser.shared.date(from: value)
     }
 
-    private static func makeKboStartTimeDateFormatter() -> DateFormatter {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyyMMdd'T'HH:mm:ssXXXXX"
-        return formatter
-    }
+    private final class KBOStartTimeParser: @unchecked Sendable {
+        static let shared = KBOStartTimeParser()
 
-    private static func makeKboBasicDateFormatter() -> ISO8601DateFormatter {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate, .withTime, .withTimeZone]
-        return formatter
-    }
+        private let lock = NSLock()
+        private let kboStartTimeDateFormatter: DateFormatter
+        private let kboBasicDateFormatter: ISO8601DateFormatter
+        private let kboExtendedDateFormatter: ISO8601DateFormatter
 
-    private static func makeKboExtendedDateFormatter() -> ISO8601DateFormatter {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter
+        private init() {
+            kboStartTimeDateFormatter = DateFormatter()
+            kboStartTimeDateFormatter.locale = Locale(identifier: "en_US_POSIX")
+            kboStartTimeDateFormatter.dateFormat = "yyyyMMdd'T'HH:mm:ssXXXXX"
+
+            kboBasicDateFormatter = ISO8601DateFormatter()
+            kboBasicDateFormatter.formatOptions = [.withFullDate, .withTime, .withTimeZone]
+
+            kboExtendedDateFormatter = ISO8601DateFormatter()
+            kboExtendedDateFormatter.formatOptions = [.withInternetDateTime]
+        }
+
+        func date(from value: String) -> Date? {
+            lock.withLock {
+                kboStartTimeDateFormatter.date(from: value)
+                    ?? kboBasicDateFormatter.date(from: value)
+                    ?? kboExtendedDateFormatter.date(from: value)
+            }
+        }
     }
 }

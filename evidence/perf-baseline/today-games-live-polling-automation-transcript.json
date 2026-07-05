@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-automation-transcript",
+  "surface": "native",
+  "buildConfiguration": "Release",
+  "dataSource": "https://api.baseball-live.kro.kr",
+  "favoriteTeam": "LT",
+  "accessibilityText": [
+    "Baseball LIVE KR",
+    "2026.07.05 (일) · 20시 20분",
+    "오늘의 초점",
+    "L",
+    "롯데",
+    "응원팀 현황 · 대표 경기",
+    "리그 전체",
+    "진행 중 경기를 우선 정렬한 전체 경기 목록입니다.",
+    "필터"
+  ],
+  "steps": [
+    {
+      "tool": "osascript",
+      "action": "set process BaseballLiveKR frontmost on main window",
+      "result": "Main TodayGames surface active"
+    },
+    {
+      "tool": "xctrace",
+      "action": "record Animation Hitches and Time Profiler, 10s each, runs 1-3",
+      "result": "All six trace bundles saved under artifacts/perf-baseline/today-games-live-polling/"
+    }
+  ],
+  "artifactRefs": [
+    "evidence/perf-baseline/today-games-live-polling.md"
+  ],
+  "verdict": "passed",
+  "surfaceName": "today-games-live-polling",
+  "tool": "osascript+xctrace",
+  "actions": [
+    {
+      "type": "osascript",
+      "command": "set process BaseballLiveKR frontmost on main window",
+      "result": "Main TodayGames surface active",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1"
+    },
+    {
+      "type": "xctrace",
+      "command": "record Animation Hitches and Time Profiler, 10s each, runs 1-3",
+      "result": "All six trace bundles saved under artifacts/perf-baseline/today-games-live-polling/",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "text",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1",
+      "expected": "TodayGames main window accessible text contains 롯데 and live list heading",
+      "result": "passed",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "status": "passed"
+    }
+  ]
+}

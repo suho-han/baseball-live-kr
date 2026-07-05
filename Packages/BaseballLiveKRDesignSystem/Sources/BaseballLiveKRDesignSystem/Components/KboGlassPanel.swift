@@ -12,8 +12,6 @@ public struct KboGlassPanel<Content: View>: View {
     private let cornerRadius: CGFloat
     private let content: Content
 
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-
     public init(
         style: KboGlassPanelStyle = .card,
         cornerRadius: CGFloat = 24,
@@ -29,9 +27,8 @@ public struct KboGlassPanel<Content: View>: View {
             .background(panelBackground)
             .clipShape(shape)
             .overlay {
-                shape.stroke(borderColor, lineWidth: 1)
+                shape.stroke(borderColor, lineWidth: borderWidth)
             }
-            .shadow(color: shadowColor, radius: shadowRadius, x: 0, y: shadowY)
     }
 
     private var shape: RoundedRectangle {
@@ -40,27 +37,32 @@ public struct KboGlassPanel<Content: View>: View {
 
     @ViewBuilder
     private var panelBackground: some View {
-        if reduceTransparency {
-            shape.fill(KboGlassToken.opaqueSurface(for: style))
-        } else {
-            shape.fill(KboGlassToken.material(for: style))
-            shape.fill(KboGlassToken.tintGradient(for: style))
-        }
+        shape.fill(backgroundColor)
+    }
+
+    private var backgroundColor: Color {
+        KboGlassToken.opaqueSurface(for: style)
     }
 
     private var borderColor: Color {
-        KboGlassToken.borderColor(for: style)
+        switch style {
+        case .card:
+            return KboSurfaceToken.cardBorder
+        case .elevated:
+            return KboSurfaceToken.glassBorder.opacity(0.78)
+        case .control:
+            return KboSurfaceToken.glassBorder.opacity(0.62)
+        case .navigation:
+            return KboSurfaceToken.glassBorder.opacity(0.70)
+        }
     }
 
-    private var shadowColor: Color {
-        KboGlassToken.shadowColor(for: style)
-    }
-
-    private var shadowRadius: CGFloat {
-        KboGlassToken.shadowRadius(for: style)
-    }
-
-    private var shadowY: CGFloat {
-        KboGlassToken.shadowY(for: style)
+    private var borderWidth: CGFloat {
+        switch style {
+        case .card, .control:
+            return 1
+        case .elevated, .navigation:
+            return 1.25
+        }
     }
 }

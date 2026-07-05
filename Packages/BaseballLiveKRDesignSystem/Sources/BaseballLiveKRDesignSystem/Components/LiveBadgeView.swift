@@ -18,6 +18,7 @@ public struct LiveBadgeView: View {
 
     public var body: some View {
         KboStatusPill(text: text, style: statusStyle, showsPulse: style == .live)
+            .accessibilityLabel(accessibilityText)
     }
 
     private var statusStyle: KboStatusPill.Style {
@@ -31,5 +32,9 @@ public struct LiveBadgeView: View {
         case .scheduled:
             return .scheduled
         }
+    }
+
+    private var accessibilityText: Text {
+        Text(text)
     }
 }

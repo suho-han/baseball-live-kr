@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-automation-transcript",
+  "tool": "G005Renderer",
+  "goalId": "G005",
+  "renderer": "/tmp/g005-renderer",
+  "worktree": "/Users/suhohan/Projects/baseball-live-kr-perf-redesign",
+  "commands": [
+    {
+      "label": "after",
+      "command": ["swift", "run", "G005Renderer", "/Users/suhohan/Projects/baseball-live-kr-perf-redesign/evidence/redesign-signoff/screenshots/after"],
+      "designSystemPath": "/Users/suhohan/Projects/baseball-live-kr-perf-redesign/Packages/BaseballLiveKRDesignSystem",
+      "result": "passed",
+      "count": 13
+    },
+    {
+      "label": "before",
+      "command": ["swift", "run", "G005Renderer", "/Users/suhohan/Projects/baseball-live-kr-perf-redesign/evidence/redesign-signoff/screenshots/before"],
+      "designSystemPath": "/Users/suhohan/Projects/baseball-live-kr/Packages/BaseballLiveKRDesignSystem",
+      "result": "passed",
+      "count": 13
+    }
+  ],
+  "screenshots": [
+    "TeamBadgeView.png",
+    "InningStateView.png",
+    "KboEmptyStateView.png",
+    "KboPrimaryActionButton.png",
+    "ScoreDigitsView.png",
+    "KboCommandBar.png",
+    "KboMetricRow.png",
+    "KboStatusPill.png",
+    "LiveBadgeView.png",
+    "OutCountView.png",
+    "BaseDiamondView.png",
+    "KboGlassPanel.png",
+    "PitchCountView.png"
+  ],
+  "actions": [
+    {
+      "type": "render",
+      "timestamp": "2026-07-05T13:49:00Z",
+      "target": "after",
+      "selector": "all-13-component-after-samples",
+      "result": "passed",
+      "artifactDir": "evidence/redesign-signoff/screenshots/after"
+    },
+    {
+      "type": "render",
+      "timestamp": "2026-07-05T13:49:15Z",
+      "target": "before",
+      "selector": "all-13-component-before-samples",
+      "result": "passed",
+      "artifactDir": "evidence/redesign-signoff/screenshots/before"
+    }
+  ],
+  "postFixChecks": {
+    "kboCommandBarNoKboText": true,
+    "kboGlassPanelTextUnclipped": true,
+    "kboPrimaryActionButtonTokenForeground": true
+  }
+}

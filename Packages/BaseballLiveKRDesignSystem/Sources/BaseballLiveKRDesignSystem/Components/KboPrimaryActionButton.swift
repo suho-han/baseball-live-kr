@@ -24,37 +24,47 @@ public struct KboPrimaryActionButton: View {
 
     public var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: KboSpacingToken.small) {
                 if let systemImage {
                     Image(systemName: systemImage)
-                        .font(KboTypographyToken.system(size: 14, weight: .bold, scaledBy: fontScale))
+                        .font(KboTypographyToken.system(size: 15, weight: .semibold, scaledBy: fontScale))
+                        .accessibilityHidden(true)
                 }
 
                 Text(title)
-                    .font(KboTypographyToken.system(size: 13, weight: .bold, scaledBy: fontScale))
+                    .font(KboTypographyToken.system(size: 14, weight: .bold, scaledBy: fontScale))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .minimumScaleFactor(0.82)
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(foregroundColor)
             .frame(maxWidth: .infinity, minHeight: KboControlToken.primaryButtonHeight)
-            .background(
-                LinearGradient(
-                    colors: [
-                        tint.opacity(isDisabled ? 0.34 : 0.95),
-                        tint.opacity(isDisabled ? 0.24 : 0.70)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .padding(.horizontal, KboSpacingToken.large)
+            .background(backgroundColor)
+            .clipShape(shape)
             .overlay {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(KboSurfaceToken.glassBorder.opacity(isDisabled ? 0.45 : 0.8), lineWidth: 1)
+                shape
+                    .stroke(borderColor, lineWidth: 1)
             }
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
-        .opacity(isDisabled ? 0.72 : 1)
+        .opacity(isDisabled ? 0.74 : 1)
+        .accessibilityLabel(title)
+    }
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: KboRadiusToken.large, style: .continuous)
+    }
+
+    private var foregroundColor: Color {
+        isDisabled ? KboSemanticColorToken.contentMuted : KboColorToken.backgroundPrimary
+    }
+
+    private var backgroundColor: Color {
+        isDisabled ? KboSurfaceToken.glassControl : tint
+    }
+
+    private var borderColor: Color {
+        isDisabled ? KboSurfaceToken.cardBorder : tint.opacity(0.72)
     }
 }

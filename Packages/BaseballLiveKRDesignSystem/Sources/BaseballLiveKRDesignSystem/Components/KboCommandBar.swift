@@ -23,41 +23,41 @@ public struct KboCommandBar<LeadingAccessory: View, Actions: View>: View {
     }
 
     public var body: some View {
-        KboGlassPanel(style: .navigation, cornerRadius: 24) {
-            HStack(alignment: .center, spacing: 14) {
+        KboGlassPanel(style: .navigation, cornerRadius: KboRadiusToken.xLarge) {
+            HStack(alignment: .center, spacing: KboSpacingToken.large) {
                 leadingAccessory
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: KboSpacingToken.small) {
                     if let eyebrow, eyebrow.isEmpty == false {
                         Text(eyebrow)
                             .font(KboTypographyToken.caption(scaledBy: fontScale))
-                            .foregroundStyle(KboSemanticColorToken.accentMint)
+                            .foregroundStyle(KboSemanticColorToken.accentNeutral)
                             .textCase(.uppercase)
                             .tracking(0.8)
                     }
 
                     Text(title)
-                        .font(KboTypographyToken.system(size: 24, weight: .black, scaledBy: fontScale))
-                        .foregroundStyle(KboTheme.primaryText)
+                        .font(KboTypographyToken.system(size: 22, weight: .bold, scaledBy: fontScale))
+                        .foregroundStyle(KboSemanticColorToken.contentPrimary)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.72)
+                        .minimumScaleFactor(0.76)
 
                     if let subtitle, subtitle.isEmpty == false {
                         Text(subtitle)
                             .font(KboTypographyToken.footnote(scaledBy: fontScale))
-                            .foregroundStyle(KboTheme.secondaryText)
+                            .foregroundStyle(KboSemanticColorToken.contentSecondary)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
 
-                Spacer(minLength: 10)
+                Spacer(minLength: KboSpacingToken.small)
 
                 actions
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
+            .padding(.horizontal, KboSpacingToken.xLarge)
+            .padding(.vertical, KboSpacingToken.large)
         }
     }
 }

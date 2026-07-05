@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-desktop-performance-transcript",
+  "goalId": "G007",
+  "surface": "native",
+  "app": "BaseballLiveKR",
+  "build": "Release",
+  "dataSource": "Staging/local live simulation via packaged backend with KBO_USE_TEST_LIVE_GAME=1 and production preset override to http://127.0.0.1:17361",
+  "capturedAt": "2026-07-05T23:31:24+09:00/2026-07-05T23:34:00+09:00",
+  "liveGameEvidence": {
+    "endpoint": "http://127.0.0.1:17361/v1/games/today",
+    "date": "20260705",
+    "liveCount": 1,
+    "gameIds": ["20260705LTHH0"],
+    "statuses": ["live"],
+    "visibleScreenshot": "evidence/perf-sentinel/staging-live-simulation-screenshot.png",
+    "visibleContent": "Release app shows LIVE, 롯데 12, 한화 9, 7회말, TEST."
+  },
+  "phase7Steering": {
+    "source": "user",
+    "decision": "Replace production live-window sentinel with staging live simulation for this run; import to production later.",
+    "deferredFollowUp": "Production import/revalidation is recorded in evidence/perf-sentinel/production-import-follow-up.md."
+  },
+  "actions": [
+    {
+      "type": "xcodebuild",
+      "command": "xcodebuild -scheme BaseballLiveKRmacOS -project BaseballLiveKR.xcodeproj -configuration Release -destination 'platform=macOS' -derivedDataPath .xcode/DerivedData build",
+      "result": "passed before staging live-simulation profiling",
+      "timestamp": "2026-07-05T23:13:04+09:00",
+      "selector": "BaseballLiveKRmacOS Release build"
+    },
+    {
+      "type": "app-configuration",
+      "command": "defaults write kr.suhohan.baseballlivekr.macos baseball-live-kr.backend-production-base-url http://127.0.0.1:17361; defaults write kr.suhohan.baseballlivekr.macos baseball-live-kr.backend-preset production",
+      "result": "Release app production preset resolved to the local staging simulation backend for this sentinel.",
+      "timestamp": "2026-07-05T23:31:00+09:00",
+      "selector": "BackendSettingsModel production preset override"
+    },
+    {
+      "type": "backend-start",
+      "command": "KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 APP_PATH=.xcode/DerivedData/Build/Products/Release/BaseballLiveKR.app ./scripts/run-macos-app-with-packaged-backend.sh",
+      "result": "packaged backend started on 127.0.0.1:17361 and app launched against the local staging simulation",
+      "timestamp": "2026-07-05T23:31:20+09:00",
+      "selector": "BaseballLiveKR Release app + packaged backend"
+    },
+    {
+      "type": "api-confirmation",
+      "command": "fetch http://127.0.0.1:17361/v1/games/today",
+      "result": "liveCount=1, id=20260705LTHH0, status=live",
+      "timestamp": "2026-07-05T23:31:21+09:00",
+      "selector": "Local staging simulation API"
+    },
+    {
+      "type": "native-ui-screenshot",
+      "surface": "today-games-live-polling",
+      "result": "Captured non-uniform desktop screenshot showing Baseball LIVE KR Release app rendering the simulated LIVE game: 롯데 12, 한화 9, 7회말, TEST.",
+      "timestamp": "2026-07-05T23:31:24+09:00",
+      "selector": "AXWindow:Baseball LIVE KR",
+      "artifactRef": "evidence/perf-sentinel/staging-live-simulation-screenshot.png"
+    },
+    {
+      "type": "xctrace",
+      "command": "xcrun xctrace record --template 'Animation Hitches' --attach <BaseballLiveKR pid> --time-limit 3s",
+      "result": "Three Animation Hitches traces saved per surface under artifacts/perf-sentinel/<surface>/",
+      "timestamp": "2026-07-05T23:32:00+09:00",
+      "selector": "AXApplication:BaseballLiveKR"
+    },
+    {
+      "type": "xctrace",
+      "command": "xcrun xctrace record --template 'Time Profiler' --attach <BaseballLiveKR pid> --time-limit 3s",
+      "result": "Three Time Profiler traces saved per surface under artifacts/perf-sentinel/<surface>/",
+      "timestamp": "2026-07-05T23:33:00+09:00",
+      "selector": "AXApplication:BaseballLiveKR"
+    },
+    {
+      "type": "xctrace-export",
+      "command": "xcrun xctrace export --xpath /trace-toc/run[@number='1']/data/table[@schema='hitches-frame-lifetimes']",
+      "result": "Exported hitches-frame-lifetimes data and generated evidence/perf-sentinel/comparison.md",
+      "timestamp": "2026-07-05T23:34:00+09:00",
+      "selector": "AXApplication:BaseballLiveKR"
+    }
+  ],
+  "artifactRefs": [
+    "artifacts/perf-sentinel/menubar-popover/",
+    "artifacts/perf-sentinel/today-games-live-polling/",
+    "artifacts/perf-sentinel/game-detail-live/",
+    "evidence/perf-sentinel/comparison.md",
+    "evidence/perf-sentinel/menubar-popover.md",
+    "evidence/perf-sentinel/today-games-live-polling.md",
+    "evidence/perf-sentinel/game-detail-live.md",
+    "evidence/perf-sentinel/sentinel-duration-sums.json",
+    "evidence/perf-sentinel/hitch-duration-summary.json",
+    "evidence/perf-sentinel/staging-live-simulation-screenshot.png",
+    "evidence/perf-sentinel/production-import-follow-up.md"
+  ],
+  "verdict": "passed",
+  "tool": "computer+xcodebuild+packaged-backend+xctrace",
+  "surfaceName": "g007-staging-live-simulation-sentinel"
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-automation-transcript",
+  "surface": "native",
+  "buildConfiguration": "Release",
+  "dataSource": "https://api.baseball-live.kro.kr",
+  "steps": [
+    {
+      "tool": "osascript",
+      "action": "click menu bar item 1 of menu bar 2 for process BaseballLiveKR",
+      "result": "MenuBarExtra popover open action issued before each trace run"
+    },
+    {
+      "tool": "xctrace",
+      "action": "record Animation Hitches and Time Profiler, 10s each, runs 1-3",
+      "result": "All six trace bundles saved under artifacts/perf-baseline/menubar-popover/"
+    }
+  ],
+  "artifactRefs": [
+    "evidence/perf-baseline/menubar-popover.md"
+  ],
+  "verdict": "passed",
+  "surfaceName": "menubar-popover",
+  "tool": "osascript+xctrace",
+  "actions": [
+    {
+      "type": "osascript",
+      "command": "click menu bar item 1 of menu bar 2 for process BaseballLiveKR",
+      "result": "MenuBarExtra popover open action issued before each trace run",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXMenuBarExtra:menu bar item 1 of menu bar 2"
+    },
+    {
+      "type": "xctrace",
+      "command": "record Animation Hitches and Time Profiler, 10s each, runs 1-3",
+      "result": "All six trace bundles saved under artifacts/perf-baseline/menubar-popover/",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXMenuBarExtra:menu bar item 1 of menu bar 2"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "text",
+      "selector": "AXMenuBarExtra:menu bar item 1 of menu bar 2",
+      "expected": "MenuBarExtra popover click issued",
+      "result": "passed",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "status": "passed"
+    }
+  ]
+}

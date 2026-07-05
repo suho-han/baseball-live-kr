@@ -1,0 +1,29 @@
+{
+  "status": "active",
+  "counts": {
+    "pending": 0,
+    "active": 1,
+    "complete": 6,
+    "failed": 0,
+    "blocked": 0,
+    "review_blocked": 0,
+    "superseded": 1
+  },
+  "goals": {
+    "G001": "complete",
+    "G002": "complete",
+    "G003": "complete",
+    "G004": "complete",
+    "G005": "complete",
+    "G006": "superseded",
+    "G007": "complete",
+    "G008": "active"
+  },
+  "requiredEvidence": {
+    "evidence/perf-sentinel/comparison.md": true,
+    "evidence/perf-sentinel/sentinel-automation-transcript.json": true,
+    "evidence/perf-sentinel/verification-report.json": true,
+    "evidence/perf-sentinel/staging-live-simulation-screenshot.png": true,
+    "evidence/perf-sentinel/production-import-follow-up.md": true
+  }
+}

@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import BaseballLiveKRCore
 import Testing
 @testable import BaseballLiveKRFeatures
@@ -401,6 +402,113 @@ struct TodayGamesViewModelTests {
         #expect(requestedDates.count >= 2)
         #expect(requestedDates.allSatisfy { $0 == "2026-06-12" })
     }
+
+    @Test func repeatedIdenticalLoadDoesNotPublishGamesAgain() async {
+        let game = makeGame(id: "live", status: .live, startHour: 17)
+        let timestamp = Date(timeIntervalSince1970: 1_781_254_800)
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(
+                repository: MockGameRepository(
+                    todayGames: TodayGames(date: "20260612", games: [game])
+                )
+            ),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in },
+            now: { timestamp }
+        )
+
+        await viewModel.load()
+        let firstUpdatedAt = viewModel.lastUpdatedAt
+        var publishedGames: [[Game]] = []
+        let cancellable = viewModel.$games.dropFirst().sink { games in
+            publishedGames.append(games)
+        }
+
+        await viewModel.load()
+
+        #expect(publishedGames.isEmpty)
+        #expect(viewModel.games == [game])
+        #expect(viewModel.lastUpdatedAt == firstUpdatedAt)
+        cancellable.cancel()
+    }
+
+    @Test func unchangedSuccessfulReloadRecoversFailedState() async throws {
+        let game = makeGame(id: "live", status: .live, startHour: 17)
+        let repository = RecoveringGameRepository(
+            responses: [
+                .success(TodayGames(date: "20260612", games: [game])),
+                .failure(TestError.offline),
+                .success(TodayGames(date: "20260612", games: [game]))
+            ]
+        )
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(repository: repository, pollingInterval: .seconds(3_600)),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+        try await waitUntilState(viewModel, equals: .failed(message: "서버에 연결할 수 없습니다."))
+
+        await viewModel.load()
+
+        #expect(viewModel.state == .loaded)
+        #expect(viewModel.games == [game])
+    }
+
+    @Test func pollingIdenticalPayloadDoesNotPublishGamesAgain() async throws {
+        let game = makeGame(id: "live", status: .live, startHour: 17)
+        let repository = SequenceGameRepository(
+            todayGamesResponses: [
+                TodayGames(date: "20260612", games: [game]),
+                TodayGames(date: "20260612", games: [game])
+            ]
+        )
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(repository: repository, pollingInterval: .seconds(60)),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+        var publishedGames: [[Game]] = []
+        let cancellable = viewModel.$games.dropFirst().sink { games in
+            publishedGames.append(games)
+        }
+
+        try await waitUntilFetchCount(repository, isAtLeast: 2)
+
+        #expect(publishedGames.isEmpty)
+        #expect(viewModel.games == [game])
+        cancellable.cancel()
+    }
+
+    @Test func pollingChangedPayloadPublishesImmediately() async throws {
+        let initialGame = makeGame(id: "scheduled", status: .scheduled, startHour: 19)
+        let liveGame = makeGame(id: "live", status: .live, startHour: 17)
+        let repository = SequenceGameRepository(
+            todayGamesResponses: [
+                TodayGames(date: "20260612", games: [initialGame]),
+                TodayGames(date: "20260612", games: [liveGame])
+            ]
+        )
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(repository: repository, pollingInterval: .seconds(60)),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+        var publishedGames: [[Game]] = []
+        let cancellable = viewModel.$games.dropFirst().sink { games in
+            publishedGames.append(games)
+        }
+
+        await viewModel.load()
+        try await waitUntilGames(viewModel, equal: [liveGame])
+
+        #expect(publishedGames.contains([liveGame]))
+        #expect(viewModel.games == [liveGame])
+        cancellable.cancel()
+    }
 }
 
 private func makeGame(
@@ -442,6 +550,94 @@ private func makeGame(
         teamRecords: teamRecords,
         sourceMeta: SourceMeta(rawStatusCode: nil, rawTopBottomCode: nil, fetchedAt: "2026-06-12T10:05:00.000Z")
     )
+}
+
+private func waitUntilFetchCount(
+    _ repository: SequenceGameRepository,
+    isAtLeast expectedCount: Int
+) async throws {
+    for _ in 0..<100 {
+        if await repository.fetchCount >= expectedCount {
+            return
+        }
+
+        try await Task.sleep(for: .milliseconds(10))
+    }
+
+    #expect(Bool(false), "Timed out waiting for fetch count \(expectedCount)")
+}
+
+@MainActor
+private func waitUntilGames(_ viewModel: TodayGamesViewModel, equal expectedGames: [Game]) async throws {
+    for _ in 0..<100 {
+        if viewModel.games == expectedGames {
+            return
+        }
+
+        try await Task.sleep(for: .milliseconds(10))
+    }
+
+    #expect(Bool(false), "Timed out waiting for games update")
+}
+
+@MainActor
+private func waitUntilState(_ viewModel: TodayGamesViewModel, equals expectedState: TodayGamesViewModel.State) async throws {
+    for _ in 0..<100 {
+        if viewModel.state == expectedState {
+            return
+        }
+
+        try await Task.sleep(for: .milliseconds(10))
+    }
+
+    #expect(Bool(false), "Timed out waiting for state \(expectedState)")
+}
+
+private actor SequenceGameRepository: GameRepository {
+    private let todayGamesResponses: [TodayGames]
+    private(set) var fetchCount = 0
+
+    init(todayGamesResponses: [TodayGames]) {
+        self.todayGamesResponses = todayGamesResponses
+    }
+
+    func fetchTodayGames(date: String?) async throws -> TodayGames {
+        defer { fetchCount += 1 }
+        let index = min(fetchCount, todayGamesResponses.count - 1)
+        return todayGamesResponses[index]
+    }
+
+    func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
+        let games = todayGamesResponses[min(fetchCount, todayGamesResponses.count - 1)].games
+        return GameDetail(date: date ?? "", game: games.first(where: { $0.id == gameId }))
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        TeamStandings(date: date ?? "", standings: [])
+    }
+}
+
+private actor RecoveringGameRepository: GameRepository {
+    private var responses: [Result<TodayGames, Error>]
+
+    init(responses: [Result<TodayGames, Error>]) {
+        self.responses = responses
+    }
+
+    func fetchTodayGames(date: String?) async throws -> TodayGames {
+        let response = responses.isEmpty
+            ? Result<TodayGames, Error>.success(TodayGames(date: date ?? "", games: []))
+            : responses.removeFirst()
+        return try response.get()
+    }
+
+    func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
+        GameDetail(date: date ?? "", game: nil)
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        TeamStandings(date: date ?? "", standings: [])
+    }
 }
 
 private struct FailingGameRepository: GameRepository, Sendable {

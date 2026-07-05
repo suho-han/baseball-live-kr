@@ -11,9 +11,32 @@ public struct PitchCountView: View {
     }
 
     public var body: some View {
-        Text("B \(balls) · S \(strikes)")
-            .font(KboTypographyToken.footnote(scaledBy: fontScale))
-            .foregroundStyle(KboTheme.secondaryText)
-            .monospacedDigit()
+        HStack(spacing: KboSpacingToken.xSmall) {
+            countLabel("B", value: balls, tint: KboSemanticColorToken.accentBlue)
+            Divider()
+                .frame(height: KboSpacingToken.medium)
+                .overlay(KboSurfaceToken.cardBorder)
+            countLabel("S", value: strikes, tint: KboSemanticColorToken.statusLive)
+        }
+        .padding(.horizontal, KboSpacingToken.small)
+        .padding(.vertical, KboSpacingToken.xSmall)
+        .background(KboSurfaceToken.glassControl)
+        .clipShape(Capsule())
+        .overlay {
+            Capsule()
+                .stroke(KboSurfaceToken.glassBorder, lineWidth: 1)
+        }
+    }
+
+    private func countLabel(_ label: String, value: Int, tint: Color) -> some View {
+        HStack(spacing: KboSpacingToken.xSmall) {
+            Text(label)
+                .foregroundStyle(KboSemanticColorToken.contentSecondary)
+            Text("\(value)")
+                .foregroundStyle(tint)
+        }
+        .font(KboTypographyToken.footnote(scaledBy: fontScale))
+        .monospacedDigit()
+        .lineLimit(1)
     }
 }

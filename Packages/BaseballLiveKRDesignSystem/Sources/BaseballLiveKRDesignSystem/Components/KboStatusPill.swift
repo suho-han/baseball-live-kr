@@ -23,11 +23,11 @@ public struct KboStatusPill: View {
     }
 
     public var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: KboSpacingToken.xSmall) {
             if style == .live {
                 Circle()
                     .fill(dotColor)
-                    .frame(width: 6, height: 6)
+                    .frame(width: dotSize, height: dotSize)
                     .scaleEffect(isPulsing && reduceMotion == false ? 1.26 : 1)
                     .opacity(isPulsing && reduceMotion == false ? 0.62 : 1)
             }
@@ -38,6 +38,7 @@ public struct KboStatusPill: View {
         }
         .foregroundStyle(foregroundColor)
         .padding(.horizontal, KboSpacingToken.small)
+        .padding(.vertical, KboSpacingToken.xSmall)
         .frame(minHeight: KboControlToken.pillHeight)
         .background(backgroundColor)
         .clipShape(Capsule())
@@ -56,18 +57,18 @@ public struct KboStatusPill: View {
     private var foregroundColor: Color {
         switch style {
         case .live:
-            return .white
+            return KboColorToken.surfaceCard
         case .final:
             return KboSemanticColorToken.contentPrimary
         case .delayed:
-            return .black.opacity(0.84)
+            return KboSemanticColorToken.contentPrimary
         case .scheduled, .neutral:
             return KboSemanticColorToken.contentPrimary
         }
     }
 
     private var dotColor: Color {
-        style == .live ? .white : foregroundColor
+        style == .live ? KboColorToken.surfaceCard : foregroundColor
     }
 
     private var backgroundColor: Color {
@@ -75,11 +76,11 @@ public struct KboStatusPill: View {
         case .live:
             return KboSemanticColorToken.statusLive
         case .final:
-            return KboSemanticColorToken.statusFinal.opacity(0.22)
+            return KboSurfaceToken.glassControl
         case .delayed:
-            return KboSemanticColorToken.statusDelayed
+            return KboSemanticColorToken.statusDelayed.opacity(0.20)
         case .scheduled:
-            return KboSemanticColorToken.statusScheduled.opacity(0.18)
+            return KboSurfaceToken.glassControl
         case .neutral:
             return KboSurfaceToken.glassControl
         }
@@ -88,15 +89,19 @@ public struct KboStatusPill: View {
     private var borderColor: Color {
         switch style {
         case .live:
-            return KboSemanticColorToken.statusLive.opacity(0.9)
+            return KboSemanticColorToken.statusLive
         case .final:
-            return KboSemanticColorToken.statusFinal.opacity(0.5)
+            return KboSurfaceToken.glassBorder
         case .delayed:
-            return KboSemanticColorToken.statusDelayed.opacity(0.8)
+            return KboSemanticColorToken.statusDelayed.opacity(0.56)
         case .scheduled:
-            return KboSemanticColorToken.statusScheduled.opacity(0.5)
+            return KboSemanticColorToken.statusScheduled.opacity(0.56)
         case .neutral:
             return KboSurfaceToken.glassBorder
         }
+    }
+
+    private var dotSize: CGFloat {
+        KboSpacingToken.small
     }
 }

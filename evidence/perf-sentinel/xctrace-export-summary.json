@@ -1,0 +1,62 @@
+{
+  "menubar-popover": [
+    {
+      "run": 1,
+      "exportExit": 0,
+      "numericCellCount": 611,
+      "maxNumericCell": 3753959541.0
+    },
+    {
+      "run": 2,
+      "exportExit": 0,
+      "numericCellCount": 589,
+      "maxNumericCell": 3678346916.0
+    },
+    {
+      "run": 3,
+      "exportExit": 0,
+      "numericCellCount": 585,
+      "maxNumericCell": 3675264041.0
+    }
+  ],
+  "today-games-live-polling": [
+    {
+      "run": 1,
+      "exportExit": 0,
+      "numericCellCount": 582,
+      "maxNumericCell": 3645534250.0
+    },
+    {
+      "run": 2,
+      "exportExit": 0,
+      "numericCellCount": 586,
+      "maxNumericCell": 3644959666.0
+    },
+    {
+      "run": 3,
+      "exportExit": 0,
+      "numericCellCount": 588,
+      "maxNumericCell": 3660371500.0
+    }
+  ],
+  "game-detail-live": [
+    {
+      "run": 1,
+      "exportExit": 0,
+      "numericCellCount": 589,
+      "maxNumericCell": 3670952833.0
+    },
+    {
+      "run": 2,
+      "exportExit": 0,
+      "numericCellCount": 582,
+      "maxNumericCell": 3648486166.0
+    },
+    {
+      "run": 3,
+      "exportExit": 0,
+      "numericCellCount": 592,
+      "maxNumericCell": 3681134500.0
+    }
+  ]
+}
