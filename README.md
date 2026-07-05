@@ -8,6 +8,18 @@ Baseball LIVE KR은 야구를 보다가 지금 어느 경기가 열리고 있는
 
 현재는 macOS에서 메뉴바와 작은 창으로 경기 상황을 확인하는 경험을 먼저 다듬고 있습니다. 이후에는 iPhone, 위젯, 실시간 활동에서도 같은 정보를 자연스럽게 볼 수 있도록 확장할 예정입니다.
 
+## 앱 실행 방법
+
+GitHub Releases에서 최신 `BaseballLiveKR-0.1.0-macOS.dmg`를 내려받아 실행합니다.
+
+현재 빌드는 아직 Apple 공증(notarization)을 거치지 않았기 때문에 처음 실행할 때 보안 경고가 나올 수 있습니다.
+
+1. `.dmg` 파일을 열고 `완료`를 클릭합니다.
+<img src="images/error.png" alt="Baseball LIVE KR 열면 에러" width="360">
+
+2. `시스템 설정` > `개인정보 보호 및 보안`에서 Baseball LIVE KR의 `그래도 열기`를 선택합니다.
+<img src="images/settings.png" alt="Baseball LIVE KR 세팅 화면" width="360">
+
 ## 서비스
 
 - 오늘 열리는 KBO 경기를 한눈에 확인합니다.
@@ -15,8 +27,6 @@ Baseball LIVE KR은 야구를 보다가 지금 어느 경기가 열리고 있는
 - 경기 상세 화면에서 이닝, 점수, 팀 흐름을 따라갑니다.
 - 순위와 선수 기록을 함께 보며 응원팀의 현재 분위기를 파악합니다.
 - 경기 중에는 화면을 자주 열지 않아도 바뀐 상황을 놓치지 않도록 돕습니다.
-
-## 스크린샷
 
 macOS 앱 메인 화면:
 
