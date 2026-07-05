@@ -11,6 +11,7 @@ public enum KboColorToken {
     public static let appBackgroundTop = adaptive(light: RGB(0.90, 0.97, 0.98), dark: RGB(0.05, 0.13, 0.16))
     public static let appBackgroundPrimary = adaptive(light: RGB(0.96, 0.98, 0.99), dark: RGB(0.04, 0.08, 0.11))
     public static let appBackgroundSecondary = adaptive(light: RGB(0.86, 0.91, 0.95), dark: RGB(0.03, 0.05, 0.08))
+    public static let scoreboardSpotlightSurface = Color.white
     public static let surfaceCard = adaptive(light: RGB(1.00, 1.00, 1.00), dark: RGB(0.11, 0.15, 0.18))
     public static let surfaceElevated = adaptive(light: RGB(0.97, 0.99, 1.00), dark: RGB(0.15, 0.19, 0.23))
     public static let borderMuted = adaptive(light: RGB(0.71, 0.77, 0.84), dark: RGB(1.00, 1.00, 1.00)).opacity(0.32)
@@ -19,6 +20,8 @@ public enum KboColorToken {
     public static let textPrimary = adaptive(light: RGB(0.05, 0.09, 0.13), dark: RGB(1.00, 1.00, 1.00))
     public static let textSecondary = adaptive(light: RGB(0.27, 0.34, 0.42), dark: RGB(1.00, 1.00, 1.00)).opacity(0.76)
     public static let textMuted = adaptive(light: RGB(0.45, 0.51, 0.59), dark: RGB(1.00, 1.00, 1.00)).opacity(0.58)
+    public static let scoreboardSpotlightTextPrimary = fixed(RGB(0.05, 0.09, 0.13))
+    public static let scoreboardSpotlightTextSecondary = fixed(RGB(0.27, 0.34, 0.42)).opacity(0.82)
 
     public static let statusLive = Color(red: 1.00, green: 0.34, blue: 0.26)
     public static let statusFinal = Color(red: 0.58, green: 0.64, blue: 0.73)

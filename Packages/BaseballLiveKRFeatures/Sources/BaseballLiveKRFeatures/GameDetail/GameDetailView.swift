@@ -217,18 +217,22 @@ public struct GameDetailView: View {
             HStack {
                 Text(isFinal ? "FINAL" : GameProjectionFormatter.inningText(for: game) ?? "LIVE")
                     .font(.system(size: 24, weight: .black))
-                    .foregroundStyle(isFinal ? KboColorToken.statusFinal : KboColorToken.statusLive)
+                    .foregroundStyle(isFinal ? scoreboardSecondaryText : KboColorToken.statusLive)
                 Spacer()
                 Text(game.venue ?? "KBO")
                     .font(KboTypographyToken.caption)
-                    .foregroundStyle(KboTheme.secondaryText)
+                    .foregroundStyle(scoreboardPrimaryText)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(KboColorToken.scoreboardSpotlightSurface.opacity(0.66))
+                    .clipShape(Capsule())
             }
 
             HStack(alignment: .center, spacing: 16) {
                 scoreboardTeam(team: game.awayTeam, score: game.score.away)
                 Text(":")
                     .font(.system(size: 40, weight: .black))
-                    .foregroundStyle(KboTheme.secondaryText)
+                    .foregroundStyle(scoreboardSecondaryText)
                 scoreboardTeam(team: game.homeTeam, score: game.score.home)
             }
         }
@@ -256,7 +260,7 @@ public struct GameDetailView: View {
             Text("\(score)")
                 .font(.system(size: 58, weight: .black))
                 .monospacedDigit()
-                .foregroundStyle(KboTheme.primaryText)
+                .foregroundStyle(scoreboardPrimaryText)
         }
         .frame(maxWidth: .infinity)
     }
@@ -664,12 +668,22 @@ public struct GameDetailView: View {
         LinearGradient(
             colors: [
                 TeamColorResolver.color(forTeamID: game.awayTeam.id).opacity(0.34),
-                Color(red: 0.08, green: 0.10, blue: 0.15),
+                TeamColorResolver.color(forTeamID: game.awayTeam.id).opacity(0.10),
+                KboColorToken.scoreboardSpotlightSurface,
+                TeamColorResolver.color(forTeamID: game.homeTeam.id).opacity(0.10),
                 TeamColorResolver.color(forTeamID: game.homeTeam.id).opacity(0.34)
             ],
             startPoint: .leading,
             endPoint: .trailing
         )
+    }
+
+    private var scoreboardPrimaryText: Color {
+        KboColorToken.scoreboardSpotlightTextPrimary
+    }
+
+    private var scoreboardSecondaryText: Color {
+        KboColorToken.scoreboardSpotlightTextSecondary
     }
 
     private func formattedDate(_ value: String) -> String {

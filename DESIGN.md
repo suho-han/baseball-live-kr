@@ -14,11 +14,14 @@ Baseball LIVE KR feels like a compact game-day command center: glassy, live, and
 | Surface/app top | `KboColorToken.appBackgroundTop` | rgb(230, 247, 250) | rgb(13, 33, 41) | Top of app gradient |
 | Surface/app primary | `KboColorToken.appBackgroundPrimary` | rgb(245, 250, 252) | rgb(10, 20, 28) | Main app gradient |
 | Surface/app secondary | `KboColorToken.appBackgroundSecondary` | rgb(219, 232, 242) | rgb(8, 13, 20) | Bottom/deep background |
+| Surface/scoreboard spotlight | `KboColorToken.scoreboardSpotlightSurface` | white | white | Game detail scoreboard center band |
 | Surface/card | `KboColorToken.surfaceCard` | white | rgb(28, 38, 46) | Cards and panels |
 | Surface/elevated | `KboColorToken.surfaceElevated` | rgb(247, 252, 255) | rgb(38, 48, 59) | Elevated panels |
 | Text/primary | `KboColorToken.textPrimary` | rgb(13, 23, 33) | white | Headlines and high-emphasis labels |
 | Text/secondary | `KboColorToken.textSecondary` | rgb(69, 87, 107) 76% | white 76% | Supporting labels |
 | Text/muted | `KboColorToken.textMuted` | rgb(115, 130, 150) 58% | white 58% | Muted metadata |
+| Text/scoreboard primary | `KboColorToken.scoreboardSpotlightTextPrimary` | rgb(13, 23, 33) | rgb(13, 23, 33) | Text on the scoreboard spotlight band |
+| Text/scoreboard secondary | `KboColorToken.scoreboardSpotlightTextSecondary` | rgb(69, 87, 107) 82% | rgb(69, 87, 107) 82% | Supporting text on the scoreboard spotlight band |
 | Accent/blue | `KboSemanticColorToken.accentBlue` | rgb(46, 122, 255) | rgb(46, 122, 255) | Active controls and focus |
 | Accent/mint | `KboSemanticColorToken.accentMint` | rgb(36, 199, 163) | rgb(36, 199, 163) | Positive live context |
 | Status/live | `KboColorToken.statusLive` | rgb(255, 87, 66) | rgb(255, 87, 66) | Live and destructive emphasis |
@@ -32,6 +35,7 @@ Baseball LIVE KR feels like a compact game-day command center: glassy, live, and
 - The app supports dark, light, and system appearance. New background, text, card, border, and glass colors must resolve through tokens rather than fixed `Color.white` or `Color.black`.
 - Team colors may be used as badge fill, stroke, text, or gradients. If a team primary color is dark, place white text on it for contrast.
 - Fixed white or black is allowed only as an intentional contrast color on saturated accent/team/status fills, not as app background or body text.
+- The game detail scoreboard may use `KboColorToken.scoreboardSpotlightSurface` as an intentional white center band, but text on that band must use the paired scoreboard spotlight text tokens rather than adaptive body text tokens.
 - New colors belong in Swift token files first, then this document.
 
 ## 3. Typography
