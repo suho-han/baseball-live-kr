@@ -20,10 +20,18 @@ public struct ScoreDigitsView: View {
         Text(String(score))
             .font(font)
             .monospacedDigit()
-            .foregroundStyle(KboTheme.primaryText)
+            .foregroundStyle(KboSemanticColorToken.contentPrimary)
             .lineLimit(1)
             .fixedSize(horizontal: true, vertical: false)
             .frame(minWidth: minWidth, alignment: .trailing)
+            .padding(.horizontal, horizontalInset)
+            .padding(.vertical, verticalInset)
+            .background(KboSurfaceToken.card)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(KboSurfaceToken.cardBorder, lineWidth: 1)
+            }
     }
 
     private var font: Font {
@@ -40,11 +48,44 @@ public struct ScoreDigitsView: View {
     private var minWidth: CGFloat {
         switch mode {
         case .scoreboardLarge:
-            return 64
+            return 72
         case .scoreboardCompact:
-            return 44
+            return 48
         case .menuBarCompact:
-            return 24
+            return 28
+        }
+    }
+
+    private var horizontalInset: CGFloat {
+        switch mode {
+        case .scoreboardLarge:
+            return KboSpacingToken.small
+        case .scoreboardCompact:
+            return KboSpacingToken.xSmall
+        case .menuBarCompact:
+            return KboSpacingToken.xSmall
+        }
+    }
+
+    private var verticalInset: CGFloat {
+        switch mode {
+        case .scoreboardLarge:
+            return KboSpacingToken.xSmall
+        case .scoreboardCompact:
+            return KboSpacingToken.xSmall
+        case .menuBarCompact:
+            return 0
+        }
+    }
+
+    private var cornerRadius: CGFloat {
+        switch mode {
+        case .scoreboardLarge:
+            return KboRadiusToken.medium
+        case .scoreboardCompact:
+            return KboRadiusToken.small
+        case .menuBarCompact:
+            return KboRadiusToken.small
         }
     }
 }

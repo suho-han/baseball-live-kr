@@ -1,0 +1,77 @@
+{
+  "menubar-popover": {
+    "runs": [
+      {
+        "run": 1,
+        "sumDurationMs": 9429.39,
+        "hitchFrameCount": 198,
+        "maxDurationMs": 64.61
+      },
+      {
+        "run": 2,
+        "sumDurationMs": 9232.84,
+        "hitchFrameCount": 194,
+        "maxDurationMs": 64.22
+      },
+      {
+        "run": 3,
+        "sumDurationMs": 9248.07,
+        "hitchFrameCount": 195,
+        "maxDurationMs": 80.63
+      }
+    ],
+    "averageSumDurationMs": 9303.43,
+    "minSumDurationMs": 9232.84,
+    "maxSumDurationMs": 9429.39
+  },
+  "today-games-live-polling": {
+    "runs": [
+      {
+        "run": 1,
+        "sumDurationMs": 9352.33,
+        "hitchFrameCount": 196,
+        "maxDurationMs": 64.59
+      },
+      {
+        "run": 2,
+        "sumDurationMs": 9484.85,
+        "hitchFrameCount": 196,
+        "maxDurationMs": 80.74
+      },
+      {
+        "run": 3,
+        "sumDurationMs": 9252.14,
+        "hitchFrameCount": 194,
+        "maxDurationMs": 64.5
+      }
+    ],
+    "averageSumDurationMs": 9363.11,
+    "minSumDurationMs": 9252.14,
+    "maxSumDurationMs": 9484.85
+  },
+  "game-detail-live": {
+    "runs": [
+      {
+        "run": 1,
+        "sumDurationMs": 9311.79,
+        "hitchFrameCount": 196,
+        "maxDurationMs": 49.24
+      },
+      {
+        "run": 2,
+        "sumDurationMs": 9169.01,
+        "hitchFrameCount": 193,
+        "maxDurationMs": 64.74
+      },
+      {
+        "run": 3,
+        "sumDurationMs": 9272.96,
+        "hitchFrameCount": 195,
+        "maxDurationMs": 64.94
+      }
+    ],
+    "averageSumDurationMs": 9251.25,
+    "minSumDurationMs": 9169.01,
+    "maxSumDurationMs": 9311.79
+  }
+}

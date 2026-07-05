@@ -1,9 +1,10 @@
 import SwiftUI
 
 public enum KboSemanticColorToken {
-    public static let accentBlue = Color(red: 0.18, green: 0.48, blue: 1.00)
-    public static let accentMint = Color(red: 0.14, green: 0.78, blue: 0.64)
+    public static let accentBlue = KboColorToken.accentBlue
+    public static let accentMint = KboColorToken.accentTeal
     public static let accentRed = KboColorToken.statusLive
+    public static let accentNeutral = KboColorToken.accentNeutral
 
     public static let contentPrimary = KboColorToken.textPrimary
     public static let contentSecondary = KboColorToken.textSecondary

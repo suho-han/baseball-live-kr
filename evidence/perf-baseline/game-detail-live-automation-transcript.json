@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-automation-transcript",
+  "surface": "native",
+  "buildConfiguration": "Release",
+  "dataSource": "https://api.baseball-live.kro.kr",
+  "favoriteTeam": "LT",
+  "liveGameId": "20260705LTKT0",
+  "steps": [
+    {
+      "tool": "osascript",
+      "action": "click button 3 of scroll area 1 of group 1 of window Baseball LIVE KR",
+      "result": "Opened game detail window"
+    },
+    {
+      "tool": "accessibility-read",
+      "action": "read static texts from detail scroll area",
+      "result": "진행중; LIVE · 7회초 · 2사; 롯데; KT; 경기 ID 20260705LTKT0"
+    },
+    {
+      "tool": "xctrace",
+      "action": "record Animation Hitches and Time Profiler, 10s each, runs 1-3",
+      "result": "All six trace bundles saved under artifacts/perf-baseline/game-detail-live/"
+    }
+  ],
+  "artifactRefs": [
+    "evidence/perf-baseline/game-detail-live.md",
+    "evidence/perf-baseline/game-detail-live-ui-state.txt"
+  ],
+  "verdict": "passed",
+  "surfaceName": "game-detail-live",
+  "tool": "osascript+xctrace",
+  "actions": [
+    {
+      "type": "osascript",
+      "command": "click button 3 of scroll area 1 of group 1 of window Baseball LIVE KR",
+      "result": "Opened game detail window",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1 > button 3"
+    },
+    {
+      "type": "accessibility-read",
+      "command": "read static texts from detail scroll area",
+      "result": "진행중; LIVE · 7회초 · 2사; 롯데; KT; 경기 ID 20260705LTKT0",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1 > button 3"
+    },
+    {
+      "type": "xctrace",
+      "command": "record Animation Hitches and Time Profiler, 10s each, runs 1-3",
+      "result": "All six trace bundles saved under artifacts/perf-baseline/game-detail-live/",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1 > button 3"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "text",
+      "selector": "AXWindow:Baseball LIVE KR > scroll area 1 > button 3",
+      "expected": "Detail window text contains LIVE and game ID 20260705LTKT0",
+      "result": "passed",
+      "timestamp": "2026-07-05T20:20:00+09:00",
+      "status": "passed"
+    }
+  ]
+}

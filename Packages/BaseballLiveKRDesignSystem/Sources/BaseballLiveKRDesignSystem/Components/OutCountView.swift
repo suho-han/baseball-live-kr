@@ -8,14 +8,28 @@ public struct OutCountView: View {
     }
 
     public var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: KboSpacingToken.xSmall) {
             ForEach(0..<3, id: \.self) { index in
                 Circle()
-                    .fill(index < outs ? KboColorToken.statusLive : KboColorToken.borderMuted)
-                    .frame(width: 8, height: 8)
+                    .fill(index < outs ? KboSemanticColorToken.statusLive : KboSemanticColorToken.contentMuted.opacity(0.28))
+                    .frame(width: dotSize, height: dotSize)
+                    .overlay {
+                        Circle()
+                            .stroke(index < outs ? KboSemanticColorToken.statusLive : KboSurfaceToken.cardBorder, lineWidth: 1)
+                    }
             }
         }
-        .padding(.horizontal, KboSpacingToken.xSmall)
-        .padding(.vertical, 4)
+        .padding(.horizontal, KboSpacingToken.small)
+        .padding(.vertical, KboSpacingToken.xSmall)
+        .background(KboSurfaceToken.glassControl)
+        .clipShape(Capsule())
+        .overlay {
+            Capsule()
+                .stroke(KboSurfaceToken.glassBorder, lineWidth: 1)
+        }
+    }
+
+    private var dotSize: CGFloat {
+        KboSpacingToken.small
     }
 }

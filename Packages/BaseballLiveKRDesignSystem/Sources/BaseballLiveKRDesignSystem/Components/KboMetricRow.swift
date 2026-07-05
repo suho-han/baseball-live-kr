@@ -33,11 +33,11 @@ public struct KboMetricRow: View {
         Group {
             switch layout {
             case .horizontal:
-                HStack(spacing: 8) {
+                HStack(spacing: KboSpacingToken.small) {
                     metricCells
                 }
             case .vertical:
-                VStack(spacing: 8) {
+                VStack(spacing: KboSpacingToken.small) {
                     metricCells
                 }
             }
@@ -52,25 +52,34 @@ public struct KboMetricRow: View {
     }
 
     private func metricCell(_ metric: KboMetricValue) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: KboSpacingToken.xSmall) {
             Text(metric.title)
                 .font(KboTypographyToken.caption(scaledBy: fontScale))
-                .foregroundStyle(KboTheme.secondaryText)
+                .foregroundStyle(KboSemanticColorToken.contentSecondary)
+                .textCase(.uppercase)
+                .tracking(0.4)
+                .lineLimit(1)
 
             Text(metric.value)
-                .font(KboTypographyToken.system(size: 13, weight: .bold, scaledBy: fontScale))
-                .foregroundStyle(metric.tint ?? KboTheme.primaryText)
+                .font(KboTypographyToken.system(size: 15, weight: .semibold, scaledBy: fontScale))
+                .foregroundStyle(metric.tint ?? KboSemanticColorToken.contentPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.78)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(KboSurfaceToken.glassControl)
-        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+        .frame(maxWidth: .infinity, minHeight: KboControlToken.compactButtonHeight, alignment: .leading)
+        .padding(.horizontal, KboSpacingToken.medium)
+        .padding(.vertical, KboSpacingToken.small)
+        .background(KboSurfaceToken.elevated)
+        .clipShape(shape)
         .overlay {
-            RoundedRectangle(cornerRadius: 13, style: .continuous)
-                .stroke(KboSurfaceToken.glassBorder.opacity(0.7), lineWidth: 1)
+            shape
+                .stroke(KboSurfaceToken.cardBorder, lineWidth: 1)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(metric.title), \(metric.value)")
+    }
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: KboRadiusToken.large, style: .continuous)
     }
 }

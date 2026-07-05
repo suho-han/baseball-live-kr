@@ -48,13 +48,13 @@ public struct TeamBadgeView: View {
                 .minimumScaleFactor(0.72)
         }
         .padding(.horizontal, KboSpacingToken.small)
-        .padding(.vertical, 6)
+        .padding(.vertical, KboSpacingToken.xSmall + 2)
         .frame(width: fixedWidth, alignment: fixedWidth == nil ? .leading : .center)
-        .background(accentColor.opacity(emphasis == .highlighted ? 0.36 : 0.24))
-        .clipShape(RoundedRectangle(cornerRadius: KboRadiusToken.pill, style: .continuous))
+        .background(badgeBackground)
+        .clipShape(Capsule())
         .overlay {
-            RoundedRectangle(cornerRadius: KboRadiusToken.pill, style: .continuous)
-                .stroke(accentColor.opacity(0.5), lineWidth: emphasis == .highlighted ? 1.5 : 1)
+            Capsule()
+                .stroke(borderColor, lineWidth: emphasis == .highlighted ? 1.5 : 1)
         }
     }
 
@@ -68,6 +68,24 @@ public struct TeamBadgeView: View {
         }
 
         return KboColorToken.textPrimary
+    }
+
+    private var badgeBackground: Color {
+        switch emphasis {
+        case .normal:
+            return accentColor.opacity(0.18)
+        case .highlighted:
+            return accentColor.opacity(0.30)
+        }
+    }
+
+    private var borderColor: Color {
+        switch emphasis {
+        case .normal:
+            return accentColor.opacity(0.36)
+        case .highlighted:
+            return accentColor.opacity(0.58)
+        }
     }
 
     @ViewBuilder
@@ -87,7 +105,7 @@ public struct TeamLogoTokenView: View {
     public init(
         teamID: String?,
         fallbackName: String = "",
-        cornerRadius: CGFloat = 6,
+        cornerRadius: CGFloat = KboRadiusToken.small,
         borderWidth: CGFloat = 1
     ) {
         self.teamID = teamID
@@ -111,7 +129,7 @@ public struct TeamLogoTokenView: View {
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(style.fill, lineWidth: borderWidth)
+                    .stroke(style.fill.opacity(0.72), lineWidth: borderWidth)
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -128,10 +146,10 @@ public struct TeamLogoTokenView: View {
             .foregroundStyle(style.fill)
             .lineLimit(1)
             .minimumScaleFactor(0.55)
-            .shadow(color: style.background, radius: 0, x: 1, y: 0)
-            .shadow(color: style.background, radius: 0, x: -1, y: 0)
-            .shadow(color: style.background, radius: 0, x: 0, y: 1)
-            .shadow(color: style.background, radius: 0, x: 0, y: -1)
+            .shadow(color: style.background.opacity(0.95), radius: 0, x: 1, y: 0)
+            .shadow(color: style.background.opacity(0.95), radius: 0, x: -1, y: 0)
+            .shadow(color: style.background.opacity(0.95), radius: 0, x: 0, y: 1)
+            .shadow(color: style.background.opacity(0.95), radius: 0, x: 0, y: -1)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
 }

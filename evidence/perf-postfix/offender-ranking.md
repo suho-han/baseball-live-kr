@@ -1,0 +1,15 @@
+# G003 Trace-Gated Offender Ranking
+
+Goal: fix exactly the top three measured offenders that explained the accepted live-surface baseline and only keep fixes that pass the post-fix variance gate.
+
+## Ranking
+
+| Rank | Offender | Baseline evidence | Fix | Verification |
+|------|----------|-------------------|-----|--------------|
+| 1 | Repeated `TodayGames(...).orderedGames(...)`/dashboard derivation from SwiftUI body reads and filter/team changes | Baseline Time Profiler summaries repeatedly surfaced `closure #2 in TodayGames.orderedGames(filter:preferredTeamID:)` on menubar and GameDetail live runs; all three live surfaces showed continuous Animation Hitches while the dashboard recomputed visible/favorite/league state. | Cache a single `DerivedState` in `TodayGamesViewModel` and update it only when games/filter/selection/date inputs change. | `TodayGamesViewModelTests` cover preserved ordering, filter behavior, dashboard summary behavior, and changed-payload publishing. Post-fix Gate 2 passes all three surfaces. |
+| 2 | Polling/model churn from identical live payloads republishing `games`, `responseDate`, `lastUpdatedAt`, and derived state | Baseline Time Profiler summaries repeatedly surfaced `LiveGamePollingService.streamTodayGames(date:)`, `URLSessionBaseballLiveKRAPIClient.fetchTodayGames(date:)`, JSON decoding, and `GameDTO.init(from:)` during live polling/detail samples; identical polling ticks still invalidated SwiftUI state. | Add `applyTodayGames(_:timestamp:)` equality guard so unchanged `TodayGames` payloads return before publishing state, while changed payloads still publish immediately. | `repeatedIdenticalLoadDoesNotPublishGamesAgain`, `pollingIdenticalPayloadDoesNotPublishGamesAgain`, and `pollingChangedPayloadPublishesImmediately` cover the no-publish/publish boundary. Post-fix Gate 2 passes TodayGames and the shared live surfaces. |
+| 3 | Date parsing formatter allocation in `GameDTOMapper.parseStartTime` plus panel-heavy visual stack cost in `KboGlassPanel` | Baseline Time Profiler summaries repeatedly surfaced `specialized GameDTO.init(from:)`, JSON decoder frames, and mapper work across menubar, TodayGames, and GameDetail. The approved plan also named `KboGlassPanel` material+gradient+stroke+shadow as an a-priori suspect; the first post-fix measurement without panel simplification did not beat variance, so the panel stack was trace-gated by failed Gate 2 evidence before simplification. | Reuse a locked shared `KBOStartTimeParser` for all accepted KBO/ISO formats and simplify `KboGlassPanel` to opaque surface + border, removing material/gradient/shadow composition. | Existing Core tests cover compact/basic/extended start-time formats. Post-simplification Gate 2 passes all three live surfaces: menubar delta 8459.35 ms > 2831.53 ms band; TodayGames delta 10018.16 ms > 1978.21 ms band; GameDetail delta 5882.32 ms > 2875.54 ms band. |
+
+## Scope control
+
+No astryx/React code is shipped. No redesign/token work is included in G003. The only production files changed for this goal are the three trace-gated lanes above plus tests for the polling/derived-state boundary.

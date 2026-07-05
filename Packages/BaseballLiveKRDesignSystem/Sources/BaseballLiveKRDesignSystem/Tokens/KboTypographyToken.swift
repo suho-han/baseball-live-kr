@@ -3,10 +3,10 @@ import SwiftUI
 public enum KboTypographyToken {
     public static let caption = Font.system(size: 11, weight: .medium)
     public static let footnote = Font.system(size: 13, weight: .medium)
-    public static let body = Font.system(size: 15, weight: .regular)
-    public static let headline = Font.system(size: 17, weight: .semibold)
+    public static let body = Font.system(size: 14, weight: .regular)
+    public static let headline = Font.system(size: 17, weight: .bold)
     public static let scoreCompact = Font.system(size: 24, weight: .bold)
-    public static let scoreLarge = Font.system(size: 36, weight: .heavy)
+    public static let scoreLarge = Font.system(size: 35, weight: .heavy)
     public static let menuBarCompact = Font.system(size: 13, weight: .bold)
 
     public static func caption(scaledBy scale: CGFloat) -> Font {
@@ -18,11 +18,11 @@ public enum KboTypographyToken {
     }
 
     public static func body(scaledBy scale: CGFloat) -> Font {
-        .system(size: scaledSize(15, by: scale), weight: .regular)
+        .system(size: scaledSize(14, by: scale), weight: .regular)
     }
 
     public static func headline(scaledBy scale: CGFloat) -> Font {
-        .system(size: scaledSize(17, by: scale), weight: .semibold)
+        .system(size: scaledSize(17, by: scale), weight: .bold)
     }
 
     public static func scoreCompact(scaledBy scale: CGFloat) -> Font {
@@ -30,7 +30,7 @@ public enum KboTypographyToken {
     }
 
     public static func scoreLarge(scaledBy scale: CGFloat) -> Font {
-        .system(size: scaledSize(36, by: scale), weight: .heavy)
+        .system(size: scaledSize(35, by: scale), weight: .heavy)
     }
 
     public static func menuBarCompact(scaledBy scale: CGFloat) -> Font {

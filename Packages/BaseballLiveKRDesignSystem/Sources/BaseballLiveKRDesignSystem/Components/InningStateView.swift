@@ -11,10 +11,15 @@ public struct InningStateView: View {
     public var body: some View {
         Text(text)
             .font(KboTypographyToken.footnote(scaledBy: fontScale))
-            .foregroundStyle(KboTheme.secondaryText)
-            .padding(.horizontal, KboSpacingToken.small)
-            .padding(.vertical, 6)
-            .background(KboColorToken.backgroundSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: KboRadiusToken.pill, style: .continuous))
+            .foregroundStyle(KboSemanticColorToken.contentSecondary)
+            .lineLimit(1)
+            .padding(.horizontal, KboSpacingToken.medium)
+            .padding(.vertical, KboSpacingToken.xSmall + 2)
+            .background(KboSurfaceToken.glassControl)
+            .clipShape(Capsule())
+            .overlay {
+                Capsule()
+                    .stroke(KboSurfaceToken.glassBorder.opacity(0.58), lineWidth: 1)
+            }
     }
 }
