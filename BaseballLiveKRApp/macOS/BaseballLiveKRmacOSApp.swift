@@ -6,6 +6,13 @@ import AppKit
 import BaseballLiveKRDesignSystem
 #endif
 
+struct MenuBarExtraLabelPolicy: Equatable {
+    let dynamicSummary: String
+
+    var systemImageName: String { "baseball.fill" }
+    var helpText: String { dynamicSummary }
+}
+
 @main
 struct BaseballLiveKRmacOSApp: App {
     private enum MainWindowLayout {
@@ -111,7 +118,9 @@ struct BaseballLiveKRmacOSApp: App {
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
         } label: {
-            Label(menuBarTitle, systemImage: "baseball.fill")
+            let labelPolicy = MenuBarExtraLabelPolicy(dynamicSummary: menuBarTitle)
+            Image(systemName: labelPolicy.systemImageName)
+                .help(labelPolicy.helpText)
         }
         .menuBarExtraStyle(.window)
     }

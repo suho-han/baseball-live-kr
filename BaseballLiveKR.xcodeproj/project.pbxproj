@@ -155,6 +155,7 @@
 		B8900FA41B1601872E8B4F9E /* GameDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380A5EB734D0B929EFD9A76 /* GameDTO.swift */; };
 		B93A242F6A4227FBEC207281 /* KboGlassPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23493DA88ED3FD4A7A3DB2B /* KboGlassPanel.swift */; };
 		BB1904CA7F220ED770B69560 /* KboTypographyToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4172B08995C5C06FFCAA9AB6 /* KboTypographyToken.swift */; };
+		BED9770EDCE5AD14D7B02C95 /* MenuBarExtraLabelPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9682295065CB7A5247EDC1 /* MenuBarExtraLabelPolicyTests.swift */; };
 		BF2A9BA2C9247A004E313D49 /* MockGameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6DC41EB8B7BCCD76560E3 /* MockGameRepository.swift */; };
 		C0104500206A52660B242581 /* LiveBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C1ECAC06D0909D2CC17A2A /* LiveBadgeView.swift */; };
 		C0FAFF32FFC66F8F13823853 /* KboAppearanceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7783C973C3917429042E0E9F /* KboAppearanceMode.swift */; };
@@ -276,6 +277,7 @@
 		5BDADEDEC50E4C23D83EC377 /* KboTeamOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboTeamOption.swift; sourceTree = "<group>"; };
 		5CA686A8108A119D7AFD4739 /* KboMotionToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboMotionToken.swift; sourceTree = "<group>"; };
 		5D8AFB43BA4DAD28A5DA9BDC /* KboTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboTheme.swift; sourceTree = "<group>"; };
+		5F9682295065CB7A5247EDC1 /* MenuBarExtraLabelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarExtraLabelPolicyTests.swift; sourceTree = "<group>"; };
 		6034B5AB8F68C4B21E8DEA2C /* KboShadowToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboShadowToken.swift; sourceTree = "<group>"; };
 		60659600502DD28548BAB3E5 /* GameDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailView.swift; sourceTree = "<group>"; };
 		6207CA304FF386C04CC5A514 /* GameDTOMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDTOMapper.swift; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 			isa = PBXGroup;
 			children = (
 				57FC9DAFCA00F566131B7EA7 /* BackendSettingsModelTests.swift */,
+				5F9682295065CB7A5247EDC1 /* MenuBarExtraLabelPolicyTests.swift */,
 			);
 			name = Tests;
 			path = BaseballLiveKRApp/Tests;
@@ -849,6 +852,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				55A713434C28CDEE1F81AE3C /* BackendSettingsModelTests.swift in Sources */,
+				BED9770EDCE5AD14D7B02C95 /* MenuBarExtraLabelPolicyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
