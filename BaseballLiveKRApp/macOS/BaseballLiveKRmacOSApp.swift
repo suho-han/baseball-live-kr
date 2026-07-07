@@ -22,6 +22,7 @@ struct BaseballLiveKRmacOSApp: App {
     @StateObject private var settings = BackendSettingsModel()
     @StateObject private var navigationModel = AppNavigationModel()
     @StateObject private var updateChecker = AppUpdateCheckModel()
+    @StateObject private var launchAtLoginController = LaunchAtLoginController()
     @AppStorage("kboLiveFontScale") private var fontScale = Double(KboFontScale.defaultValue)
     @AppStorage(KboAppearanceMode.storageKey) private var appearanceModeRawValue = KboAppearanceMode.defaultValue.rawValue
     @AppStorage("kboLiveMenuBarEnabled") private var isMenuBarEnabled = true
@@ -51,7 +52,11 @@ struct BaseballLiveKRmacOSApp: App {
                 navigationModel: navigationModel,
                 updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
-                isMenuBarEnabled: $isMenuBarEnabled
+                isMenuBarEnabled: $isMenuBarEnabled,
+                isLaunchAtLoginEnabled: launchAtLoginBinding,
+                launchAtLoginStatusText: launchAtLoginController.statusText,
+                launchAtLoginDetailText: launchAtLoginController.detailText,
+                onRefreshLaunchAtLogin: launchAtLoginController.refresh
             )
                 .frame(
                     width: MainWindowLayout.minWidth
@@ -124,6 +129,10 @@ struct BaseballLiveKRmacOSApp: App {
                 updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
                 isMenuBarEnabled: $isMenuBarEnabled,
+                isLaunchAtLoginEnabled: launchAtLoginBinding,
+                launchAtLoginStatusText: launchAtLoginController.statusText,
+                launchAtLoginDetailText: launchAtLoginController.detailText,
+                onRefreshLaunchAtLogin: launchAtLoginController.refresh,
                 onApplyBackendSettings: applyBackendSettings
             )
             .environment(\.kboFontScale, CGFloat(fontScale))
@@ -140,6 +149,14 @@ struct BaseballLiveKRmacOSApp: App {
             KboAppearanceMode.resolved(from: appearanceModeRawValue)
         } set: { newValue in
             appearanceModeRawValue = newValue.rawValue
+        }
+    }
+
+    private var launchAtLoginBinding: Binding<Bool> {
+        Binding {
+            launchAtLoginController.isEnabled
+        } set: { newValue in
+            launchAtLoginController.setEnabled(newValue)
         }
     }
 

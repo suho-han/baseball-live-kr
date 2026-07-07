@@ -6,6 +6,10 @@ struct SettingsView: View {
     @ObservedObject var updateChecker: AppUpdateCheckModel
     @Binding var appearanceMode: KboAppearanceMode
     @Binding var isMenuBarEnabled: Bool
+    @Binding var isLaunchAtLoginEnabled: Bool
+    let launchAtLoginStatusText: String
+    let launchAtLoginDetailText: String
+    let onRefreshLaunchAtLogin: () -> Void
     let onApplyBackendSettings: () -> Void
 
     var body: some View {
@@ -15,6 +19,10 @@ struct SettingsView: View {
             updateChecker: updateChecker,
             appearanceMode: $appearanceMode,
             isMenuBarEnabled: $isMenuBarEnabled,
+            isLaunchAtLoginEnabled: $isLaunchAtLoginEnabled,
+            launchAtLoginStatusText: launchAtLoginStatusText,
+            launchAtLoginDetailText: launchAtLoginDetailText,
+            onRefreshLaunchAtLogin: onRefreshLaunchAtLogin,
             onApplyBackendSettings: onApplyBackendSettings
         )
         .frame(width: 620, height: 620)

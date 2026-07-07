@@ -20,6 +20,10 @@ struct BaseballLiveKRHomeRootView: View {
     @ObservedObject private var updateChecker: AppUpdateCheckModel
     @Binding private var appearanceMode: KboAppearanceMode
     @Binding private var isMenuBarEnabled: Bool
+    @Binding private var isLaunchAtLoginEnabled: Bool
+    private let launchAtLoginStatusText: String
+    private let launchAtLoginDetailText: String
+    private let onRefreshLaunchAtLogin: () -> Void
     @State private var isShowingSettings = false
 
     init(
@@ -28,13 +32,21 @@ struct BaseballLiveKRHomeRootView: View {
         navigationModel: AppNavigationModel = AppNavigationModel(),
         updateChecker: AppUpdateCheckModel = AppUpdateCheckModel(),
         appearanceMode: Binding<KboAppearanceMode> = .constant(.defaultValue),
-        isMenuBarEnabled: Binding<Bool> = .constant(false)
+        isMenuBarEnabled: Binding<Bool> = .constant(false),
+        isLaunchAtLoginEnabled: Binding<Bool> = .constant(false),
+        launchAtLoginStatusText: String = "꺼짐",
+        launchAtLoginDetailText: String = "Mac에 로그인하면 Baseball LIVE KR을 자동으로 엽니다.",
+        onRefreshLaunchAtLogin: @escaping () -> Void = {}
     ) {
         _settings = ObservedObject(wrappedValue: settings)
         _navigationModel = ObservedObject(wrappedValue: navigationModel)
         _updateChecker = ObservedObject(wrappedValue: updateChecker)
         _appearanceMode = appearanceMode
         _isMenuBarEnabled = isMenuBarEnabled
+        _isLaunchAtLoginEnabled = isLaunchAtLoginEnabled
+        self.launchAtLoginStatusText = launchAtLoginStatusText
+        self.launchAtLoginDetailText = launchAtLoginDetailText
+        self.onRefreshLaunchAtLogin = onRefreshLaunchAtLogin
         if let viewModel {
             _viewModel = StateObject(wrappedValue: viewModel)
         } else {
@@ -93,6 +105,10 @@ struct BaseballLiveKRHomeRootView: View {
                         updateChecker: updateChecker,
                         appearanceMode: $appearanceMode,
                         isMenuBarEnabled: $isMenuBarEnabled,
+                        isLaunchAtLoginEnabled: $isLaunchAtLoginEnabled,
+                        launchAtLoginStatusText: launchAtLoginStatusText,
+                        launchAtLoginDetailText: launchAtLoginDetailText,
+                        onRefreshLaunchAtLogin: onRefreshLaunchAtLogin,
                         onApplyBackendSettings: applyBackendSettings
                     )
                     .navigationTitle("설정")

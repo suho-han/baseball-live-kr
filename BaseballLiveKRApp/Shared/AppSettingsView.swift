@@ -20,6 +20,10 @@ struct AppSettingsView: View {
     @ObservedObject var updateChecker: AppUpdateCheckModel
     @Binding var appearanceMode: KboAppearanceMode
     @Binding var isMenuBarEnabled: Bool
+    @Binding var isLaunchAtLoginEnabled: Bool
+    let launchAtLoginStatusText: String
+    let launchAtLoginDetailText: String
+    let onRefreshLaunchAtLogin: () -> Void
     let onApplyBackendSettings: () -> Void
 
     init(
@@ -28,6 +32,10 @@ struct AppSettingsView: View {
         updateChecker: AppUpdateCheckModel,
         appearanceMode: Binding<KboAppearanceMode>,
         isMenuBarEnabled: Binding<Bool> = .constant(true),
+        isLaunchAtLoginEnabled: Binding<Bool> = .constant(false),
+        launchAtLoginStatusText: String = "꺼짐",
+        launchAtLoginDetailText: String = "Mac에 로그인하면 Baseball LIVE KR을 자동으로 엽니다.",
+        onRefreshLaunchAtLogin: @escaping () -> Void = {},
         onApplyBackendSettings: @escaping () -> Void
     ) {
         self.viewModel = viewModel
@@ -35,6 +43,10 @@ struct AppSettingsView: View {
         self.updateChecker = updateChecker
         _appearanceMode = appearanceMode
         _isMenuBarEnabled = isMenuBarEnabled
+        _isLaunchAtLoginEnabled = isLaunchAtLoginEnabled
+        self.launchAtLoginStatusText = launchAtLoginStatusText
+        self.launchAtLoginDetailText = launchAtLoginDetailText
+        self.onRefreshLaunchAtLogin = onRefreshLaunchAtLogin
         self.onApplyBackendSettings = onApplyBackendSettings
     }
 
@@ -286,6 +298,28 @@ struct AppSettingsView: View {
                         }
                         .toggleStyle(.switch)
 
+                        Divider()
+                            .overlay(KboSurfaceToken.glassBorder.opacity(0.6))
+
+                        Toggle(isOn: $isLaunchAtLoginEnabled) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: KboSpacingToken.small) {
+                                    Text("Mac 로그인 시 자동 실행")
+                                        .font(KboTypographyToken.headline)
+                                        .foregroundStyle(KboTheme.primaryText)
+
+                                    launchAtLoginStatusPill
+                                }
+
+                                Text(launchAtLoginDetailText)
+                                    .font(KboTypographyToken.caption)
+                                    .foregroundStyle(KboTheme.secondaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .toggleStyle(.switch)
+                        .onAppear(perform: onRefreshLaunchAtLogin)
+
                         HStack(spacing: KboSpacingToken.small) {
                             KboPrimaryActionButton(
                                 title: "시작",
@@ -329,6 +363,17 @@ struct AppSettingsView: View {
         .padding(.vertical, KboSpacingToken.small)
         .background(menuBarAccentColor.opacity(0.14))
         .clipShape(Capsule())
+    }
+
+    private var launchAtLoginStatusPill: some View {
+        Text(launchAtLoginStatusText)
+            .font(KboTypographyToken.caption)
+            .foregroundStyle(isLaunchAtLoginEnabled ? KboSemanticColorToken.success : KboTheme.secondaryText)
+            .lineLimit(1)
+            .padding(.horizontal, KboSpacingToken.small)
+            .padding(.vertical, 3)
+            .background((isLaunchAtLoginEnabled ? KboSemanticColorToken.success : KboTheme.secondaryText).opacity(0.14))
+            .clipShape(Capsule())
     }
 
     private var menuBarAccentColor: Color {
