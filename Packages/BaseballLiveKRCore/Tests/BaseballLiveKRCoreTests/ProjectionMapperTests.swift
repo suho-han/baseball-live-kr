@@ -129,6 +129,103 @@ struct ProjectionMapperTests {
         #expect(summary.recentPlay == "좌전 적시타")
     }
 
+    @Test func formatsScheduledMenuBarTeamDetailsWithProbablePitchers() {
+        let game = makeMenuBarTeamDetailGame(
+            status: .scheduled,
+            probablePitchers: ProbablePitchers(
+                away: ProbablePitcher(name: "  네일  "),
+                home: ProbablePitcher(name: "류현진")
+            )
+        )
+
+        let details = GameProjectionFormatter.menuBarTeamDetails(for: game)
+
+        #expect(details.away == "네일")
+        #expect(details.home == "류현진")
+    }
+
+    @Test func formatsLiveTopMenuBarTeamDetailsWithAwayBatterAndHomePitcher() {
+        let game = makeMenuBarTeamDetailGame(
+            status: .live,
+            score: Score(away: 2, home: 1),
+            inning: InningState(number: 4, half: .top),
+            current: CurrentMatchup(batter: "김도영", pitcher: "류현진"),
+            probablePitchers: staleProbablePitchers()
+        )
+
+        let details = GameProjectionFormatter.menuBarTeamDetails(for: game)
+
+        #expect(details.away == "타자 김도영")
+        #expect(details.home == "P 류현진")
+    }
+
+    @Test func formatsLiveBottomMenuBarTeamDetailsWithAwayPitcherAndHomeBatter() {
+        let game = makeMenuBarTeamDetailGame(
+            status: .live,
+            score: Score(away: 2, home: 1),
+            inning: InningState(number: 4, half: .bottom),
+            current: CurrentMatchup(batter: "노시환", pitcher: "네일"),
+            probablePitchers: staleProbablePitchers()
+        )
+
+        let details = GameProjectionFormatter.menuBarTeamDetails(for: game)
+
+        #expect(details.away == "P 네일")
+        #expect(details.home == "타자 노시환")
+    }
+
+    @Test func formatsFinalHomeWinMenuBarTeamDetailsWithDecisions() {
+        let game = makeMenuBarTeamDetailGame(
+            status: .final,
+            score: Score(away: 3, home: 5),
+            pitcherDecisions: PitcherDecisions(win: "문동주", loss: "네일"),
+            probablePitchers: staleProbablePitchers()
+        )
+
+        let details = GameProjectionFormatter.menuBarTeamDetails(for: game)
+
+        #expect(details.away == "패 네일")
+        #expect(details.home == "승 문동주")
+    }
+
+    @Test func formatsFinalAwayWinMenuBarTeamDetailsWithDecisions() {
+        let game = makeMenuBarTeamDetailGame(
+            status: .final,
+            score: Score(away: 6, home: 2),
+            pitcherDecisions: PitcherDecisions(win: "네일", loss: "문동주"),
+            probablePitchers: staleProbablePitchers()
+        )
+
+        let details = GameProjectionFormatter.menuBarTeamDetails(for: game)
+
+        #expect(details.away == "승 네일")
+        #expect(details.home == "패 문동주")
+    }
+
+    @Test func suppressesMenuBarTeamDetailsForLiveAndFinalMissingData() {
+        let liveGame = makeMenuBarTeamDetailGame(
+            status: .live,
+            score: Score(away: 2, home: 1),
+            inning: InningState(number: 4, half: .top),
+            current: CurrentMatchup(batter: " ", pitcher: nil),
+            probablePitchers: staleProbablePitchers()
+        )
+        let finalGame = makeMenuBarTeamDetailGame(
+            status: .final,
+            score: Score(away: 3, home: 5),
+            pitcherDecisions: nil,
+            probablePitchers: staleProbablePitchers()
+        )
+
+        let liveDetails = GameProjectionFormatter.menuBarTeamDetails(for: liveGame)
+        let finalDetails = GameProjectionFormatter.menuBarTeamDetails(for: finalGame)
+
+        #expect(liveDetails.away == nil)
+        #expect(liveDetails.home == nil)
+        #expect(finalDetails.away == nil)
+        #expect(finalDetails.home == nil)
+    }
+
     @Test func truncatesLongRecentPlayForActivityState() {
         let game = makeGame(recentPlay: "오스틴의 좌중간 담장을 때리는 아주 긴 적시 2루타 설명")
         let state = ActivityGameStateMapper.map(game)
@@ -202,6 +299,44 @@ struct ProjectionMapperTests {
             probablePitchers: ProbablePitchers(away: ProbablePitcher(name: nil), home: ProbablePitcher(name: nil)),
             recentPlay: recentPlay,
             sourceMeta: SourceMeta(rawStatusCode: nil, rawTopBottomCode: nil, fetchedAt: "2026-06-10T10:05:00.000Z")
+        )
+    }
+
+    private func makeMenuBarTeamDetailGame(
+        status: GameStatus,
+        score: Score = Score(away: 0, home: 0),
+        inning: InningState? = nil,
+        current: CurrentMatchup? = nil,
+        pitcherDecisions: PitcherDecisions? = nil,
+        probablePitchers: ProbablePitchers = ProbablePitchers(
+            away: ProbablePitcher(name: nil),
+            home: ProbablePitcher(name: nil)
+        )
+    ) -> Game {
+        Game(
+            id: "menu-bar-team-detail",
+            date: "20260610",
+            venue: "잠실",
+            startTime: nil,
+            pitcherDecisions: pitcherDecisions,
+            status: status,
+            awayTeam: Team(id: "HT", name: "KIA"),
+            homeTeam: Team(id: "HH", name: "한화"),
+            score: score,
+            inning: inning,
+            count: nil,
+            bases: nil,
+            current: current,
+            probablePitchers: probablePitchers,
+            recentPlay: nil,
+            sourceMeta: SourceMeta(rawStatusCode: nil, rawTopBottomCode: nil, fetchedAt: "2026-06-10T10:05:00.000Z")
+        )
+    }
+
+    private func staleProbablePitchers() -> ProbablePitchers {
+        ProbablePitchers(
+            away: ProbablePitcher(name: "옛 원정 선발"),
+            home: ProbablePitcher(name: "옛 홈 선발")
         )
     }
 }

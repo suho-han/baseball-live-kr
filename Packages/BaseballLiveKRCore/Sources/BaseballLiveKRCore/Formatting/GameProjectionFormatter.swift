@@ -40,6 +40,46 @@ public enum GameProjectionFormatter {
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
+    public static func menuBarTeamDetails(for game: Game) -> (away: String?, home: String?) {
+        switch game.status {
+        case .scheduled:
+            return (
+                away: trimmedName(game.probablePitchers.away.name),
+                home: trimmedName(game.probablePitchers.home.name)
+            )
+        case .live:
+            guard
+                let inning = game.inning,
+                let batter = trimmedName(game.current?.batter),
+                let pitcher = trimmedName(game.current?.pitcher)
+            else {
+                return (away: nil, home: nil)
+            }
+
+            switch inning.half {
+            case .top:
+                return (away: batterDetail(batter), home: pitcherDetail(pitcher))
+            case .bottom:
+                return (away: pitcherDetail(pitcher), home: batterDetail(batter))
+            }
+        case .final:
+            guard
+                game.score.away != game.score.home,
+                let win = trimmedName(game.pitcherDecisions?.win),
+                let loss = trimmedName(game.pitcherDecisions?.loss)
+            else {
+                return (away: nil, home: nil)
+            }
+
+            if game.score.away > game.score.home {
+                return (away: winningPitcherDetail(win), home: losingPitcherDetail(loss))
+            }
+            return (away: losingPitcherDetail(loss), home: winningPitcherDetail(win))
+        case .delayed, .cancelled, .unknown:
+            return (away: nil, home: nil)
+        }
+    }
+
     public static func shortRecentPlay(_ text: String?, limit: Int) -> String? {
         guard let trimmed = text?.trimmingCharacters(in: .whitespacesAndNewlines), trimmed.isEmpty == false else {
             return nil
@@ -76,6 +116,29 @@ public enum GameProjectionFormatter {
         case .unknown:
             return nil
         }
+    }
+
+    private static func batterDetail(_ name: String) -> String {
+        "타자 \(name)"
+    }
+
+    private static func pitcherDetail(_ name: String) -> String {
+        "P \(name)"
+    }
+
+    private static func winningPitcherDetail(_ name: String) -> String {
+        "승 \(name)"
+    }
+
+    private static func losingPitcherDetail(_ name: String) -> String {
+        "패 \(name)"
+    }
+
+    private static func trimmedName(_ name: String?) -> String? {
+        guard let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines), trimmed.isEmpty == false else {
+            return nil
+        }
+        return trimmed
     }
 }
 

@@ -138,6 +138,7 @@ enum SampleGameFactory {
             date: "20260613",
             venue: "잠실",
             startTime: makeStartTime(day: 13, hour: 17, minute: 0),
+            pitcherDecisions: PitcherDecisions(win: "임찬규", loss: "비슬리", save: "유영찬"),
             status: .final,
             awayTeam: Team(id: "LT", name: "롯데"),
             homeTeam: Team(id: "LG", name: "LG"),

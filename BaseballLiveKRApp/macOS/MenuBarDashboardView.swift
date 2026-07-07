@@ -477,6 +477,10 @@ private struct MenuBarFeaturedGameCardView: View {
         static let scoreWidth: CGFloat = 28
     }
 
+    private var teamDetails: (away: String?, home: String?) {
+        GameProjectionFormatter.menuBarTeamDetails(for: game)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .center, spacing: 8) {
@@ -501,7 +505,7 @@ private struct MenuBarFeaturedGameCardView: View {
                     team: game.awayTeam,
                     score: game.score.away,
                     isFavorite: game.awayTeam.id == favoriteTeamID,
-                    probablePitcher: trimmedPitcherName(game.probablePitchers.away.name)
+                    detailText: teamDetails.away
                 )
 
                 Spacer(minLength: 0)
@@ -514,7 +518,7 @@ private struct MenuBarFeaturedGameCardView: View {
                     team: game.homeTeam,
                     score: game.score.home,
                     isFavorite: game.homeTeam.id == favoriteTeamID,
-                    probablePitcher: trimmedPitcherName(game.probablePitchers.home.name)
+                    detailText: teamDetails.home
                 )
             }
 
@@ -572,7 +576,7 @@ private struct MenuBarFeaturedGameCardView: View {
         }
     }
 
-    private func teamColumn(team: Team, score: Int, isFavorite: Bool, probablePitcher: String?) -> some View {
+    private func teamColumn(team: Team, score: Int, isFavorite: Bool, detailText: String?) -> some View {
         VStack(spacing: 7) {
             TeamBadgeView(
                 shortName: team.name,
@@ -584,8 +588,8 @@ private struct MenuBarFeaturedGameCardView: View {
                 nameWidth: Layout.nameWidth
             )
 
-            if let probablePitcher {
-                Text(probablePitcher)
+            if let detailText {
+                Text(detailText)
                     .font(KboTypographyToken.system(size: 11, weight: .semibold, scaledBy: fontScale))
                     .foregroundStyle(KboTheme.primaryText)
                     .lineLimit(1)
@@ -621,15 +625,6 @@ private struct MenuBarFeaturedGameCardView: View {
             }
         }
         .frame(width: 76, alignment: .center)
-    }
-
-    private func trimmedPitcherName(_ name: String?) -> String? {
-        guard let trimmedName = name?.trimmingCharacters(in: .whitespacesAndNewlines),
-              trimmedName.isEmpty == false else {
-            return nil
-        }
-
-        return trimmedName
     }
 
     private func recentPlayLabel(_ text: String) -> some View {
