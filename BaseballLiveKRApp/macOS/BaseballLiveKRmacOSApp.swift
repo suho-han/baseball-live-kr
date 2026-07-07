@@ -9,8 +9,9 @@ import BaseballLiveKRDesignSystem
 struct MenuBarExtraLabelPolicy: Equatable {
     let dynamicSummary: String
 
+    var title: String { "Baseball LIVE KR" }
     var systemImageName: String { "baseball.fill" }
-    var helpText: String { dynamicSummary }
+    var toolTip: String { dynamicSummary }
 }
 
 @main
@@ -24,6 +25,7 @@ struct BaseballLiveKRmacOSApp: App {
 
 #if canImport(AppKit)
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @State private var menuBarController = AppKitMenuBarController()
 #endif
     @StateObject private var viewModel: TodayGamesViewModel
     @StateObject private var settings = BackendSettingsModel()
@@ -46,7 +48,6 @@ struct BaseballLiveKRmacOSApp: App {
 
     var body: some Scene {
         mainWindowScene
-        menuBarScene
         settingsScene
     }
 
@@ -65,6 +66,7 @@ struct BaseballLiveKRmacOSApp: App {
                 )
                 .frame(minHeight: MainWindowLayout.minHeight)
                 .background(WindowWidthLimiter(width: MainWindowLayout.minWidth))
+                .background(menuBarStatusItemInstaller)
                 .environment(\.kboFontScale, CGFloat(fontScale))
                 .preferredColorScheme(appearanceMode.preferredColorScheme)
                 .onAppear {
@@ -106,23 +108,6 @@ struct BaseballLiveKRmacOSApp: App {
                 .disabled(CGFloat(fontScale) <= KboFontScale.minimum)
             }
         }
-    }
-
-    @SceneBuilder
-    private var menuBarScene: some Scene {
-        MenuBarExtra(isInserted: $isMenuBarEnabled) {
-            MenuBarDashboardView(
-                viewModel: viewModel,
-                navigationModel: navigationModel
-            )
-            .environment(\.kboFontScale, CGFloat(fontScale))
-            .preferredColorScheme(appearanceMode.preferredColorScheme)
-        } label: {
-            let labelPolicy = MenuBarExtraLabelPolicy(dynamicSummary: menuBarTitle)
-            Image(systemName: labelPolicy.systemImageName)
-                .help(labelPolicy.helpText)
-        }
-        .menuBarExtraStyle(.window)
     }
 
     private var settingsScene: some Scene {
@@ -182,9 +167,143 @@ struct BaseballLiveKRmacOSApp: App {
 
         return viewModel.leagueGames.first.map { MenuBarGameSummaryMapper.map($0).primaryText } ?? "Baseball LIVE KR"
     }
+
+    @ViewBuilder
+    private var menuBarStatusItemInstaller: some View {
+#if canImport(AppKit)
+        MenuBarStatusItemInstaller(
+            controller: menuBarController,
+            viewModel: viewModel,
+            navigationModel: navigationModel,
+            isEnabled: isMenuBarEnabled,
+            fontScale: CGFloat(fontScale),
+            appearanceMode: appearanceMode,
+            summary: menuBarTitle
+        )
+#else
+        EmptyView()
+#endif
+    }
 }
 
 #if canImport(AppKit)
+private struct MenuBarStatusItemInstaller: View {
+    let controller: AppKitMenuBarController
+    @ObservedObject var viewModel: TodayGamesViewModel
+    @ObservedObject var navigationModel: AppNavigationModel
+    let isEnabled: Bool
+    let fontScale: CGFloat
+    let appearanceMode: KboAppearanceMode
+    let summary: String
+
+    var body: some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+            .onAppear(perform: syncStatusItem)
+            .onChange(of: isEnabled) { _ in syncStatusItem() }
+            .onChange(of: fontScale) { _ in syncStatusItem() }
+            .onChange(of: appearanceMode) { _ in syncStatusItem() }
+            .onChange(of: summary) { _ in syncStatusItem() }
+    }
+
+    private func syncStatusItem() {
+        controller.configure(
+            isEnabled: isEnabled,
+            viewModel: viewModel,
+            navigationModel: navigationModel,
+            fontScale: fontScale,
+            appearanceMode: appearanceMode,
+            summary: summary
+        )
+    }
+}
+
+@MainActor
+private final class AppKitMenuBarController: NSObject {
+    private var statusItem: NSStatusItem?
+    private let popover = NSPopover()
+
+    override init() {
+        super.init()
+        popover.behavior = .transient
+    }
+
+    func configure(
+        isEnabled: Bool,
+        viewModel: TodayGamesViewModel,
+        navigationModel: AppNavigationModel,
+        fontScale: CGFloat,
+        appearanceMode: KboAppearanceMode,
+        summary: String
+    ) {
+        guard isEnabled else {
+            removeStatusItem()
+            return
+        }
+
+        let labelPolicy = MenuBarExtraLabelPolicy(dynamicSummary: summary)
+        let statusItem = statusItem ?? makeStatusItem()
+        if self.statusItem == nil {
+            self.statusItem = statusItem
+        }
+
+        if let button = statusItem.button {
+            button.image = statusImage(systemName: labelPolicy.systemImageName)
+            button.imagePosition = .imageOnly
+            button.imageScaling = .scaleProportionallyDown
+            button.toolTip = labelPolicy.toolTip
+        }
+
+        popover.contentSize = NSSize(width: 328, height: 520)
+        popover.contentViewController = NSHostingController(
+            rootView: MenuBarDashboardView(
+                viewModel: viewModel,
+                navigationModel: navigationModel
+            )
+            .environment(\.kboFontScale, fontScale)
+            .preferredColorScheme(appearanceMode.preferredColorScheme)
+        )
+    }
+
+    private func makeStatusItem() -> NSStatusItem {
+        let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusItem.button?.target = self
+        statusItem.button?.action = #selector(togglePopover(_:))
+        statusItem.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        return statusItem
+    }
+
+    private func statusImage(systemName: String) -> NSImage? {
+        let image = NSImage(systemSymbolName: systemName, accessibilityDescription: "Baseball LIVE KR")
+            ?? NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Baseball LIVE KR")
+        image?.isTemplate = true
+        return image
+    }
+
+    @objc private func togglePopover(_ sender: Any?) {
+        guard let button = statusItem?.button else { return }
+
+        if popover.isShown {
+            popover.performClose(sender)
+            return
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+    }
+
+    private func removeStatusItem() {
+        popover.performClose(nil)
+
+        if let statusItem {
+            NSStatusBar.system.removeStatusItem(statusItem)
+        }
+
+        statusItem = nil
+    }
+
+}
+
 private struct WindowWidthLimiter: NSViewRepresentable {
     let width: CGFloat
 
