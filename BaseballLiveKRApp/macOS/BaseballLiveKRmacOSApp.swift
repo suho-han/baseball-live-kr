@@ -17,6 +17,7 @@ struct BaseballLiveKRmacOSApp: App {
 
 #if canImport(AppKit)
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @StateObject private var menuBarStatusItemController = MenuBarStatusItemController()
 #endif
     @StateObject private var viewModel: TodayGamesViewModel
     @StateObject private var settings = BackendSettingsModel()
@@ -40,7 +41,6 @@ struct BaseballLiveKRmacOSApp: App {
 
     var body: some Scene {
         mainWindowScene
-        menuBarScene
         settingsScene
     }
 
@@ -67,9 +67,17 @@ struct BaseballLiveKRmacOSApp: App {
                 .preferredColorScheme(appearanceMode.preferredColorScheme)
                 .onAppear {
                     applyApplicationAppearance(appearanceMode)
+                    configureMenuBarStatusItem()
                 }
                 .onChange(of: appearanceMode) { newValue in
                     applyApplicationAppearance(newValue)
+                    configureMenuBarStatusItem()
+                }
+                .onChange(of: fontScale) { _ in
+                    configureMenuBarStatusItem()
+                }
+                .onChange(of: isMenuBarEnabled) { _ in
+                    configureMenuBarStatusItem()
                 }
                 .task {
                     updateChecker.startAutomaticChecks()
@@ -106,26 +114,6 @@ struct BaseballLiveKRmacOSApp: App {
         }
     }
 
-    @SceneBuilder
-    private var menuBarScene: some Scene {
-        MenuBarExtra(isInserted: $isMenuBarEnabled) {
-            MenuBarDashboardView(
-                viewModel: viewModel,
-                navigationModel: navigationModel
-            )
-            .environment(\.kboFontScale, CGFloat(fontScale))
-            .preferredColorScheme(appearanceMode.preferredColorScheme)
-        } label: {
-            Image(Self.menuBarItemImageName)
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .frame(width: Self.menuBarItemIconSize, height: Self.menuBarItemIconSize)
-                .accessibilityLabel(Self.menuBarItemTitle)
-        }
-        .menuBarExtraStyle(.window)
-    }
-
     private var settingsScene: some Scene {
         Settings {
             SettingsView(
@@ -142,6 +130,18 @@ struct BaseballLiveKRmacOSApp: App {
             )
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
+            .onAppear {
+                configureMenuBarStatusItem()
+            }
+            .onChange(of: appearanceMode) { _ in
+                configureMenuBarStatusItem()
+            }
+            .onChange(of: fontScale) { _ in
+                configureMenuBarStatusItem()
+            }
+            .onChange(of: isMenuBarEnabled) { _ in
+                configureMenuBarStatusItem()
+            }
         }
     }
 
@@ -188,12 +188,118 @@ struct BaseballLiveKRmacOSApp: App {
 #endif
     }
 
+    private func configureMenuBarStatusItem() {
+#if canImport(AppKit)
+        menuBarStatusItemController.update(
+            isInserted: isMenuBarEnabled,
+            title: Self.menuBarItemTitle,
+            imageName: Self.menuBarItemImageName,
+            viewModel: viewModel,
+            navigationModel: navigationModel,
+            fontScale: CGFloat(fontScale),
+            colorScheme: appearanceMode.preferredColorScheme
+        )
+#endif
+    }
+
     static let menuBarItemTitle = "Baseball LIVE KR"
     static let menuBarItemImageName = "MenuBarBaseball"
-    static let menuBarItemIconSize: CGFloat = 17
 }
 
 #if canImport(AppKit)
+@MainActor
+private final class MenuBarStatusItemController: NSObject, ObservableObject {
+    private var statusItem: NSStatusItem?
+    private let popover = NSPopover()
+
+    func update(
+        isInserted: Bool,
+        title: String,
+        imageName: String,
+        viewModel: TodayGamesViewModel,
+        navigationModel: AppNavigationModel,
+        fontScale: CGFloat,
+        colorScheme: ColorScheme?
+    ) {
+        guard isInserted else {
+            closePopover()
+
+            if let statusItem {
+                NSStatusBar.system.removeStatusItem(statusItem)
+                self.statusItem = nil
+            }
+
+            return
+        }
+
+        let statusItem = ensureStatusItem()
+        configureButton(statusItem.button, title: title, imageName: imageName)
+        configurePopover(
+            viewModel: viewModel,
+            navigationModel: navigationModel,
+            fontScale: fontScale,
+            colorScheme: colorScheme
+        )
+    }
+
+    private func ensureStatusItem() -> NSStatusItem {
+        if let statusItem {
+            return statusItem
+        }
+
+        let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        self.statusItem = statusItem
+        return statusItem
+    }
+
+    private func configureButton(_ button: NSStatusBarButton?, title: String, imageName: String) {
+        guard let button else { return }
+
+        button.target = self
+        button.action = #selector(togglePopover(_:))
+        button.toolTip = title
+        button.imagePosition = .imageOnly
+
+        let image = NSImage(named: imageName) ?? NSImage(systemSymbolName: "baseball", accessibilityDescription: title)
+        image?.isTemplate = true
+        image?.size = NSSize(width: 18, height: 18)
+        button.image = image
+        button.setAccessibilityLabel(title)
+    }
+
+    private func configurePopover(
+        viewModel: TodayGamesViewModel,
+        navigationModel: AppNavigationModel,
+        fontScale: CGFloat,
+        colorScheme: ColorScheme?
+    ) {
+        popover.behavior = .transient
+        popover.contentSize = NSSize(width: 560, height: 760)
+        popover.contentViewController = NSHostingController(
+            rootView: MenuBarDashboardView(
+                viewModel: viewModel,
+                navigationModel: navigationModel
+            )
+            .environment(\.kboFontScale, fontScale)
+            .preferredColorScheme(colorScheme)
+        )
+    }
+
+    @objc
+    private func togglePopover(_ sender: NSStatusBarButton) {
+        if popover.isShown {
+            closePopover()
+        } else {
+            popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
+            popover.contentViewController?.view.window?.makeKey()
+        }
+    }
+
+    private func closePopover() {
+        popover.performClose(nil)
+    }
+}
+
 private struct WindowWidthLimiter: NSViewRepresentable {
     let width: CGFloat
 
