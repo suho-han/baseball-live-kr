@@ -86,7 +86,7 @@ BaseballLiveKRApp targets
   - product name: `BaseballLiveKR`
   - bundle id: `kr.suhohan.baseballlivekr.macos`
   - `MenuBarExtra` 기반 엔트리 포함
-  - menu bar item itself uses a stable icon-only label; dynamic game summaries stay inside the popover so system menu bar layout does not shift during polling.
+  - menu bar item uses the stable `MenuBarExtra` title + `baseball.fill` system image initializer; dynamic game summaries stay inside the popover so system menu bar layout does not shift during polling.
 - `BaseballLiveKRWidgetExtension`
   - iOS widget extension
   - bundle id: `kr.suhohan.baseballlivekr.ios.widget`

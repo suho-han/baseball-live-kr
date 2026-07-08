@@ -108,20 +108,17 @@ struct BaseballLiveKRmacOSApp: App {
 
     @SceneBuilder
     private var menuBarScene: some Scene {
-        MenuBarExtra(isInserted: $isMenuBarEnabled) {
+        MenuBarExtra(
+            Self.menuBarItemTitle,
+            systemImage: Self.menuBarItemSystemImage,
+            isInserted: $isMenuBarEnabled
+        ) {
             MenuBarDashboardView(
                 viewModel: viewModel,
                 navigationModel: navigationModel
             )
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
-        } label: {
-            Image(Self.menuBarItemImageName)
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .frame(width: Self.menuBarItemIconSize, height: Self.menuBarItemIconSize)
-                .accessibilityLabel(Self.menuBarItemTitle)
         }
         .menuBarExtraStyle(.window)
     }
@@ -189,8 +186,7 @@ struct BaseballLiveKRmacOSApp: App {
     }
 
     static let menuBarItemTitle = "Baseball LIVE KR"
-    static let menuBarItemImageName = "MenuBarBaseball"
-    static let menuBarItemIconSize: CGFloat = 17
+    static let menuBarItemSystemImage = "baseball.fill"
 }
 
 #if canImport(AppKit)
