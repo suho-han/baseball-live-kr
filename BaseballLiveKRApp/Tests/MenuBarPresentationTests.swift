@@ -4,6 +4,7 @@ import XCTest
 final class MenuBarPresentationTests: XCTestCase {
     func testMenuBarItemUsesStableLabelPresentation() {
         XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemTitle, "Baseball LIVE KR")
-        XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemSystemImage, "baseball.fill")
+        XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemImageName, "MenuBarBaseball")
+        XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemIconSize, 17)
     }
 }

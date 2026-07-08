@@ -105,6 +105,7 @@
 		77B942CC0AB6C91F58C235D1 /* TeamColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB8604D81A4F932F7BE30DC /* TeamColorPalette.swift */; };
 		79A29BA7292E841ED81F9700 /* BackendSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E786A533D28E0FB41643168 /* BackendSettingsView.swift */; };
 		7A496DB188BA0EF5573C3657 /* LiveGameActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45430FFAFC96D9A0C2FB7A77 /* LiveGameActivityWidget.swift */; };
+		7AA2D175E3DD32A8BFA6B72D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04C737A4C75BF263C76F275A /* Assets.xcassets */; };
 		7AC48BB99CB53678C2687673 /* ActivityGameStateMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3379729C075696650A67D9 /* ActivityGameStateMapper.swift */; };
 		7ADC04044BCCB2B2818E0A80 /* InningStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B58E4B9D019EF0B53B2774E /* InningStateView.swift */; };
 		7E18D7892736305C5A3C5B7C /* InningStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B58E4B9D019EF0B53B2774E /* InningStateView.swift */; };
@@ -246,6 +247,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		04C737A4C75BF263C76F275A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08F3104B5678E99B8840965D /* GameDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailScreen.swift; sourceTree = "<group>"; };
 		0A9EE63216CE1A405635F823 /* KboSpacingToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboSpacingToken.swift; sourceTree = "<group>"; };
 		0BD4628D6154E165201C562D /* BaseballLiveKRiOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BaseballLiveKRiOS.entitlements; sourceTree = "<group>"; };
@@ -513,6 +515,7 @@
 		98E0DFE81C01D020AAD0CB66 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				04C737A4C75BF263C76F275A /* Assets.xcassets */,
 				9052D52F177B008933A08AD3 /* BaseballLiveKR.icns */,
 				B12B695ADC1AB0A832F223E0 /* BaseballLiveKRmacOSApp.swift */,
 				1AB65776440191E837775270 /* Info.plist */,
@@ -767,6 +770,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AA2D175E3DD32A8BFA6B72D /* Assets.xcassets in Resources */,
 				2DF940DCE5FFCA04D0797C5F /* BaseballLiveKR.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

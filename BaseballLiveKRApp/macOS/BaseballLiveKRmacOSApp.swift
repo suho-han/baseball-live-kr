@@ -116,7 +116,12 @@ struct BaseballLiveKRmacOSApp: App {
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
         } label: {
-            Label(Self.menuBarItemTitle, systemImage: Self.menuBarItemSystemImage)
+            Image(Self.menuBarItemImageName)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: Self.menuBarItemIconSize, height: Self.menuBarItemIconSize)
+                .accessibilityLabel(Self.menuBarItemTitle)
         }
         .menuBarExtraStyle(.window)
     }
@@ -184,7 +189,8 @@ struct BaseballLiveKRmacOSApp: App {
     }
 
     static let menuBarItemTitle = "Baseball LIVE KR"
-    static let menuBarItemSystemImage = "baseball.fill"
+    static let menuBarItemImageName = "MenuBarBaseball"
+    static let menuBarItemIconSize: CGFloat = 17
 }
 
 #if canImport(AppKit)
