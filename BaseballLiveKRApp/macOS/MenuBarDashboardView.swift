@@ -38,8 +38,8 @@ struct MenuBarDashboardView: View {
 
             if let game = viewModel.favoriteGame {
                 favoriteGameCard(game)
-            } else if let summary = currentSummary {
-                fallbackSummary(summary)
+            } else if let game = currentGame {
+                fallbackSummary(game)
             } else {
                 emptySummary
             }
@@ -142,35 +142,14 @@ struct MenuBarDashboardView: View {
         .frame(maxWidth: .infinity)
     }
 
-    private func fallbackSummary(_ summary: MenuBarGameSummary) -> some View {
+    private func fallbackSummary(_ game: Game) -> some View {
         Button {
-            if let game = viewModel.leagueGames.first {
-                openInMainWindow(game)
-            }
+            openInMainWindow(game)
         } label: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(summary.primaryText)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(KboTheme.primaryText)
-
-                if let secondaryText = summary.secondaryText {
-                    Text(secondaryText)
-                        .font(.caption)
-                        .foregroundStyle(KboTheme.secondaryText)
-                }
-
-                if let recentPlay = summary.recentPlay {
-                    recentPlayLabel(recentPlay)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(KboSpacingToken.medium)
-            .background(KboSurfaceToken.glassControl)
-            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
-                    .stroke(KboSurfaceToken.glassBorder.opacity(0.7), lineWidth: 1)
-            }
+            MenuBarFeaturedGameCardView(
+                game: game,
+                favoriteTeamID: Optional<String>.none
+            )
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
@@ -183,21 +162,6 @@ struct MenuBarDashboardView: View {
             systemImage: "calendar.badge.exclamationmark",
             style: .control
         )
-    }
-
-    private func recentPlayLabel(_ text: String) -> some View {
-        Label {
-            Text(text)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(KboTheme.primaryText)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-        } icon: {
-            Image(systemName: "quote.bubble.fill")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(KboColorToken.statusLive)
-        }
-        .labelStyle(.titleAndIcon)
     }
 
     private var headerSubtitle: String {
@@ -213,8 +177,8 @@ struct MenuBarDashboardView: View {
         openWindow(id: "main-window")
     }
 
-    private var currentSummary: MenuBarGameSummary? {
-        viewModel.visibleGames.first.map(MenuBarGameSummaryMapper.map)
+    private var currentGame: Game? {
+        viewModel.visibleGames.first
     }
 
     private var lastUpdatedStatusText: String {
@@ -478,7 +442,11 @@ private struct MenuBarFeaturedGameCardView: View {
     }
 
     private var teamDetails: (away: String?, home: String?) {
-        GameProjectionFormatter.menuBarTeamDetails(for: game)
+        if game.status == .live {
+            return (away: nil, home: nil)
+        }
+
+        return GameProjectionFormatter.menuBarTeamDetails(for: game)
     }
 
     var body: some View {
@@ -549,7 +517,7 @@ private struct MenuBarFeaturedGameCardView: View {
         case .scheduled:
             return "예정"
         case .live:
-            return GameProjectionFormatter.inningText(for: game) ?? "LIVE"
+            return "LIVE"
         case .final:
             return "종료"
         case .delayed:

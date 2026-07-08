@@ -2,6 +2,7 @@
 
 작성일: 2026-06-13  
 업데이트: 2026-06-14  
+Updated: 2026-07-08
 상태: Current
 
 이 문서는 현재 `baseball-live-kr` 저장소의 실제 구조와 개발 진입점을 정리한 기준 문서다.
@@ -85,6 +86,7 @@ BaseballLiveKRApp targets
   - product name: `BaseballLiveKR`
   - bundle id: `kr.suhohan.baseballlivekr.macos`
   - `MenuBarExtra` 기반 엔트리 포함
+  - menu bar item itself uses a stable icon-only label; dynamic game summaries stay inside the popover so system menu bar layout does not shift during polling.
 - `BaseballLiveKRWidgetExtension`
   - iOS widget extension
   - bundle id: `kr.suhohan.baseballlivekr.ios.widget`

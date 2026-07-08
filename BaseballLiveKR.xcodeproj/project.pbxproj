@@ -173,6 +173,7 @@
 		D27E4C594BCCD092B7E90022 /* TeamBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309D293C8E78B02BF0882199 /* TeamBadgeView.swift */; };
 		D2D99A983F7B109557AB0A99 /* LiveGamePollingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF66BBD410E21F99EB2709BF /* LiveGamePollingService.swift */; };
 		D50E815F516815D076060B23 /* KboGlassPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23493DA88ED3FD4A7A3DB2B /* KboGlassPanel.swift */; };
+		D61974EA4B450AAA51C3DE7D /* MenuBarPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD70158091D1753D9676B30B /* MenuBarPresentationTests.swift */; };
 		D741E71942E0E94B9F9E0085 /* WidgetGameSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36E4ACF8E6C62BE04980EC /* WidgetGameSnapshot.swift */; };
 		D75D5B01A6DAE6EBE9B3ABA1 /* BackendSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09F768894B7B87FB854B4E8 /* BackendSettingsModel.swift */; };
 		D8D179B4676484467FD3ED1B /* MenuBarGameSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF3F366EA8804F7D73DE8E1 /* MenuBarGameSummary.swift */; };
@@ -334,6 +335,7 @@
 		ECB8604D81A4F932F7BE30DC /* TeamColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamColorPalette.swift; sourceTree = "<group>"; };
 		EE948F405F731D4ED93C02AE /* LaunchAtLoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginController.swift; sourceTree = "<group>"; };
 		F7DEC0C30CDF85BB208210D1 /* LaunchAtLoginControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginControllerTests.swift; sourceTree = "<group>"; };
+		FD70158091D1753D9676B30B /* MenuBarPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPresentationTests.swift; sourceTree = "<group>"; };
 		FF66BBD410E21F99EB2709BF /* LiveGamePollingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGamePollingService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -368,6 +370,7 @@
 			children = (
 				57FC9DAFCA00F566131B7EA7 /* BackendSettingsModelTests.swift */,
 				F7DEC0C30CDF85BB208210D1 /* LaunchAtLoginControllerTests.swift */,
+				FD70158091D1753D9676B30B /* MenuBarPresentationTests.swift */,
 			);
 			name = Tests;
 			path = BaseballLiveKRApp/Tests;
@@ -857,6 +860,7 @@
 			files = (
 				55A713434C28CDEE1F81AE3C /* BackendSettingsModelTests.swift in Sources */,
 				8F80CBB58CCFD0460E63820C /* LaunchAtLoginControllerTests.swift in Sources */,
+				D61974EA4B450AAA51C3DE7D /* MenuBarPresentationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

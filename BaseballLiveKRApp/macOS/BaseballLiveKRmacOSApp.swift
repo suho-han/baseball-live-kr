@@ -116,7 +116,7 @@ struct BaseballLiveKRmacOSApp: App {
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
         } label: {
-            Label(menuBarTitle, systemImage: "baseball.fill")
+            Label(Self.menuBarItemTitle, systemImage: Self.menuBarItemSystemImage)
         }
         .menuBarExtraStyle(.window)
     }
@@ -183,13 +183,8 @@ struct BaseballLiveKRmacOSApp: App {
 #endif
     }
 
-    private var menuBarTitle: String {
-        if let favoriteGame = viewModel.favoriteGame {
-            return GameProjectionFormatter.scoreLine(for: favoriteGame)
-        }
-
-        return viewModel.leagueGames.first.map { MenuBarGameSummaryMapper.map($0).primaryText } ?? "Baseball LIVE KR"
-    }
+    static let menuBarItemTitle = "Baseball LIVE KR"
+    static let menuBarItemSystemImage = "baseball.fill"
 }
 
 #if canImport(AppKit)
