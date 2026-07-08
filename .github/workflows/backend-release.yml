@@ -1,0 +1,109 @@
+name: Backend Release Asset
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: GitHub release tag to attach the backend asset to
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  ASSET_NAME: baseball-live-kr-backend-server.tar.gz
+
+jobs:
+  package:
+    name: Package backend server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend-spike/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend-spike
+        run: npm ci
+
+      - name: Typecheck backend
+        working-directory: backend-spike
+        run: npm run typecheck
+
+      - name: Test backend
+        working-directory: backend-spike
+        run: npm test
+
+      - name: Package backend archive
+        run: |
+          ARCHIVE_PATH="${RUNNER_TEMP}/${ASSET_NAME}" ./scripts/package-backend-server.sh
+
+      - name: Resolve release id
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_RELEASE_ID: ${{ github.event.release.id }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${EVENT_RELEASE_ID}" ]]; then
+            release_id="${EVENT_RELEASE_ID}"
+          else
+            release_json="$(curl -fsSL \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/${INPUT_TAG}")"
+            release_id="$(jq -r '.id' <<<"${release_json}")"
+          fi
+
+          if [[ -z "${release_id}" || "${release_id}" == "null" ]]; then
+            echo "Could not resolve release id." >&2
+            exit 1
+          fi
+
+          echo "release_id=${release_id}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload backend release asset
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ steps.release.outputs.release_id }}
+        run: |
+          set -euo pipefail
+
+          existing_asset_id="$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets" \
+            | jq -r --arg name "${ASSET_NAME}" '.[] | select(.name == $name) | .id' \
+            | head -n 1)"
+
+          if [[ -n "${existing_asset_id}" ]]; then
+            curl -fsSL \
+              -X DELETE \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/assets/${existing_asset_id}"
+          fi
+
+          curl -fsSL \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            -H "Content-Type: application/gzip" \
+            --data-binary "@${RUNNER_TEMP}/${ASSET_NAME}" \
+            "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${ASSET_NAME}"

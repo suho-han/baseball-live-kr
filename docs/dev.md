@@ -159,6 +159,66 @@ PORT=17361 \
 DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 ```
 
+GitHub Release를 기준으로 원격 backend 서버가 자동 배포하게 하려면 release asset workflow와 원격 polling timer를 같이 사용한다.
+
+흐름:
+
+1. GitHub Release를 publish한다.
+2. `.github/workflows/backend-release.yml`이 `baseball-live-kr-backend-server.tar.gz` asset을 release에 업로드한다.
+3. 원격 서버의 `systemd --user` timer가 GitHub latest release를 확인한다.
+4. 새 tag가 있으면 asset을 내려받아 `current` symlink를 바꾸고 `baseball-live-kr-backend.service`를 재시작한다.
+5. `HEALTH_URL` smoke가 통과하면 해당 tag를 배포 완료로 기록한다.
+
+원격 서버 사전 요구사항:
+
+```bash
+node --version
+npm --version
+jq --version
+curl --version
+systemctl --user status
+```
+
+로컬에서 release용 backend archive만 만들기:
+
+```bash
+./scripts/baseball-live-kr.sh package-backend-release
+```
+
+원격 서버에 GitHub Release polling updater 설치:
+
+```bash
+SSH_TARGET=user@backend.example.com \
+GITHUB_REPOSITORY=owner/baseball-live-kr \
+REMOTE_INSTALL_ROOT=/home/suhohan/baseball-live-kr-backend \
+PORT=17361 \
+./scripts/baseball-live-kr.sh install-backend-release-updater
+```
+
+설치될 원격 파일:
+
+```text
+~/.local/bin/baseball-live-kr-backend-release-update
+~/.config/baseball-live-kr/backend-release.env
+~/.config/systemd/user/baseball-live-kr-backend.service
+~/.config/systemd/user/baseball-live-kr-backend-release-update.service
+~/.config/systemd/user/baseball-live-kr-backend-release-update.timer
+```
+
+저장소가 private이면 원격 서버의 `~/.config/baseball-live-kr/backend-release.env`에 GitHub contents read 권한 토큰을 추가한다.
+
+```bash
+GITHUB_TOKEN=...
+```
+
+timer 상태와 로그:
+
+```bash
+systemctl --user status baseball-live-kr-backend-release-update.timer
+systemctl --user start baseball-live-kr-backend-release-update.service
+journalctl --user -u baseball-live-kr-backend-release-update.service -u baseball-live-kr-backend.service -f
+```
+
 Production API 도메인을 backend로 연결하는 nginx proxy 설치:
 
 ```bash

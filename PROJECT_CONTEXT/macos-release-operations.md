@@ -149,6 +149,31 @@ journalctl --user -u baseball-live-kr-backend.service -f
 DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 ```
 
+GitHub Release 기반 자동 배포:
+
+- `.github/workflows/backend-release.yml`은 release publish 또는 수동 workflow 실행 시 `backend-spike`를 typecheck/test/build하고 `baseball-live-kr-backend-server.tar.gz` asset을 release에 업로드한다.
+- `scripts/install-backend-release-updater.sh`는 원격 서버에 `systemd --user` timer와 updater script를 설치한다.
+- updater는 GitHub latest release API에서 동일 asset 이름을 찾고, 새 tag면 release directory에 압축을 푼 뒤 `current` symlink를 바꾸고 backend service를 재시작한다.
+- private repository에서는 원격 `~/.config/baseball-live-kr/backend-release.env`에 contents read 권한의 `GITHUB_TOKEN`을 직접 둔다. 토큰 값은 tracked 문서나 repo 파일에 기록하지 않는다.
+
+설치:
+
+```bash
+SSH_TARGET=user@backend.example.com \
+GITHUB_REPOSITORY=owner/baseball-live-kr \
+REMOTE_INSTALL_ROOT=/home/suhohan/baseball-live-kr-backend \
+PORT=17361 \
+./scripts/baseball-live-kr.sh install-backend-release-updater
+```
+
+운영 확인:
+
+```bash
+systemctl --user status baseball-live-kr-backend-release-update.timer
+systemctl --user start baseball-live-kr-backend-release-update.service
+journalctl --user -u baseball-live-kr-backend-release-update.service -u baseball-live-kr-backend.service -f
+```
+
 ## 7. Signing And Notarization
 
 현재 상태:

@@ -1,6 +1,7 @@
 # Baseball LIVE KR Production Backend Strategy
 
 작성일: 2026-06-16
+Updated: 2026-07-08
 상태: Working v0.2
 
 ## 1. 목적
@@ -26,6 +27,7 @@
 3. production도 초기에는 long-running API를 우선한다.
 4. cloud function은 traffic이 낮고 cold start가 허용되는 보조 후보로만 둔다.
 5. 앱은 `local`, `staging`, `production` backend URL을 명시적으로 전환할 수 있어야 한다.
+6. 초기 backend 배포 자동화는 GitHub Release asset을 원격 서버가 주기적으로 확인하는 pull 배포를 사용한다.
 
 이유:
 
