@@ -39,18 +39,18 @@ macOS 앱 메인 화면:
 
 <img src="images/menubar.png" alt="Baseball LIVE KR 메뉴바 화면" width="360">
 
-## 앱 실행 방법
+## 앱 여는 법
 
-GitHub Releases에서 최신 `BaseballLiveKR-0.1.0-macOS.dmg`를 내려받습니다.
+GitHub Releases의 [Baseball LIVE KR 0.1.0](https://github.com/suho-han/baseball-live-kr/releases/tag/v0.1.0)에서 `BaseballLiveKR-0.1.0-macOS.dmg`를 내려받습니다.
 
 1. `.dmg` 파일을 열고, 왼쪽의 큰 `BaseballLiveKR.app` 아이콘을 오른쪽 `Applications` 폴더로 드래그합니다.
 2. `Applications`에서 `BaseballLiveKR.app`을 엽니다.
-3. 처음 열 때 "Apple에서 'BaseballLiveKR'에 멀웨어가 없음을 확인할 수 없습니다" 보안 경고가 나옵니다. 아직 Apple 공증(notarization)을 거치지 않은 빌드라서 나오는 정상적인 안내이며, 아래 순서대로 진행하면 이후에는 다시 묻지 않습니다.
+3. 처음 열 때 "Apple에서 'BaseballLiveKR'에 멀웨어가 없음을 확인할 수 없습니다" 보안 경고가 나옵니다. 아직 Apple 공증(notarization)을 거치지 않은 ad-hoc 서명 빌드라서 나오는 정상적인 안내입니다. 아래 순서대로 진행하면 이후에는 다시 묻지 않습니다.
    1. 경고 창에서 `완료`를 누릅니다. (`휴지통으로 이동`은 누르지 않습니다.)
 
       <img src="images/error.png" alt="Baseball LIVE KR 열면 에러" width="360">
 
-   2. `시스템 설정` > `개인정보 보호 및 보안`을 열고 아래 `보안` 항목에서 `그래도 열기`를 누릅니다.
+   2. `시스템 설정` > `개인정보 보호 및 보안`을 열고 아래 `보안` 항목에서 `그래도 열기`를 누릅니다. Apple 안내 기준으로 이 버튼은 차단된 실행 시도 후 약 1시간 동안 표시됩니다.
 
       <img src="images/settings.png" alt="Baseball LIVE KR 세팅 화면" width="360">
 
@@ -63,6 +63,13 @@ GitHub Releases에서 최신 `BaseballLiveKR-0.1.0-macOS.dmg`를 내려받습니
    ```
 
 4. 메뉴바에서 Baseball LIVE KR 아이콘을 눌러 오늘 경기를 확인합니다.
+
+다운로드 파일을 확인하려면 같은 릴리즈에 있는 `BaseballLiveKR-0.1.0-macOS.dmg.sha256` 파일을 함께 내려받아 아래처럼 비교합니다.
+
+```bash
+shasum -a 256 BaseballLiveKR-0.1.0-macOS.dmg
+cat BaseballLiveKR-0.1.0-macOS.dmg.sha256
+```
 
 ## 개발 및 검증
 
