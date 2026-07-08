@@ -1,6 +1,7 @@
 # macOS Release And Remote Test Operations
 
 작성일: 2026-06-17
+Updated: 2026-07-08
 
 ## 1. 목적
 
@@ -64,7 +65,13 @@ DMG 포함 항목:
 
 - `BaseballLiveKR.app`
 - `/Applications` symlink
-- `.background/dmg-background.png` Finder 배경 이미지
+- `.background/dmg-background.png` Finder 화살표 이미지
+
+DMG Finder 레이아웃 기준:
+
+- 왼쪽 `BaseballLiveKR.app`, 오른쪽 `Applications`, 중앙 오른쪽 화살표
+- 배경색/그림자 없이 투명 PNG 위 단색 굵은 화살표와 128pt 아이콘 크기
+- 같은 볼륨명이 이미 마운트된 상태에서도 `hdiutil attach`가 반환한 실제 mount path의 볼륨명에 레이아웃을 기록
 
 사용자 설치 흐름:
 

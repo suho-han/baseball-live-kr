@@ -69,47 +69,16 @@ func fill(_ path: NSBezierPath, color fillColor: NSColor) {
 image.lockFocus()
 
 let arrow = NSBezierPath()
-arrow.move(to: NSPoint(x: 286, y: 226))
-arrow.line(to: NSPoint(x: 434, y: 226))
-stroke(arrow, color: color(46, 122, 255, 0.90), width: 7)
-stroke(arrow, color: color(255, 255, 255, 0.45), width: 2)
+arrow.move(to: NSPoint(x: 286, y: 230))
+arrow.line(to: NSPoint(x: 434, y: 230))
+stroke(arrow, color: color(36, 118, 255, 0.95), width: 15)
 
 let arrowHead = NSBezierPath()
-arrowHead.move(to: NSPoint(x: 434, y: 226))
-arrowHead.line(to: NSPoint(x: 406, y: 206))
-arrowHead.move(to: NSPoint(x: 434, y: 226))
-arrowHead.line(to: NSPoint(x: 406, y: 246))
-stroke(arrowHead, color: color(46, 122, 255, 0.90), width: 7)
-stroke(arrowHead, color: color(255, 255, 255, 0.45), width: 2)
-
-let captionAttributes: [NSAttributedString.Key: Any] = [
-    .font: NSFont.systemFont(ofSize: 18, weight: .semibold),
-    .foregroundColor: color(255, 255, 255, 0.92),
-    .kern: 0.2
-]
-let caption = "Drag to Applications"
-let captionSize = caption.size(withAttributes: captionAttributes)
-
-let hintAttributes: [NSAttributedString.Key: Any] = [
-    .font: NSFont.systemFont(ofSize: 13, weight: .regular),
-    .foregroundColor: color(255, 255, 255, 0.80),
-    .kern: 0.1
-]
-let hint = "처음 실행 시 보안 경고가 나오면: 시스템 설정 > 개인정보 보호 및 보안 > \"그래도 열기\""
-let hintSize = hint.size(withAttributes: hintAttributes)
-
-// Translucent panel keeps the captions legible over both light and dark
-// Finder window backgrounds.
-let panelWidth = max(captionSize.width, hintSize.width) + 48
-let panel = NSBezierPath(
-    roundedRect: NSRect(x: (canvas.width - panelWidth) / 2, y: 22, width: panelWidth, height: 68),
-    xRadius: 14,
-    yRadius: 14
-)
-fill(panel, color: color(20, 24, 34, 0.55))
-
-caption.draw(at: NSPoint(x: (canvas.width - captionSize.width) / 2, y: 58), withAttributes: captionAttributes)
-hint.draw(at: NSPoint(x: (canvas.width - hintSize.width) / 2, y: 32), withAttributes: hintAttributes)
+arrowHead.move(to: NSPoint(x: 434, y: 230))
+arrowHead.line(to: NSPoint(x: 406, y: 208))
+arrowHead.move(to: NSPoint(x: 434, y: 230))
+arrowHead.line(to: NSPoint(x: 406, y: 252))
+stroke(arrowHead, color: color(36, 118, 255, 0.95), width: 15)
 
 image.unlockFocus()
 
@@ -174,6 +143,8 @@ if [[ -z "$mount_path" || ! -d "$mount_path" ]]; then
   exit 1
 fi
 
+layout_volume_name="$(basename "$mount_path")"
+
 cleanup_mount() {
   hdiutil detach "$mount_path" >/dev/null 2>&1 || true
 }
@@ -185,7 +156,7 @@ fi
 
 osascript <<APPLESCRIPT
 tell application "Finder"
-  tell disk "$VOLUME_NAME"
+  tell disk "$layout_volume_name"
     open
     set current view of container window to icon view
     set toolbar visible of container window to false
@@ -204,6 +175,7 @@ tell application "Finder"
 end tell
 APPLESCRIPT
 
+bless --folder "$mount_path" --openfolder "$mount_path" >/dev/null 2>&1 || true
 sync
 hdiutil detach "$mount_path" >/dev/null
 trap - EXIT
