@@ -1,7 +1,7 @@
 # Baseball LIVE KR Backend Spike Results
 
 작성일: 2026-06-10
-업데이트: 2026-06-14
+업데이트: 2026-07-09
 상태: Working v0.2
 
 ## 1. 목적
@@ -26,6 +26,7 @@ KBO 공식 웹서비스를 직접 앱에서 때리지 않고, 중간 backend/BFF
 - 브라우저 유사 headers
 - raw DTO schema
 - normalized game mapper
+- DB-backed latest game snapshot read path
 - monthly schedule metadata mapper
 - month-level schedule + game merge
 - polling script
@@ -51,6 +52,7 @@ KBO 공식 웹서비스를 직접 앱에서 때리지 않고, 중간 backend/BFF
 - scheduled 경기에서 기본 score/status/venue/startTime 필드 확인
 - schedule metadata 기준 `broadcastChannels`, `homepageLinks`, `venue`, `startTime` 보강 확인
 - `startTime` normalized 형식은 현재 `YYYYMMDDTHH:mm:ss+09:00` (예: `20260610T18:30:00+09:00`) 확인
+- `games` + `game_snapshots` table에 해당 날짜 최신 normalized snapshot이 있으면 `/v1/games/today`가 KBO source 호출 전에 DB snapshot을 우선 반환함 확인
 - KBO source 오류는 `KboSourceError`로 감싸 route 계층에서 처리 가능
 - polling script 2회 실행 시
   - 첫 tick: `initial snapshot`
