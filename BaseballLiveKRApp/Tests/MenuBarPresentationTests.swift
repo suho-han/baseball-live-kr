@@ -6,6 +6,7 @@ final class MenuBarPresentationTests: XCTestCase {
         XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemTitle, "Baseball LIVE KR")
         XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemSystemImage, "baseball.fill")
         XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemAccessibilityIdentifier, "kr.suhohan.baseballlivekr.menubar")
+        XCTAssertEqual(BaseballLiveKRmacOSApp.menuBarItemAutosaveName, "kr.suhohan.baseballlivekr.menubar")
     }
 
     func testAppStaysRunningAfterLastWindowCloses() {

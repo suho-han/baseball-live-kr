@@ -28,7 +28,7 @@ struct MenuBarDashboardView: View {
 
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var navigationModel: AppNavigationModel
-    @Environment(\.openWindow) private var openWindow
+    let openMainWindow: () -> Void
     @State private var backendStatus: BackendServerStatus = .checking
     @State private var isRefreshing = false
 
@@ -83,7 +83,7 @@ struct MenuBarDashboardView: View {
             .buttonStyle(.plain)
 
             Button {
-                openWindow(id: "main-window")
+                openMainWindow()
             } label: {
                 compactActionButton(title: "메인으로", systemImage: "macwindow")
             }
@@ -174,7 +174,7 @@ struct MenuBarDashboardView: View {
 
     private func openInMainWindow(_ game: Game) {
         navigationModel.present(game: game)
-        openWindow(id: "main-window")
+        openMainWindow()
     }
 
     private var currentGame: Game? {

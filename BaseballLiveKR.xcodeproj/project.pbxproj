@@ -183,6 +183,7 @@
 		DB74900C8797B1CC15C03FEF /* KboSurfaceToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72AE8AF73AA813C41B91AB7 /* KboSurfaceToken.swift */; };
 		DB97461982916634C8DBADA1 /* BaseDiamondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585FCB6AB9C743FEFD00351E /* BaseDiamondView.swift */; };
 		DC4C22BF39D457A05B4A13CA /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B43AB9234FF439321BD619 /* Game.swift */; };
+		DC706A12BE2011FD30919521 /* MenuBarStatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4673A65E174CFDB4CA92F863 /* MenuBarStatusItemController.swift */; };
 		DE460DD34B286DFDB3F6C2D0 /* BackendSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E786A533D28E0FB41643168 /* BackendSettingsView.swift */; };
 		DE7A1B384F130DF59402EA84 /* BaseballLiveKRiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D48BBA87CE5180C3555D01 /* BaseballLiveKRiOSApp.swift */; };
 		DF150F3CBCEF9095D1942300 /* GameFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B19334A8BD3D1E6FA9239 /* GameFeed.swift */; };
@@ -273,6 +274,7 @@
 		4164E6343A3C752556E9AF57 /* WidgetGameSnapshotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGameSnapshotStore.swift; sourceTree = "<group>"; };
 		4172B08995C5C06FFCAA9AB6 /* KboTypographyToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboTypographyToken.swift; sourceTree = "<group>"; };
 		45430FFAFC96D9A0C2FB7A77 /* LiveGameActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGameActivityWidget.swift; sourceTree = "<group>"; };
+		4673A65E174CFDB4CA92F863 /* MenuBarStatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusItemController.swift; sourceTree = "<group>"; };
 		46A2797A218DC238F5103948 /* KboMetricRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KboMetricRow.swift; sourceTree = "<group>"; };
 		47053E50D0C7DDD5302F736B /* GameProjectionFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProjectionFormatter.swift; sourceTree = "<group>"; };
 		4E36E4ACF8E6C62BE04980EC /* WidgetGameSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetGameSnapshot.swift; sourceTree = "<group>"; };
@@ -521,6 +523,7 @@
 				1AB65776440191E837775270 /* Info.plist */,
 				EE948F405F731D4ED93C02AE /* LaunchAtLoginController.swift */,
 				939FEF51317FF1A6114BCC21 /* MenuBarDashboardView.swift */,
+				4673A65E174CFDB4CA92F863 /* MenuBarStatusItemController.swift */,
 				4029E390E7C3CB2E90A5B026 /* SettingsView.swift */,
 			);
 			name = macOS;
@@ -835,6 +838,7 @@
 				52B8BAC30108DDA7E4E4222B /* MenuBarDashboardView.swift in Sources */,
 				D8D179B4676484467FD3ED1B /* MenuBarGameSummary.swift in Sources */,
 				7FDE677783A8579F1AFC993F /* MenuBarGameSummaryMapper.swift in Sources */,
+				DC706A12BE2011FD30919521 /* MenuBarStatusItemController.swift in Sources */,
 				BF2A9BA2C9247A004E313D49 /* MockGameRepository.swift in Sources */,
 				A5EC8685D99F497E429C783C /* MyTeamSelectionStore.swift in Sources */,
 				E06D62E32C389AB540BAF74A /* OutCountView.swift in Sources */,
