@@ -108,17 +108,17 @@ struct BaseballLiveKRmacOSApp: App {
 
     @SceneBuilder
     private var menuBarScene: some Scene {
-        MenuBarExtra(
-            Self.menuBarItemTitle,
-            systemImage: Self.menuBarItemSystemImage,
-            isInserted: $isMenuBarEnabled
-        ) {
+        MenuBarExtra(isInserted: $isMenuBarEnabled) {
             MenuBarDashboardView(
                 viewModel: viewModel,
                 navigationModel: navigationModel
             )
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
+        } label: {
+            Image(systemName: Self.menuBarItemSystemImage)
+                .accessibilityLabel(Self.menuBarItemTitle)
+                .accessibilityIdentifier(Self.menuBarItemAccessibilityIdentifier)
         }
         .menuBarExtraStyle(.window)
     }
@@ -187,6 +187,8 @@ struct BaseballLiveKRmacOSApp: App {
 
     static let menuBarItemTitle = "Baseball LIVE KR"
     static let menuBarItemSystemImage = "baseball.fill"
+    static let menuBarItemAccessibilityIdentifier = "kr.suhohan.baseballlivekr.menubar"
+    static let shouldTerminateAfterLastWindowClosed = false
 }
 
 #if canImport(AppKit)
@@ -282,6 +284,10 @@ private final class WindowWidthController: NSObject, NSWindowDelegate {
 private final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        BaseballLiveKRmacOSApp.shouldTerminateAfterLastWindowClosed
     }
 }
 #endif
