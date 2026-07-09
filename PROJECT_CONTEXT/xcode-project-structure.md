@@ -87,6 +87,7 @@ BaseballLiveKRApp targets
   - bundle id: `kr.suhohan.baseballlivekr.macos`
   - AppKit `NSStatusItem` 기반 메뉴바 엔트리 포함
   - menu bar item uses `NSStatusItem.autosaveName = kr.suhohan.baseballlivekr.menubar`, `Baseball LIVE KR` accessibility title, `kr.suhohan.baseballlivekr.menubar` accessibility identifier, and static `baseball.fill` system image; dynamic game summaries stay inside the popover so system menu bar layout does not shift during polling.
+  - menu bar popover refresh controls reserve fixed loading indicator slots, so swapping between icon and spinner does not resize neighboring UI during manual refresh.
   - main window close does not terminate the app; the menu bar process stays alive until the user explicitly quits the app.
 - `BaseballLiveKRWidgetExtension`
   - iOS widget extension

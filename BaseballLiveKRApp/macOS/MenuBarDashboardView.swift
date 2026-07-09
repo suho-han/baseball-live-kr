@@ -70,8 +70,9 @@ struct MenuBarDashboardView: View {
                 refreshAll()
             } label: {
                 compactActionButton(
-                    title: isRefreshing ? "갱신 중" : "새로고침",
-                    systemImage: isRefreshing ? "arrow.triangle.2.circlepath" : "arrow.clockwise"
+                    title: "새로고침",
+                    systemImage: "arrow.clockwise",
+                    isLoading: isRefreshing
                 )
             }
             .buttonStyle(.plain)
@@ -122,10 +123,10 @@ struct MenuBarDashboardView: View {
 
             Spacer(minLength: 12)
 
-            if viewModel.isLoading || isRefreshing {
-                ProgressView()
-                    .controlSize(.small)
-            }
+            ProgressView()
+                .controlSize(.small)
+                .opacity(viewModel.isLoading || isRefreshing ? 1 : 0)
+                .frame(width: 16, height: 16)
         }
     }
 
@@ -290,11 +291,19 @@ struct MenuBarDashboardView: View {
         }
     }
 
-    private func compactActionButton(title: String, systemImage: String) -> some View {
+    private func compactActionButton(title: String, systemImage: String, isLoading: Bool = false) -> some View {
         HStack(spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(KboTheme.primaryText.opacity(0.88))
+            ZStack {
+                Image(systemName: systemImage)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(KboTheme.primaryText.opacity(0.88))
+                    .opacity(isLoading ? 0 : 1)
+
+                ProgressView()
+                    .controlSize(.small)
+                    .opacity(isLoading ? 1 : 0)
+            }
+            .frame(width: 18, height: 18)
 
             Text(title)
                 .font(.caption.weight(.semibold))
