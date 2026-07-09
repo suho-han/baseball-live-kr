@@ -116,7 +116,8 @@ struct BaseballLiveKRmacOSApp: App {
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
         } label: {
-            Image(systemName: Self.menuBarItemSystemImage)
+            Label(Self.menuBarItemTitle, systemImage: Self.menuBarItemSystemImage)
+                .labelStyle(.iconOnly)
                 .accessibilityLabel(Self.menuBarItemTitle)
                 .accessibilityIdentifier(Self.menuBarItemAccessibilityIdentifier)
         }
