@@ -45,7 +45,7 @@ GitHub Releases의 [Baseball LIVE KR 0.1.0](https://github.com/suho-han/baseball
 
 1. `.dmg` 파일을 열고, 왼쪽의 큰 `BaseballLiveKR.app` 아이콘을 오른쪽 `Applications` 폴더로 드래그합니다.
 2. `Applications`에서 `BaseballLiveKR.app`을 엽니다.
-3. 처음 열 때 "Apple에서 'BaseballLiveKR'에 멀웨어가 없음을 확인할 수 없습니다" 보안 경고가 나옵니다. 아직 Apple 공증(notarization)을 거치지 않은 ad-hoc 서명 빌드라서 나오는 정상적인 안내입니다. 아래 순서대로 진행하면 이후에는 다시 묻지 않습니다.
+3. 현재 공개된 0.1.0 DMG를 처음 열 때는 "Apple에서 'BaseballLiveKR'에 멀웨어가 없음을 확인할 수 없습니다" 보안 경고가 나옵니다. 이 파일은 아직 Apple 공증(notarization)을 거치지 않은 ad-hoc 서명 빌드라서 나오는 정상적인 안내입니다. Developer ID로 서명하고 공증한 릴리즈부터는 macOS가 인터넷에서 받은 앱임을 확인하는 `Open` 경고만 표시하고 바로 열 수 있습니다.
    1. 경고 창에서 `완료`를 누릅니다. (`휴지통으로 이동`은 누르지 않습니다.)
 
       <img src="images/error.png" alt="Baseball LIVE KR 열면 에러" width="360">

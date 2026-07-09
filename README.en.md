@@ -45,7 +45,7 @@ Download the latest `BaseballLiveKR-0.1.0-macOS.dmg` from GitHub Releases.
 
 1. Open the `.dmg` file and drag the large `BaseballLiveKR.app` icon on the left into the `Applications` folder on the right.
 2. Open `BaseballLiveKR.app` from `Applications`.
-3. On first launch you'll see the security warning "Apple could not verify 'BaseballLiveKR' is free of malware." This is expected because the build has not yet been notarized by Apple. Follow the steps below once and you won't be asked again.
+3. The current 0.1.0 DMG shows the security warning "Apple could not verify 'BaseballLiveKR' is free of malware" on first launch. This is expected because that file has not yet been notarized by Apple. Developer ID-signed and notarized releases will show only the standard `Open` confirmation for apps downloaded from the Internet.
    1. In the warning dialog, click `Done`. (Do not click `Move to Trash`.)
 
       <img src="images/error.png" alt="Baseball LIVE KR launch error" width="360">

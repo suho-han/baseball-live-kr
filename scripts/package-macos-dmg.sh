@@ -15,6 +15,9 @@ RW_DMG_PATH="$WORK_DIR/BaseballLiveKR-$VERSION-macOS-rw.dmg"
 BACKGROUND_DIR="$STAGING_DIR/.background"
 BACKGROUND_PATH="$BACKGROUND_DIR/dmg-background.png"
 BACKGROUND_SCRIPT="$WORK_DIR/dmg-background.swift"
+SIGN_IDENTITY="${SIGN_IDENTITY:-}"
+NOTARY_PROFILE="${NOTARY_PROFILE:-}"
+APP_ZIP_PATH="$WORK_DIR/BaseballLiveKR-$VERSION-macOS-app.zip"
 
 require_tool() {
   local tool_name="$1"
@@ -34,6 +37,23 @@ find_setfile() {
   fi
 
   xcrun -f SetFile 2>/dev/null || true
+}
+
+submit_for_notarization() {
+  local artifact_path="$1"
+  local description="$2"
+
+  printf 'Submitting %s for notarization: %s\n' "$description" "$artifact_path"
+  xcrun notarytool submit "$artifact_path" \
+    --keychain-profile "$NOTARY_PROFILE" \
+    --wait
+}
+
+staple_and_validate() {
+  local artifact_path="$1"
+
+  xcrun stapler staple "$artifact_path"
+  xcrun stapler validate "$artifact_path"
 }
 
 mount_path_from_attach_output() {
@@ -104,6 +124,15 @@ require_tool hdiutil 'hdiutil ships with macOS. Run this script on macOS.'
 require_tool osascript 'osascript ships with macOS. Run this script on macOS with Finder available.'
 require_tool swift 'swift is required to render the DMG background. Install Xcode Command Line Tools with: xcode-select --install'
 
+if [[ -n "$NOTARY_PROFILE" && -z "$SIGN_IDENTITY" ]]; then
+  printf 'NOTARY_PROFILE requires SIGN_IDENTITY so the app is Developer ID signed before notarization.\n' >&2
+  exit 1
+fi
+
+if [[ -n "$NOTARY_PROFILE" ]]; then
+  require_tool xcrun 'xcrun ships with Xcode. Install Xcode and configure notarytool credentials first.'
+fi
+
 SETFILE_BIN="$(find_setfile)"
 
 rm -rf "$STAGING_DIR" "$WORK_DIR" "$DMG_PATH" "$DMG_PATH.sha256"
@@ -111,12 +140,25 @@ mkdir -p "$BACKGROUND_DIR" "$WORK_DIR" "$OUT_DIR"
 
 cp -R "$APP_PATH" "$STAGING_DIR/BaseballLiveKR.app"
 
-# Re-sign the staged copy ad-hoc so quarantine on the user's Mac shows the
-# standard "Open Anyway" path instead of an unrecoverable "damaged" error.
 STAGED_APP="$STAGING_DIR/BaseballLiveKR.app"
 xattr -cr "$STAGED_APP"
-codesign --force --sign - "$STAGED_APP"
+
+if [[ -n "$SIGN_IDENTITY" ]]; then
+  codesign --force --deep --options runtime --timestamp --sign "$SIGN_IDENTITY" "$STAGED_APP"
+else
+  # Re-sign the staged copy ad-hoc so quarantine on the user's Mac shows the
+  # standard "Open Anyway" path instead of an unrecoverable "damaged" error.
+  codesign --force --sign - "$STAGED_APP"
+fi
+
 codesign --verify --strict --deep "$STAGED_APP"
+
+if [[ -n "$NOTARY_PROFILE" ]]; then
+  ditto -c -k --keepParent "$STAGED_APP" "$APP_ZIP_PATH"
+  submit_for_notarization "$APP_ZIP_PATH" 'app bundle zip'
+  staple_and_validate "$STAGED_APP"
+  spctl --assess --type execute --verbose=4 "$STAGED_APP"
+fi
 
 ln -s /Applications "$STAGING_DIR/Applications"
 generate_background
@@ -191,6 +233,21 @@ rm -f "$RW_DMG_PATH"
 DMG_SHA256="$(shasum -a 256 "$DMG_PATH" | awk '{print $1}')"
 printf '%s  %s\n' "$DMG_SHA256" "$(basename "$DMG_PATH")" > "$DMG_PATH.sha256"
 
+if [[ -n "$NOTARY_PROFILE" ]]; then
+  submit_for_notarization "$DMG_PATH" 'DMG'
+  staple_and_validate "$DMG_PATH"
+  spctl --assess --type open --context context:primary-signature --verbose=4 "$DMG_PATH"
+fi
+
 printf 'Packaged macOS DMG: %s\n' "$DMG_PATH"
 printf 'SHA-256: %s\n' "$DMG_SHA256"
-printf 'Signing: ad-hoc (Gatekeeper warning expected until notarization)\n'
+if [[ -n "$SIGN_IDENTITY" ]]; then
+  printf 'Signing: %s\n' "$SIGN_IDENTITY"
+else
+  printf 'Signing: ad-hoc (Gatekeeper warning expected until notarization)\n'
+fi
+if [[ -n "$NOTARY_PROFILE" ]]; then
+  printf 'Notarization: stapled app and DMG using keychain profile %s\n' "$NOTARY_PROFILE"
+else
+  printf 'Notarization: skipped\n'
+fi

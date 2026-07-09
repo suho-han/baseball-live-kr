@@ -144,6 +144,23 @@ Mac mini로 올리고 기본 실행 확인까지 진행:
 SSH_TARGET=user@macmini.local REMOTE_DIR=/Users/suhohan/Projects/baseball-live-kr ./scripts/deploy-macmini-runtime.sh
 ```
 
+외부 배포용 signed/notarized DMG 생성:
+
+```bash
+xcodebuild -project BaseballLiveKR.xcodeproj \
+  -scheme BaseballLiveKRmacOS \
+  -configuration Release \
+  -destination 'platform=macOS' \
+  -derivedDataPath .xcode/DerivedData \
+  build
+
+SIGN_IDENTITY='Developer ID Application: Your Name (TEAMID)' \
+NOTARY_PROFILE=baseball-live-kr-notary \
+./scripts/package-macos-dmg.sh
+```
+
+사전 요구사항은 Developer ID Application 인증서와 `xcrun notarytool store-credentials`로 저장한 keychain profile이다. `SIGN_IDENTITY`와 `NOTARY_PROFILE`을 지정하지 않으면 기존처럼 ad-hoc DMG를 만든다.
+
 원격 backend 서버에 systemd user service로 자동 배포:
 
 ```bash
