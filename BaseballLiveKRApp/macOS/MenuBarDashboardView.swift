@@ -140,6 +140,7 @@ struct MenuBarDashboardView: View {
             )
         }
         .buttonStyle(.plain)
+        .focusEffectDisabled()
         .frame(maxWidth: .infinity)
     }
 
@@ -153,6 +154,7 @@ struct MenuBarDashboardView: View {
             )
         }
         .buttonStyle(.plain)
+        .focusEffectDisabled()
         .frame(maxWidth: .infinity)
     }
 
