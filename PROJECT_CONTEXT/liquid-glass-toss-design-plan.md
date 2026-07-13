@@ -1,6 +1,7 @@
 # Liquid Glass + Toss Design System 적용 계획
 
 작성일: 2026-06-16
+Updated: 2026-07-09
 
 ## 1. 목표
 
@@ -176,6 +177,7 @@ Baseball LIVE KR에 적용:
 - detail hero header에 glass shell 적용
 - score, inning, base diamond는 고대비 content로 유지
 - 주요 액션은 primary/secondary button hierarchy 적용
+- 경기 상세 페이지 배경과 score hero는 메인 대표 경기 카드와 같은 팀 매치업 그라데이션 계열을 사용해 두 팀 색이 은은하게 묻어나게 한다.
 
 2차:
 
