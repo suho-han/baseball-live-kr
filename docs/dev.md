@@ -19,6 +19,13 @@
 ./scripts/verify-local.sh
 ```
 
+이 명령은 아래 항목을 순서대로 검증합니다.
+
+- backend-spike: 테스트, TypeScript 타입 검사, production build
+- BaseballLiveKRCore, BaseballLiveKRDesignSystem, BaseballLiveKRFeatures: Swift package 테스트
+- macOS: Xcode 단위 테스트
+- iOS와 Widget: iOS Simulator용 Xcode build
+
 Xcode target build를 제외하고 빠르게 확인:
 
 ```bash

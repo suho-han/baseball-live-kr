@@ -11,13 +11,14 @@ run() {
 
 cd "$ROOT_DIR/backend-spike"
 run npm test
+run npm run typecheck
 run npm run build
 
 cd "$ROOT_DIR/Packages/BaseballLiveKRCore"
 run swift test
 
 cd "$ROOT_DIR/Packages/BaseballLiveKRDesignSystem"
-run swift build
+run swift test
 
 cd "$ROOT_DIR/Packages/BaseballLiveKRFeatures"
 run swift test
@@ -33,7 +34,7 @@ run xcodebuild \
   -scheme BaseballLiveKRmacOS \
   -destination 'platform=macOS' \
   -derivedDataPath "$DERIVED_DATA_PATH" \
-  build
+  test
 
 run xcodebuild \
   -project BaseballLiveKR.xcodeproj \
