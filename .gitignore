@@ -14,6 +14,9 @@ backend-spike/.data/
 backend-spike/artifacts/
 backend-spike/logs/polling/
 
+# Generated source downloads for team brand assets
+BaseballLiveKRApp/Shared/TeamBrandAssets/**/download__*
+
 # Build outputs & tool caches
 /.xcode/
 /.omo/

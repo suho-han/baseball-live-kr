@@ -12,6 +12,8 @@ vi.mock('../src/clients/kboClient.js', () => ({
 }))
 
 import type { RawKboScheduleListResponse } from '../src/dto/kboScheduleList.dto.js'
+import { makeTestLiveGame } from '../src/fixtures/testLiveGame.js'
+import { upsertGameSnapshots } from '../src/repositories/gameSnapshotRepository.js'
 import { upsertTeamSeasonRecords } from '../src/repositories/teamRecordRepository.js'
 import { getTeamStandings, getTodayGames } from '../src/services/gameService.js'
 import {
@@ -132,6 +134,44 @@ describe('gameService cache', () => {
         streak: '2승'
       }]
     })
+  })
+
+  it('serves DB-backed game snapshots before calling the live source', async () => {
+    process.env.BASEBALL_LIVE_KR_DB_ENABLED = '1'
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-games-fallback-'))
+    tempDirs.push(dir)
+    process.env.BASEBALL_LIVE_KR_DB_PATH = join(dir, 'test.sqlite')
+    const liveGame = makeTestLiveGame(TEST_DATE)
+    const finalGame = {
+      ...makeTestLiveGame(TEST_DATE),
+      gameId: `${TEST_DATE}LGLT0`,
+      status: 'final',
+      awayTeam: { id: 'LG', name: 'LG' },
+      homeTeam: { id: 'LT', name: '롯데' },
+      score: { away: 7, home: 4 },
+      inning: { number: 9, half: 'bottom' },
+      count: null,
+      bases: null,
+      current: null,
+      recentPlay: '경기 종료, LG 7-4 승리',
+      sourceMeta: {
+        rawStatusCode: 'TEST_FINAL',
+        rawTopBottomCode: 'B',
+        fetchedAt: '2026-06-13T12:00:00.000Z'
+      }
+    } satisfies ReturnType<typeof makeTestLiveGame>
+    upsertGameSnapshots(TEST_DATE, [liveGame, finalGame])
+
+    const result = await getTodayGames(TEST_INPUT_DATE)
+
+    expect(result.date).toBe(TEST_DATE)
+    expect(result.games).toEqual(expect.arrayContaining([
+      expect.objectContaining({ gameId: liveGame.gameId, status: 'live' }),
+      expect.objectContaining({ gameId: finalGame.gameId, status: 'final' })
+    ]))
+    expect(mockGameDate).not.toHaveBeenCalled()
+    expect(mockScheduleList).not.toHaveBeenCalled()
+    expect(mockGameList).not.toHaveBeenCalled()
   })
 
   it('loads every scheduled date in the month instead of only the requested date', async () => {

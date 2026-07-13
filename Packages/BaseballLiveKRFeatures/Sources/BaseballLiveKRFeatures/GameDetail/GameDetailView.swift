@@ -224,7 +224,7 @@ public struct GameDetailView: View {
                     .foregroundStyle(scoreboardPrimaryText)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(KboColorToken.scoreboardSpotlightSurface.opacity(0.66))
+                    .background(Color.black.opacity(0.34))
                     .clipShape(Capsule())
             }
 
@@ -237,7 +237,10 @@ public struct GameDetailView: View {
             }
         }
         .padding(22)
-        .background(scoreboardBackground(game: game))
+        .background {
+            scoreboardBackground(game: game)
+            TeamMatchupGradient.readabilityScrim
+        }
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
@@ -652,6 +655,20 @@ public struct GameDetailView: View {
     }
 
     private var backgroundView: some View {
+        ZStack {
+            appBackgroundGradient
+
+            if let game = viewModel.game {
+                TeamMatchupGradient.pageTint(
+                    awayTeamID: game.awayTeam.id,
+                    homeTeamID: game.homeTeam.id
+                )
+            }
+        }
+        .ignoresSafeArea()
+    }
+
+    private var appBackgroundGradient: LinearGradient {
         LinearGradient(
             colors: [
                 KboColorToken.appBackgroundTop,
@@ -661,29 +678,21 @@ public struct GameDetailView: View {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
-        .ignoresSafeArea()
     }
 
     private func scoreboardBackground(game: Game) -> LinearGradient {
-        LinearGradient(
-            colors: [
-                TeamColorResolver.color(forTeamID: game.awayTeam.id).opacity(0.34),
-                TeamColorResolver.color(forTeamID: game.awayTeam.id).opacity(0.10),
-                KboColorToken.scoreboardSpotlightSurface,
-                TeamColorResolver.color(forTeamID: game.homeTeam.id).opacity(0.10),
-                TeamColorResolver.color(forTeamID: game.homeTeam.id).opacity(0.34)
-            ],
-            startPoint: .leading,
-            endPoint: .trailing
+        TeamMatchupGradient.background(
+            awayTeamID: game.awayTeam.id,
+            homeTeamID: game.homeTeam.id
         )
     }
 
     private var scoreboardPrimaryText: Color {
-        KboColorToken.scoreboardSpotlightTextPrimary
+        Color.white.opacity(0.95)
     }
 
     private var scoreboardSecondaryText: Color {
-        KboColorToken.scoreboardSpotlightTextSecondary
+        Color.white.opacity(0.68)
     }
 
     private func formattedDate(_ value: String) -> String {

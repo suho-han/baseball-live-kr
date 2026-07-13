@@ -6,13 +6,6 @@ import AppKit
 import BaseballLiveKRDesignSystem
 #endif
 
-struct MenuBarExtraLabelPolicy: Equatable {
-    let dynamicSummary: String
-
-    var systemImageName: String { "baseball.fill" }
-    var helpText: String { dynamicSummary }
-}
-
 @main
 struct BaseballLiveKRmacOSApp: App {
     private enum MainWindowLayout {
@@ -24,11 +17,13 @@ struct BaseballLiveKRmacOSApp: App {
 
 #if canImport(AppKit)
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @StateObject private var menuBarController = MenuBarStatusItemController()
 #endif
     @StateObject private var viewModel: TodayGamesViewModel
     @StateObject private var settings = BackendSettingsModel()
     @StateObject private var navigationModel = AppNavigationModel()
     @StateObject private var updateChecker = AppUpdateCheckModel()
+    @StateObject private var launchAtLoginController = LaunchAtLoginController()
     @AppStorage("kboLiveFontScale") private var fontScale = Double(KboFontScale.defaultValue)
     @AppStorage(KboAppearanceMode.storageKey) private var appearanceModeRawValue = KboAppearanceMode.defaultValue.rawValue
     @AppStorage("kboLiveMenuBarEnabled") private var isMenuBarEnabled = true
@@ -46,7 +41,6 @@ struct BaseballLiveKRmacOSApp: App {
 
     var body: some Scene {
         mainWindowScene
-        menuBarScene
         settingsScene
     }
 
@@ -58,13 +52,18 @@ struct BaseballLiveKRmacOSApp: App {
                 navigationModel: navigationModel,
                 updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
-                isMenuBarEnabled: $isMenuBarEnabled
+                isMenuBarEnabled: $isMenuBarEnabled,
+                isLaunchAtLoginEnabled: launchAtLoginBinding,
+                launchAtLoginStatusText: launchAtLoginController.statusText,
+                launchAtLoginDetailText: launchAtLoginController.detailText,
+                onRefreshLaunchAtLogin: launchAtLoginController.refresh
             )
                 .frame(
                     width: MainWindowLayout.minWidth
                 )
                 .frame(minHeight: MainWindowLayout.minHeight)
                 .background(WindowWidthLimiter(width: MainWindowLayout.minWidth))
+                .background(menuBarPresenter)
                 .environment(\.kboFontScale, CGFloat(fontScale))
                 .preferredColorScheme(appearanceMode.preferredColorScheme)
                 .onAppear {
@@ -108,23 +107,6 @@ struct BaseballLiveKRmacOSApp: App {
         }
     }
 
-    @SceneBuilder
-    private var menuBarScene: some Scene {
-        MenuBarExtra(isInserted: $isMenuBarEnabled) {
-            MenuBarDashboardView(
-                viewModel: viewModel,
-                navigationModel: navigationModel
-            )
-            .environment(\.kboFontScale, CGFloat(fontScale))
-            .preferredColorScheme(appearanceMode.preferredColorScheme)
-        } label: {
-            let labelPolicy = MenuBarExtraLabelPolicy(dynamicSummary: menuBarTitle)
-            Image(systemName: labelPolicy.systemImageName)
-                .help(labelPolicy.helpText)
-        }
-        .menuBarExtraStyle(.window)
-    }
-
     private var settingsScene: some Scene {
         Settings {
             SettingsView(
@@ -133,12 +115,30 @@ struct BaseballLiveKRmacOSApp: App {
                 updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
                 isMenuBarEnabled: $isMenuBarEnabled,
+                isLaunchAtLoginEnabled: launchAtLoginBinding,
+                launchAtLoginStatusText: launchAtLoginController.statusText,
+                launchAtLoginDetailText: launchAtLoginController.detailText,
+                onRefreshLaunchAtLogin: launchAtLoginController.refresh,
                 onApplyBackendSettings: applyBackendSettings
             )
+            .background(menuBarPresenter)
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
         }
     }
+
+#if canImport(AppKit)
+    private var menuBarPresenter: some View {
+        MenuBarStatusItemPresenter(
+            controller: menuBarController,
+            viewModel: viewModel,
+            navigationModel: navigationModel,
+            isEnabled: isMenuBarEnabled,
+            fontScale: CGFloat(fontScale),
+            appearanceMode: appearanceMode
+        )
+    }
+#endif
 
     private var appearanceMode: KboAppearanceMode {
         KboAppearanceMode.resolved(from: appearanceModeRawValue)
@@ -149,6 +149,14 @@ struct BaseballLiveKRmacOSApp: App {
             KboAppearanceMode.resolved(from: appearanceModeRawValue)
         } set: { newValue in
             appearanceModeRawValue = newValue.rawValue
+        }
+    }
+
+    private var launchAtLoginBinding: Binding<Bool> {
+        Binding {
+            launchAtLoginController.isEnabled
+        } set: { newValue in
+            launchAtLoginController.setEnabled(newValue)
         }
     }
 
@@ -175,16 +183,46 @@ struct BaseballLiveKRmacOSApp: App {
 #endif
     }
 
-    private var menuBarTitle: String {
-        if let favoriteGame = viewModel.favoriteGame {
-            return GameProjectionFormatter.scoreLine(for: favoriteGame)
-        }
-
-        return viewModel.leagueGames.first.map { MenuBarGameSummaryMapper.map($0).primaryText } ?? "Baseball LIVE KR"
-    }
+    static let menuBarItemTitle = "Baseball LIVE KR"
+    static let menuBarItemSystemImage = "baseball.fill"
+    static let menuBarItemAccessibilityIdentifier = "kr.suhohan.baseballlivekr.menubar"
+    static let menuBarItemAutosaveName = "kr.suhohan.baseballlivekr.menubar"
+    static let shouldTerminateAfterLastWindowClosed = false
 }
 
 #if canImport(AppKit)
+private struct MenuBarStatusItemPresenter: View {
+    @ObservedObject var controller: MenuBarStatusItemController
+    @ObservedObject var viewModel: TodayGamesViewModel
+    @ObservedObject var navigationModel: AppNavigationModel
+    let isEnabled: Bool
+    let fontScale: CGFloat
+    let appearanceMode: KboAppearanceMode
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+            .onAppear(perform: updateStatusItem)
+            .onChange(of: isEnabled) { updateStatusItem() }
+            .onChange(of: fontScale) { updateStatusItem() }
+            .onChange(of: appearanceMode) { updateStatusItem() }
+    }
+
+    private func updateStatusItem() {
+        controller.update(
+            isEnabled: isEnabled,
+            viewModel: viewModel,
+            navigationModel: navigationModel,
+            fontScale: fontScale,
+            colorScheme: appearanceMode.preferredColorScheme,
+            openMainWindow: {
+                openWindow(id: "main-window")
+            }
+        )
+    }
+}
+
 private struct WindowWidthLimiter: NSViewRepresentable {
     let width: CGFloat
 
@@ -277,6 +315,10 @@ private final class WindowWidthController: NSObject, NSWindowDelegate {
 private final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        BaseballLiveKRmacOSApp.shouldTerminateAfterLastWindowClosed
     }
 }
 #endif

@@ -28,7 +28,7 @@ struct MenuBarDashboardView: View {
 
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var navigationModel: AppNavigationModel
-    @Environment(\.openWindow) private var openWindow
+    let openMainWindow: () -> Void
     @State private var backendStatus: BackendServerStatus = .checking
     @State private var isRefreshing = false
 
@@ -38,8 +38,8 @@ struct MenuBarDashboardView: View {
 
             if let game = viewModel.favoriteGame {
                 favoriteGameCard(game)
-            } else if let summary = currentSummary {
-                fallbackSummary(summary)
+            } else if let game = currentGame {
+                fallbackSummary(game)
             } else {
                 emptySummary
             }
@@ -70,8 +70,9 @@ struct MenuBarDashboardView: View {
                 refreshAll()
             } label: {
                 compactActionButton(
-                    title: isRefreshing ? "갱신 중" : "새로고침",
-                    systemImage: isRefreshing ? "arrow.triangle.2.circlepath" : "arrow.clockwise"
+                    title: "새로고침",
+                    systemImage: "arrow.clockwise",
+                    isLoading: isRefreshing
                 )
             }
             .buttonStyle(.plain)
@@ -83,7 +84,7 @@ struct MenuBarDashboardView: View {
             .buttonStyle(.plain)
 
             Button {
-                openWindow(id: "main-window")
+                openMainWindow()
             } label: {
                 compactActionButton(title: "메인으로", systemImage: "macwindow")
             }
@@ -122,10 +123,10 @@ struct MenuBarDashboardView: View {
 
             Spacer(minLength: 12)
 
-            if viewModel.isLoading || isRefreshing {
-                ProgressView()
-                    .controlSize(.small)
-            }
+            ProgressView()
+                .controlSize(.small)
+                .opacity(viewModel.isLoading || isRefreshing ? 1 : 0)
+                .frame(width: 16, height: 16)
         }
     }
 
@@ -142,35 +143,14 @@ struct MenuBarDashboardView: View {
         .frame(maxWidth: .infinity)
     }
 
-    private func fallbackSummary(_ summary: MenuBarGameSummary) -> some View {
+    private func fallbackSummary(_ game: Game) -> some View {
         Button {
-            if let game = viewModel.leagueGames.first {
-                openInMainWindow(game)
-            }
+            openInMainWindow(game)
         } label: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(summary.primaryText)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(KboTheme.primaryText)
-
-                if let secondaryText = summary.secondaryText {
-                    Text(secondaryText)
-                        .font(.caption)
-                        .foregroundStyle(KboTheme.secondaryText)
-                }
-
-                if let recentPlay = summary.recentPlay {
-                    recentPlayLabel(recentPlay)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(KboSpacingToken.medium)
-            .background(KboSurfaceToken.glassControl)
-            .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
-                    .stroke(KboSurfaceToken.glassBorder.opacity(0.7), lineWidth: 1)
-            }
+            MenuBarFeaturedGameCardView(
+                game: game,
+                favoriteTeamID: Optional<String>.none
+            )
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
@@ -185,21 +165,6 @@ struct MenuBarDashboardView: View {
         )
     }
 
-    private func recentPlayLabel(_ text: String) -> some View {
-        Label {
-            Text(text)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(KboTheme.primaryText)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-        } icon: {
-            Image(systemName: "quote.bubble.fill")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(KboColorToken.statusLive)
-        }
-        .labelStyle(.titleAndIcon)
-    }
-
     private var headerSubtitle: String {
         if let selectedTeam = viewModel.selectedTeam {
             return selectedTeam.koreanFullName
@@ -210,11 +175,11 @@ struct MenuBarDashboardView: View {
 
     private func openInMainWindow(_ game: Game) {
         navigationModel.present(game: game)
-        openWindow(id: "main-window")
+        openMainWindow()
     }
 
-    private var currentSummary: MenuBarGameSummary? {
-        viewModel.visibleGames.first.map(MenuBarGameSummaryMapper.map)
+    private var currentGame: Game? {
+        viewModel.visibleGames.first
     }
 
     private var lastUpdatedStatusText: String {
@@ -326,11 +291,19 @@ struct MenuBarDashboardView: View {
         }
     }
 
-    private func compactActionButton(title: String, systemImage: String) -> some View {
+    private func compactActionButton(title: String, systemImage: String, isLoading: Bool = false) -> some View {
         HStack(spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(KboTheme.primaryText.opacity(0.88))
+            ZStack {
+                Image(systemName: systemImage)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(KboTheme.primaryText.opacity(0.88))
+                    .opacity(isLoading ? 0 : 1)
+
+                ProgressView()
+                    .controlSize(.small)
+                    .opacity(isLoading ? 1 : 0)
+            }
+            .frame(width: 18, height: 18)
 
             Text(title)
                 .font(.caption.weight(.semibold))
@@ -478,7 +451,11 @@ private struct MenuBarFeaturedGameCardView: View {
     }
 
     private var teamDetails: (away: String?, home: String?) {
-        GameProjectionFormatter.menuBarTeamDetails(for: game)
+        if game.status == .live {
+            return (away: nil, home: nil)
+        }
+
+        return GameProjectionFormatter.menuBarTeamDetails(for: game)
     }
 
     var body: some View {
@@ -549,7 +526,7 @@ private struct MenuBarFeaturedGameCardView: View {
         case .scheduled:
             return "예정"
         case .live:
-            return GameProjectionFormatter.inningText(for: game) ?? "LIVE"
+            return "LIVE"
         case .final:
             return "종료"
         case .delayed:

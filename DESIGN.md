@@ -107,6 +107,14 @@ All spacing derives from a 4pt base.
 - Accessibility: border and tint must remain visible on dark backgrounds.
 - Motion: no intrinsic motion.
 
+### Team Matchup Gradient
+
+- Structure: four-stop team color gradient from away team to home team, with a separate five-stop transparent page tint variant for screen backgrounds.
+- Usage: featured game cards, game detail scoreboards, and game detail page tint.
+- Direction: `topLeading` to `bottomTrailing` so the away color leads and the home color resolves.
+- Color strength: team colors stay translucent enough to read as atmosphere, not a full saturated fill.
+- Accessibility: text-bearing card and scoreboard gradients include a dark readability scrim and use high-contrast white text rather than scoreboard spotlight text tokens.
+
 ## 6. Motion & Interaction
 
 ### Timing

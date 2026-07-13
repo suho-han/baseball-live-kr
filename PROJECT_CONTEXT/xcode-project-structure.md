@@ -2,6 +2,7 @@
 
 작성일: 2026-06-13  
 업데이트: 2026-06-14  
+Updated: 2026-07-09
 상태: Current
 
 이 문서는 현재 `baseball-live-kr` 저장소의 실제 구조와 개발 진입점을 정리한 기준 문서다.
@@ -84,7 +85,10 @@ BaseballLiveKRApp targets
   - macOS app
   - product name: `BaseballLiveKR`
   - bundle id: `kr.suhohan.baseballlivekr.macos`
-  - `MenuBarExtra` 기반 엔트리 포함
+  - AppKit `NSStatusItem` 기반 메뉴바 엔트리 포함
+  - menu bar item uses `NSStatusItem.autosaveName = kr.suhohan.baseballlivekr.menubar`, `Baseball LIVE KR` accessibility title, `kr.suhohan.baseballlivekr.menubar` accessibility identifier, and static `baseball.fill` system image; dynamic game summaries stay inside the popover so system menu bar layout does not shift during polling.
+  - menu bar popover refresh controls reserve fixed loading indicator slots, so swapping between icon and spinner does not resize neighboring UI during manual refresh.
+  - main window close does not terminate the app; the menu bar process stays alive until the user explicitly quits the app.
 - `BaseballLiveKRWidgetExtension`
   - iOS widget extension
   - bundle id: `kr.suhohan.baseballlivekr.ios.widget`

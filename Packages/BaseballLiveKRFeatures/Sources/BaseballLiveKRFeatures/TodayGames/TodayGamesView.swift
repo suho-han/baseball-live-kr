@@ -1068,7 +1068,10 @@ private struct FeaturedGameCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
-        .background(cardGradient)
+        .background {
+            cardGradient
+            TeamMatchupGradient.readabilityScrim
+        }
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -1107,23 +1110,10 @@ private struct FeaturedGameCardView: View {
     }
 
     private var cardGradient: LinearGradient {
-        LinearGradient(
-            colors: cardGradientColors,
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
+        TeamMatchupGradient.background(
+            awayTeamID: game.awayTeam.id,
+            homeTeamID: game.homeTeam.id
         )
-    }
-
-    private var cardGradientColors: [Color] {
-        let awayColor = TeamColorResolver.color(forTeamID: game.awayTeam.id)
-        let homeColor = TeamColorResolver.color(forTeamID: game.homeTeam.id)
-
-        return [
-            awayColor.opacity(0.68),
-            awayColor.opacity(0.50),
-            homeColor.opacity(0.50),
-            homeColor.opacity(0.68)
-        ]
     }
 
     private var cardAccent: Color {

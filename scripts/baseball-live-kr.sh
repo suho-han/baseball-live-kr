@@ -14,8 +14,12 @@ Usage:
   ./scripts/baseball-live-kr.sh open     Build and open only the macOS app
   ./scripts/baseball-live-kr.sh verify   Run local verification
   ./scripts/baseball-live-kr.sh package  Build the Mac mini test package
+  ./scripts/baseball-live-kr.sh package-backend-release
+                                Build the backend server release archive
   ./scripts/baseball-live-kr.sh deploy-backend
                                 Build and deploy the remote backend service
+  ./scripts/baseball-live-kr.sh install-backend-release-updater
+                                Install the remote GitHub Release polling updater
 
 Environment:
   FORCE_RESTART=1   Restart the local game data process
@@ -55,8 +59,14 @@ case "$command" in
     build_macos_app
     "$ROOT_DIR/scripts/package-macmini-runtime.sh"
     ;;
+  package-backend-release)
+    "$ROOT_DIR/scripts/package-backend-server.sh"
+    ;;
   deploy-backend)
     "$ROOT_DIR/scripts/deploy-remote-backend.sh"
+    ;;
+  install-backend-release-updater)
+    "$ROOT_DIR/scripts/install-backend-release-updater.sh"
     ;;
   help|-h|--help)
     print_help

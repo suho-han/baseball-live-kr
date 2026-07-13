@@ -1,6 +1,7 @@
 import { fetchKboTeamRankDailyPage } from '../clients/kboClient.js'
 import { makeTestLiveGame } from '../fixtures/testLiveGame.js'
 import { parseKboTeamRankDaily } from '../mappers/teamRankMapper.js'
+import { listLatestGameSnapshots } from '../repositories/gameSnapshotRepository.js'
 import { listTeamSeasonRecords, upsertTeamSeasonRecords } from '../repositories/teamRecordRepository.js'
 import { enrichPreviousAtBatResult } from './liveTextEnrichment.js'
 import { loadKboMonthGameSource } from './monthScheduleSource.js'
@@ -141,6 +142,14 @@ export async function getTodayGames(date?: string) {
     return {
       date: kboDate,
       games: [makeTestLiveGame(kboDate)]
+    }
+  }
+
+  const dbGames = listLatestGameSnapshots(kboDate)
+  if (dbGames.length > 0) {
+    return {
+      date: kboDate,
+      games: dbGames
     }
   }
 

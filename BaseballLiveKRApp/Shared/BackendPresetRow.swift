@@ -33,12 +33,6 @@ struct BackendPresetRow: View {
                     Text(preset.description)
                         .font(KboTypographyToken.caption)
                         .foregroundStyle(KboTheme.secondaryText)
-
-                    Text(settings.baseURLDescription(for: preset))
-                        .font(.caption2.monospaced())
-                        .foregroundStyle(settings.hasConfiguredBaseURL(for: preset) ? KboTheme.mutedText : KboSemanticColorToken.danger)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
                 }
 
                 Spacer()

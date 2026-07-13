@@ -13,7 +13,6 @@ fi
 
 BACKEND_DIR="${ROOT_DIR}/backend-spike"
 OUT_DIR="${OUT_DIR:-$ROOT_DIR/.build/transfer}"
-STAGING_DIR="${ROOT_DIR}/.build/remote-backend"
 ARCHIVE_PATH="${ARCHIVE_PATH:-$OUT_DIR/baseball-live-kr-backend-server.tar.gz}"
 SSH_TARGET="${SSH_TARGET:-}"
 SSH_PORT="${SSH_PORT:-22}"
@@ -51,51 +50,7 @@ remote_sh() {
   ssh -p "${SSH_PORT}" "${SSH_TARGET}" "${script}"
 }
 
-if ! command -v node >/dev/null 2>&1; then
-  echo "node is required to build the backend deploy artifact." >&2
-  exit 1
-fi
-
-if ! command -v npm >/dev/null 2>&1; then
-  echo "npm is required to build the backend deploy artifact." >&2
-  exit 1
-fi
-
-cd "${BACKEND_DIR}"
-
-if [[ ! -x "${BACKEND_DIR}/node_modules/.bin/tsc" || "${BACKEND_DIR}/package-lock.json" -nt "${BACKEND_DIR}/node_modules/.package-lock.json" ]]; then
-  npm ci
-fi
-
-npm run build
-
-rm -rf "${STAGING_DIR}"
-mkdir -p "${STAGING_DIR}" "${OUT_DIR}"
-
-cp -R "${BACKEND_DIR}/dist" "${STAGING_DIR}/dist"
-cp "${BACKEND_DIR}/package.json" "${STAGING_DIR}/package.json"
-cp "${BACKEND_DIR}/package-lock.json" "${STAGING_DIR}/package-lock.json"
-
-cat > "${STAGING_DIR}/run-backend.command" <<'SCRIPT'
-#!/usr/bin/env bash
-set -euo pipefail
-
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-if ! command -v node >/dev/null 2>&1; then
-  echo "Node.js 22+ is required to run Baseball LIVE KR backend." >&2
-  exit 1
-fi
-
-export NODE_ENV="${NODE_ENV:-production}"
-export HOST="${HOST:-0.0.0.0}"
-export PORT="${PORT:-17361}"
-
-exec node "${DIR}/dist/src/index.js"
-SCRIPT
-
-chmod +x "${STAGING_DIR}/run-backend.command"
-tar -czf "${ARCHIVE_PATH}" -C "${STAGING_DIR}" .
+OUT_DIR="${OUT_DIR}" ARCHIVE_PATH="${ARCHIVE_PATH}" "${ROOT_DIR}/scripts/package-backend-server.sh"
 
 printf 'Deploying backend archive %s to %s:%s\n' "${ARCHIVE_PATH}" "${SSH_TARGET}" "${REMOTE_DIR}"
 

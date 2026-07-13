@@ -1,6 +1,7 @@
 # macOS Release And Remote Test Operations
 
 작성일: 2026-06-17
+Updated: 2026-07-09
 
 ## 1. 목적
 
@@ -64,7 +65,13 @@ DMG 포함 항목:
 
 - `BaseballLiveKR.app`
 - `/Applications` symlink
-- `.background/dmg-background.png` Finder 배경 이미지
+- `.background/dmg-background.png` Finder 화살표 이미지
+
+DMG Finder 레이아웃 기준:
+
+- 왼쪽 `BaseballLiveKR.app`, 오른쪽 `Applications`, 중앙 오른쪽 화살표
+- 배경색/그림자 없이 투명 PNG 위 단색 굵은 화살표와 128pt 아이콘 크기
+- 같은 볼륨명이 이미 마운트된 상태에서도 `hdiutil attach`가 반환한 실제 mount path의 볼륨명에 레이아웃을 기록
 
 사용자 설치 흐름:
 
@@ -142,6 +149,31 @@ journalctl --user -u baseball-live-kr-backend.service -f
 DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 ```
 
+GitHub Release 기반 자동 배포:
+
+- `.github/workflows/backend-release.yml`은 release publish 또는 수동 workflow 실행 시 `backend-spike`를 typecheck/test/build하고 `baseball-live-kr-backend-server.tar.gz` asset을 release에 업로드한다.
+- `scripts/install-backend-release-updater.sh`는 원격 서버에 `systemd --user` timer와 updater script를 설치한다.
+- updater는 GitHub latest release API에서 동일 asset 이름을 찾고, 새 tag면 release directory에 압축을 푼 뒤 `current` symlink를 바꾸고 backend service를 재시작한다.
+- private repository에서는 원격 `~/.config/baseball-live-kr/backend-release.env`에 contents read 권한의 `GITHUB_TOKEN`을 직접 둔다. 토큰 값은 tracked 문서나 repo 파일에 기록하지 않는다.
+
+설치:
+
+```bash
+SSH_TARGET=user@backend.example.com \
+GITHUB_REPOSITORY=owner/baseball-live-kr \
+REMOTE_INSTALL_ROOT=/home/suhohan/baseball-live-kr-backend \
+PORT=17361 \
+./scripts/baseball-live-kr.sh install-backend-release-updater
+```
+
+운영 확인:
+
+```bash
+systemctl --user status baseball-live-kr-backend-release-update.timer
+systemctl --user start baseball-live-kr-backend-release-update.service
+journalctl --user -u baseball-live-kr-backend-release-update.service -u baseball-live-kr-backend.service -f
+```
+
 ## 7. Signing And Notarization
 
 현재 상태:
@@ -149,49 +181,34 @@ DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 - Debug/local 검증은 Xcode `Sign to Run Locally` 기준이다.
 - notarization은 아직 release 필수 경로가 아니다.
 - 외부 사용자 테스트용 `.dmg`는 `scripts/package-macos-dmg.sh`로 생성한다.
-- DMG 패키징 시 스테이징된 앱을 ad-hoc으로 재서명(`codesign --force --sign -`)하고 `codesign --verify --strict --deep`로 검증한다. 서명 seal이 깨진 채 배포되면 사용자 Mac에서 `Open Anyway` 경로가 없는 "손상됨" 오류가 나기 때문이다. ad-hoc 서명이므로 Gatekeeper "확인할 수 없음" 경고 자체는 notarization 전까지 계속 나온다.
-- public distribution용 signed/notarized archive는 별도 후속 작업으로 둔다.
+- 기본 DMG 패키징은 스테이징된 앱을 ad-hoc으로 재서명(`codesign --force --sign -`)하고 `codesign --verify --strict --deep`로 검증한다. 서명 seal이 깨진 채 배포되면 사용자 Mac에서 `Open Anyway` 경로가 없는 "손상됨" 오류가 나기 때문이다. ad-hoc 서명이므로 Gatekeeper "확인할 수 없음" 경고 자체는 notarization 전까지 계속 나온다.
+- `SIGN_IDENTITY`와 `NOTARY_PROFILE`을 지정하면 같은 패키징 스크립트가 Developer ID 서명, hardened runtime signing option, 앱 번들 zip notarization, 앱 staple/validate, DMG notarization, DMG staple/validate, `spctl` 검증을 수행한다.
+- IINA처럼 "인터넷에서 다운로드한 앱이며 Apple이 악성 소프트웨어를 확인했다"는 첫 실행 경고를 얻으려면 Developer ID Application 인증서로 서명한 뒤 app/DMG를 notarize하고 staple한 DMG를 Safari/GitHub Releases 등 quarantine을 보존하는 경로로 배포해야 한다.
 
 Release readiness procedure when Developer ID credentials are available:
 
 ```bash
-APP_PRODUCT_NAME=BaseballLiveKR
-APP_BUNDLE=".xcode/DerivedData/Build/Products/Release/${APP_PRODUCT_NAME}.app"
-APP_ZIP=".build/transfer/${APP_PRODUCT_NAME}.zip"
-
 xcodebuild -project BaseballLiveKR.xcodeproj \
   -scheme BaseballLiveKRmacOS \
   -configuration Release \
   -destination 'platform=macOS' \
   -derivedDataPath .xcode/DerivedData \
-  CODE_SIGN_STYLE=Manual \
-  OTHER_CODE_SIGN_FLAGS='--options runtime' \
   build
 
-ditto -c -k --keepParent \
-  "${APP_BUNDLE}" \
-  "${APP_ZIP}"
-
-xcrun notarytool submit "${APP_ZIP}" \
-  --keychain-profile baseball-live-kr-notary \
-  --wait
-
-xcrun stapler staple "${APP_BUNDLE}"
-xcrun stapler validate "${APP_BUNDLE}"
-spctl --assess --type execute --verbose=4 "${APP_BUNDLE}"
+SIGN_IDENTITY='Developer ID Application: Your Name (TEAMID)' \
+NOTARY_PROFILE=baseball-live-kr-notary \
+./scripts/package-macos-dmg.sh
 ```
 
 Credentials required:
 
 - Developer ID Application certificate in the build keychain
 - `notarytool` keychain profile named `baseball-live-kr-notary`
-- Hardened runtime enabled for release signing
+- Hardened runtime signing option, applied by `scripts/package-macos-dmg.sh` when `SIGN_IDENTITY` is set
 
 후속 결정:
 
 - Developer ID Application 인증서 사용 여부
-- hardened runtime 설정
-- notarization 자동화 위치
 - Sparkle 또는 자체 업데이트 채널 도입 여부
 
 ## 8. Versioning And Changelog
