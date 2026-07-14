@@ -226,7 +226,7 @@ Baseball LIVE KR에 적용:
 
 완료 기준:
 
-- `PROJECT_CONTEXT/design-audit.md` 작성
+- `CONTEXT/design-audit.md` 작성
 - 우선 적용 컴포넌트 5개 선정
 
 ### Phase 1: token foundation

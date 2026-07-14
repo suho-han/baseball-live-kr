@@ -371,7 +371,7 @@ BaseballLiveKRApp/macOS/Info.plist
 BaseballLiveKRApp/Widget/Info.plist
 backend-spike/package.json
 scripts/*
-PROJECT_CONTEXT/*
+CONTEXT/*
 ```
 
 우선순위:

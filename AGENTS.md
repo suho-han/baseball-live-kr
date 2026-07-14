@@ -9,10 +9,10 @@
 
 ## Project Context
 
-- Start with `PROJECT_CONTEXT/README.md`, then read the focused context file for the task.
-- Keep `PROJECT_CONTEXT/` concise and factual; update existing notes when project direction or reproducibility assumptions change.
+- Start with `CONTEXT/README.md`, then read the focused context file for the task.
+- Keep `CONTEXT/` concise and factual; update existing notes when project direction or reproducibility assumptions change.
 - `docs/dev.md` is the command reference for local development, validation, packaging, and backend operations.
-- `README.md` is user-facing product documentation. Keep implementation and deployment details in `docs/dev.md` or `PROJECT_CONTEXT/`.
+- `README.md` is user-facing product documentation. Keep implementation and deployment details in `docs/dev.md` or `CONTEXT/`.
 
 ## Launch Helper
 

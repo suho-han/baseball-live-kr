@@ -25,7 +25,7 @@ BaseballLiveKRApp/
 BaseballLiveKR.xcodeproj/
 BaseballLiveKR.xcworkspace/
 Packages/
-PROJECT_CONTEXT/
+CONTEXT/
 backend-spike/
 scripts/
 ```

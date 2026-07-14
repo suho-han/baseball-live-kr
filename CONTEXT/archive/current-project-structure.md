@@ -20,7 +20,7 @@ BaseballLiveKRApp/
 BaseballLiveKRApp.xcodeproj/
 KboLive.xcworkspace/
 Packages/
-PROJECT_CONTEXT/
+CONTEXT/
 backend-spike/
 scripts/
 ```
@@ -41,7 +41,7 @@ scripts/
   - 루트 워크스페이스 파일이다. 현재 샌드박스에서는 `xcodebuild -workspace` 검증이 안정적이지 않다.
 - `Packages/`
   - Core, DesignSystem, Features 계층을 나눈 Swift 패키지 모음이다.
-- `PROJECT_CONTEXT/`
+- `CONTEXT/`
   - 제품 계획, 구조 설계, 스파이크 결과 문서를 보관한다.
 - `backend-spike/`
   - KBO 데이터 소스 검증용 Fastify + TypeScript 실험 코드다.

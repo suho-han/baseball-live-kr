@@ -122,7 +122,7 @@ baseball-live-kr/
 │   ├── fixtures/
 │   ├── logs/
 │   └── tests/
-└── PROJECT_CONTEXT/
+└── CONTEXT/
 ```
 
 ### 이유
@@ -556,12 +556,12 @@ spike에서도 최소 테스트는 필요하다.
 
 ### Task 7: spike 결과 문서화
 
-**Objective:** 확인된 것과 미확정 사항을 PROJECT_CONTEXT에 기록한다.
+**Objective:** 확인된 것과 미확정 사항을 CONTEXT에 기록한다.
 
 **Files:**
 
-- Modify: `PROJECT_CONTEXT/kbo-data-source-research.md`
-- Create: `PROJECT_CONTEXT/backend-spike-results.md`
+- Modify: `CONTEXT/kbo-data-source-research.md`
+- Create: `CONTEXT/backend-spike-results.md`
 
 **Steps:**
 

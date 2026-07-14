@@ -33,7 +33,7 @@
 **Files:**
 - Create: `KboLive.xcworkspace`
 - Create: `BaseballLiveKRApp/BaseballLiveKRApp.xcodeproj`
-- Create: `PROJECT_CONTEXT/`
+- Create: `CONTEXT/`
 - Create: `.gitignore`
 - Create: `README.md`
 
@@ -342,7 +342,7 @@
 **Objective:** Home/Detail/Widget/Live Activity의 A/B 결과를 비교하고 1차 선택안을 기록한다.
 
 **Files:**
-- Create: `PROJECT_CONTEXT/ui-tone-decision.md`
+- Create: `CONTEXT/ui-tone-decision.md`
 
 **Step 1: 비교 기준 정리**
 - 인지 속도
@@ -503,8 +503,8 @@
 **Objective:** 실제 구현 상태와 다음 단계 리스크를 문서화한다.
 
 **Files:**
-- Modify: `PROJECT_CONTEXT/current-status.md`
-- Modify: `PROJECT_CONTEXT/roadmap.md`
+- Modify: `CONTEXT/current-status.md`
+- Modify: `CONTEXT/roadmap.md`
 - Modify: `README.md`
 
 **Step 1: 구현된 범위 기록**

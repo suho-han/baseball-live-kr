@@ -1,4 +1,4 @@
-# PROJECT_CONTEXT
+# CONTEXT
 
 루트에는 지금 참고할 문서만 남기고, 지난 계획 문서는 `archive/`로 이동한다.
 

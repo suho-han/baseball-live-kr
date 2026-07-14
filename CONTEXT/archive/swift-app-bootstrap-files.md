@@ -60,7 +60,7 @@ baseball-live-kr/
 │   ├── BaseballLiveKRCore/
 │   └── BaseballLiveKRDesignSystem/
 ├── backend-spike/
-└── PROJECT_CONTEXT/
+└── CONTEXT/
 ```
 
 ---

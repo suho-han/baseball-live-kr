@@ -137,7 +137,7 @@ BASEBALL_LIVE_KR_DB_ENABLED=1 npm run collect:probable-pitchers -- --date 202606
 
 ## 배포 준비
 
-macOS 배포와 원격 테스트 체크리스트는 `PROJECT_CONTEXT/macos-release-operations.md`를 기준으로 유지합니다.
+macOS 배포와 원격 테스트 체크리스트는 `CONTEXT/macos-release-operations.md`를 기준으로 유지합니다.
 
 Mac mini 테스트용 실행 파일 묶기:
 
@@ -280,12 +280,12 @@ curl -fsS https://api.baseball-live.kro.kr/v1/health
 
 ## 참고 문서
 
-- `PROJECT_CONTEXT/README.md`
-- `PROJECT_CONTEXT/xcode-project-structure.md`
-- `PROJECT_CONTEXT/forward-development-roadmap.md`
-- `PROJECT_CONTEXT/backend-spike-results.md`
-- `PROJECT_CONTEXT/production-backend-strategy.md`
-- `PROJECT_CONTEXT/kbo-data-quality-regression-plan.md`
-- `PROJECT_CONTEXT/kbo-data-validation-checklist.md`
-- `PROJECT_CONTEXT/kbo-source-data-collection.md`
-- `PROJECT_CONTEXT/app-productization-roadmap.md`
+- `CONTEXT/README.md`
+- `CONTEXT/xcode-project-structure.md`
+- `CONTEXT/forward-development-roadmap.md`
+- `CONTEXT/backend-spike-results.md`
+- `CONTEXT/production-backend-strategy.md`
+- `CONTEXT/kbo-data-quality-regression-plan.md`
+- `CONTEXT/kbo-data-validation-checklist.md`
+- `CONTEXT/kbo-source-data-collection.md`
+- `CONTEXT/app-productization-roadmap.md`
