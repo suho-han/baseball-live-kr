@@ -38,7 +38,7 @@ xcodebuild -project BaseballLiveKR.xcodeproj -scheme BaseballLiveKRiOS -destinat
 3. `/v1/health`, `/v1/ready`가 200을 반환하는지 확인한다.
 4. 앱 설정에서 backend preset 또는 Backend URL을 확인한다.
 5. 오늘 경기 화면에서 loading, empty, error, loaded 상태를 확인한다.
-6. 진행 중 경기 fixture가 필요하면 `KBO_USE_TEST_LIVE_GAME=1`로 backend를 실행한다.
+6. 진행 중 경기 fixture가 필요하면 `NODE_ENV=development KBO_USE_TEST_LIVE_GAME=1`로 backend를 실행한다.
 7. macOS 메뉴바 popover에서 empty/live 상태와 설정 진입을 확인한다.
 
 ## 4. Demo Flow

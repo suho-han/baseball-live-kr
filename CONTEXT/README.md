@@ -18,6 +18,10 @@
   - 팀 기록/선수 기록 보강과 DB 구축 단계별 계획
 - `kbo-data-quality-regression-plan.md`
   - KBO 원천 데이터 fixture catalog, contract test, schema drift 회귀 기준
+- `official-source-field-inventory.md`
+  - backend 공식 원천 필드 채택/보류 기준과 fixture/test evidence matrix
+- `api-v2-cleanup-candidates.md`
+  - v1 호환성을 깨는 API 정리 후보와 v2 분리 기준
 - `app-productization-roadmap.md`
   - 나의 팀 중심 UX, 상태별 fallback, 알림/개인화 제품화 로드맵
 - `macos-release-operations.md`

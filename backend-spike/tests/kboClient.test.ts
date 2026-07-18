@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchKboGameDate, fetchKboGameList, fetchKboLiveTextView, KboSourceError } from '../src/clients/kboClient.js'
+import { fetchKboGameDate, fetchKboGameList, fetchKboLiveTextView, fetchKboTeamRankDailyPage, KboSourceError } from '../src/clients/kboClient.js'
 import { closeDatabase } from '../src/db/database.js'
 import { countRawSources } from '../src/repositories/rawSourceRepository.js'
 import { TEST_DATE } from './testConfig.js'
@@ -24,6 +24,7 @@ describe('kboClient', () => {
     delete process.env.BASEBALL_LIVE_KR_DB_DISABLED
     delete process.env.BASEBALL_LIVE_KR_DB_ENABLED
     delete process.env.BASEBALL_LIVE_KR_DB_PATH
+    delete process.env.KBO_SOURCE_TIMEOUT_MS
   })
 
   it('posts form data and parses a valid game date response', async () => {
@@ -66,6 +67,32 @@ describe('kboClient', () => {
     await fetchKboGameDate(TEST_DATE)
 
     expect(countRawSources()).toBe(1)
+  })
+
+  it('keeps source response parsing non-fatal when raw source persistence fails', async () => {
+    delete process.env.BASEBALL_LIVE_KR_DB_DISABLED
+    process.env.BASEBALL_LIVE_KR_DB_ENABLED = '1'
+    const dir = mkdtempSync(join(tmpdir(), 'baseball-live-kr-client-db-fail-'))
+    tempDirs.push(dir)
+    process.env.BASEBALL_LIVE_KR_DB_PATH = dir
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({
+      BEFORE_G_DT: '20260612',
+      NOW_G_DT: TEST_DATE,
+      NOW_G_DT_TEXT: '06.13(토)',
+      AFTER_G_DT: '20260614',
+      code: '100',
+      msg: 'OK'
+    }), { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const response = await fetchKboGameDate(TEST_DATE)
+
+    expect(response).toMatchObject({
+      NOW_G_DT: TEST_DATE,
+      code: '100',
+      msg: 'OK'
+    })
+    expect(fetchMock).toHaveBeenCalledOnce()
   })
 
   it('posts to KBO live text view and returns HTML', async () => {
@@ -135,5 +162,34 @@ describe('kboClient', () => {
       endpoint: 'GetKboGameList',
       message: expect.stringContaining('expected schema')
     })
+  })
+
+  it('passes timeout coverage to postForm-backed source fetches', async () => {
+    const fetchMock = vi.fn(async (_url: string, init: RequestInit) => {
+      expect(init.signal).toBeInstanceOf(AbortSignal)
+
+      return new Response(JSON.stringify({ game: [] }), { status: 200 })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await fetchKboGameList(TEST_DATE)
+
+    expect(fetchMock).toHaveBeenCalledOnce()
+  })
+
+  it('passes runtime timeout coverage to TeamRankDaily page fetches', async () => {
+    process.env.KBO_SOURCE_TIMEOUT_MS = '1234'
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout')
+    const fetchMock = vi.fn(async (_url: URL, init: RequestInit) => {
+      expect(init.signal).toBeInstanceOf(AbortSignal)
+
+      return new Response('<html><body>standings</body></html>', { status: 200 })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await fetchKboTeamRankDailyPage(TEST_DATE)
+
+    expect(timeoutSpy).toHaveBeenCalledWith(1234)
+    expect(fetchMock).toHaveBeenCalledOnce()
   })
 })

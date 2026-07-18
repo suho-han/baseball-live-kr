@@ -95,7 +95,7 @@ FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
 live fixture 실행:
 
 ```bash
-KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
+NODE_ENV=development KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
 ```
 
 ## 5. Remote Mac Mini Smoke

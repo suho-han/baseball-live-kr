@@ -11,8 +11,10 @@ vi.mock('../src/clients/kboClient.js', () => ({
 import { getGameById, getTodayGames, getTodayGamesRaw } from '../src/services/gameService.js'
 import {
   cleanupGameServiceTestState,
+  mockGameDate,
   resetGameServiceTestState,
   TEST_DATE,
+  TEST_GAME_ID,
   TEST_INPUT_DATE
 } from './gameServiceTestSupport.js'
 
@@ -25,6 +27,7 @@ describe('gameService misc flows', () => {
 
   afterEach(() => {
     cleanupGameServiceTestState(tempDirs)
+    delete process.env.NODE_ENV
   })
 
   it('returns a single live fixture game when test live mode is enabled', async () => {
@@ -40,6 +43,43 @@ describe('gameService misc flows', () => {
       score: { away: 12, home: 9 },
       inning: { number: 7, half: 'bottom' }
     })
+  })
+
+  it('keeps test live fixture mode enabled for the local packaged helper runtime', async () => {
+    process.env.NODE_ENV = 'development'
+    process.env.KBO_USE_TEST_LIVE_GAME = '1'
+
+    const result = await getTodayGames(TEST_INPUT_DATE)
+
+    expect(result.date).toBe(TEST_DATE)
+    expect(result.games).toHaveLength(1)
+    expect(result.games[0]).toMatchObject({
+      gameId: `${TEST_DATE}LTHH0`,
+      status: 'live'
+    })
+  })
+
+  it('ignores test live fixture mode for normalized production responses', async () => {
+    process.env.NODE_ENV = 'production'
+    process.env.KBO_USE_TEST_LIVE_GAME = '1'
+
+    const result = await getTodayGames(TEST_INPUT_DATE)
+
+    expect(result.date).toBe(TEST_DATE)
+    expect(result.games[0]?.gameId).toBe(TEST_GAME_ID)
+    expect(mockGameDate).toHaveBeenCalledWith(TEST_DATE)
+  })
+
+  it('ignores test live fixture mode for raw production responses', async () => {
+    process.env.NODE_ENV = 'production'
+    process.env.KBO_USE_TEST_LIVE_GAME = '1'
+
+    const result = await getTodayGamesRaw(TEST_INPUT_DATE)
+
+    expect(result.requestedDate).toBe(TEST_DATE)
+    expect(result.normalizedGames[0]?.gameId).toBe(TEST_GAME_ID)
+    expect(result.gameList.game).toHaveLength(1)
+    expect(mockGameDate).toHaveBeenCalledWith(TEST_DATE)
   })
 
   it('returns null game detail when the requested game is missing', async () => {

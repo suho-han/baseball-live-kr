@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 
+import { canExposeDebugSource } from '../config/runtimeConfig.js'
 import { getPlayerSeasonRecord, searchPlayers } from '../repositories/playerRecordRepository.js'
 import { getGameById, getTeamStandings, getTodayGames, getTodayGamesRaw } from '../services/gameService.js'
 
@@ -29,7 +30,17 @@ export function registerGamesRoutes(server: FastifyInstance) {
   server.get('/v1/standings', standingsHandler)
   server.get('/v1/teams/standings', standingsHandler)
 
-  server.get('/debug/source/today', async (request) => {
+  server.get('/debug/source/today', async (request, reply) => {
+    if (!canExposeDebugSource()) {
+      return reply.status(404).send({
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Not found',
+          statusCode: 404
+        }
+      })
+    }
+
     const query = request.query as { date?: string }
     return getTodayGamesRaw(query.date)
   })

@@ -45,7 +45,7 @@ case "$command" in
     ;;
   live)
     build_macos_app
-    KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART="${FORCE_RESTART:-1}" "$ROOT_DIR/scripts/run-macos-app-with-packaged-backend.sh"
+    NODE_ENV=development KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART="${FORCE_RESTART:-1}" "$ROOT_DIR/scripts/run-macos-app-with-packaged-backend.sh"
     ;;
   open)
     build_macos_app

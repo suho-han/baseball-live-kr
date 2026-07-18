@@ -1,0 +1,229 @@
+import { createServer } from 'node:http'
+import { writeFileSync } from 'node:fs'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+vi.mock('../src/clients/kboClient.js', () => ({
+  fetchKboGameDate: vi.fn(),
+  fetchKboGameList: vi.fn(),
+  fetchKboLiveTextView: vi.fn(),
+  fetchKboScheduleList: vi.fn(),
+  fetchKboTeamRankDailyPage: vi.fn()
+}))
+
+import { recordAlert } from '../src/observability/alerts.js'
+import { getMetricsSnapshot, resetObservabilityForTests } from '../src/observability/metrics.js'
+import { getTodayGames } from '../src/services/gameService.js'
+import {
+  cleanupGameServiceTestState,
+  mockGameDate,
+  resetGameServiceTestState,
+  TEST_INPUT_DATE
+} from './gameServiceTestSupport.js'
+
+function listen(server: ReturnType<typeof createServer>): Promise<number> {
+  return new Promise((resolve, reject) => {
+    server.once('error', reject)
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address()
+      if (typeof address === 'object' && address !== null) {
+        resolve(address.port)
+        return
+      }
+
+      reject(new Error('test server did not bind a TCP port'))
+    })
+  })
+}
+
+function close(server: ReturnType<typeof createServer>): Promise<void> {
+  return new Promise((resolve, reject) => {
+    server.close((error) => {
+      if (error instanceof Error) {
+        reject(error)
+        return
+      }
+
+      resolve()
+    })
+  })
+}
+
+describe('observability alerts', () => {
+  const tempDirs: string[] = []
+
+  beforeEach(() => {
+    resetGameServiceTestState()
+    resetObservabilityForTests()
+    process.env.KBO_CACHE_TTL_GAME_IDLE_SEC = '0'
+    process.env.KBO_CACHE_STALE_IF_ERROR_SEC = '600'
+    process.env.KBO_ALERT_SOURCE_FAILURE_THRESHOLD = '1'
+    process.env.KBO_ALERT_COOLDOWN_SEC = '60'
+  })
+
+  afterEach(() => {
+    cleanupGameServiceTestState(tempDirs)
+    resetObservabilityForTests()
+    delete process.env.KBO_ALERT_SOURCE_FAILURE_THRESHOLD
+    delete process.env.KBO_ALERT_COOLDOWN_SEC
+    delete process.env.KBO_ALERT_WEBHOOK_URL
+    delete process.env.O1_ALERT_CAPTURE_PATH
+  })
+
+  it('records stale cache and source failure alerts without webhook secrets', async () => {
+    const cached = await getTodayGames(TEST_INPUT_DATE)
+    mockGameDate.mockRejectedValue(new Error('source down'))
+
+    const stale = await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      expect(getMetricsSnapshot().counters.alerts.recorded).toBe(1)
+    })
+    const snapshot = getMetricsSnapshot()
+
+    expect(stale).toEqual(cached)
+    expect(snapshot.counters.source.failure).toBe(1)
+    expect(snapshot.counters.cache.stale).toBe(1)
+    expect(snapshot.counters.alerts.recorded).toBe(1)
+    expect(snapshot.counters.alerts.sent).toBe(0)
+    expect(snapshot.state.alerts.lastEvent).toMatchObject({
+      kind: 'source_failure_threshold',
+      delivery: 'recorded'
+    })
+  })
+
+  it('suppresses duplicate alert storms during the cooldown window', async () => {
+    await getTodayGames(TEST_INPUT_DATE)
+    mockGameDate.mockRejectedValue(new Error('source down'))
+
+    await getTodayGames(TEST_INPUT_DATE)
+    await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      const snapshot = getMetricsSnapshot()
+      expect(snapshot.counters.alerts.recorded).toBe(1)
+      expect(snapshot.counters.alerts.suppressed).toBe(1)
+    })
+    const snapshot = getMetricsSnapshot()
+
+    expect(snapshot.counters.alerts.recorded).toBe(1)
+    expect(snapshot.counters.alerts.suppressed).toBe(1)
+  })
+
+  it('sends a concise webhook payload when a local alert sink is configured', async () => {
+    const payloads: string[] = []
+    const sink = createServer((request, response) => {
+      request.setEncoding('utf8')
+      request.on('data', (chunk) => {
+        payloads.push(chunk)
+      })
+      request.on('end', () => {
+        response.writeHead(204)
+        response.end()
+      })
+    })
+    const port = await listen(sink)
+    process.env.KBO_ALERT_WEBHOOK_URL = `http://127.0.0.1:${port}/alert`
+
+    await getTodayGames(TEST_INPUT_DATE)
+    mockGameDate.mockRejectedValue(new Error('source down'))
+    await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      expect(payloads.join('')).not.toBe('')
+    })
+    await close(sink)
+
+    const body = payloads.join('')
+    if (process.env.O1_ALERT_CAPTURE_PATH !== undefined) {
+      writeFileSync(process.env.O1_ALERT_CAPTURE_PATH, `${body}\n`)
+    }
+    expect(JSON.parse(body)).toMatchObject({
+      service: 'baseball-live-kr-backend-spike',
+      kind: 'source_failure_threshold',
+      severity: 'warning'
+    })
+    expect(body).not.toContain('KBO_ALERT_WEBHOOK_URL')
+    expect(body).not.toContain(process.env.KBO_ALERT_WEBHOOK_URL)
+  })
+
+  it('does not suppress retries after webhook delivery fails', async () => {
+    let requestCount = 0
+    const sink = createServer((request, response) => {
+      request.resume()
+      requestCount += 1
+      response.writeHead(503)
+      response.end()
+    })
+    const port = await listen(sink)
+    process.env.KBO_ALERT_WEBHOOK_URL = `http://127.0.0.1:${port}/alert`
+
+    await getTodayGames(TEST_INPUT_DATE)
+    mockGameDate.mockRejectedValue(new Error('source down'))
+    await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      const snapshot = getMetricsSnapshot()
+      expect(requestCount).toBe(1)
+      expect(snapshot.counters.alerts.failed).toBe(1)
+    })
+    await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      const snapshot = getMetricsSnapshot()
+      expect(requestCount).toBe(2)
+      expect(snapshot.counters.alerts.failed).toBe(2)
+    })
+    await close(sink)
+
+    const snapshot = getMetricsSnapshot()
+    expect(requestCount).toBe(2)
+    expect(snapshot.counters.alerts.failed).toBe(2)
+    expect(snapshot.counters.alerts.suppressed).toBe(0)
+  })
+
+  it('treats non-http webhook URLs as unconfigured alert sinks', async () => {
+    process.env.KBO_ALERT_WEBHOOK_URL = 'ftp://example.test/alert'
+
+    await recordAlert({
+      kind: 'source_failure_threshold',
+      reason: 'KBO source failure threshold reached',
+      value: 1
+    })
+
+    const snapshot = getMetricsSnapshot()
+    expect(snapshot.state.alerts.webhookConfigured).toBe(false)
+    expect(snapshot.counters.alerts.recorded).toBe(1)
+    expect(snapshot.counters.alerts.failed).toBe(0)
+  })
+
+  it('suppresses concurrent same-kind alerts while delivery is in flight', async () => {
+    let requestCount = 0
+    let releaseSink: () => void = () => {}
+    const sinkReleased = new Promise<void>((resolve) => {
+      releaseSink = resolve
+    })
+    const sink = createServer(async (request, response) => {
+      request.resume()
+      requestCount += 1
+      await sinkReleased
+      response.writeHead(204)
+      response.end()
+    })
+    const port = await listen(sink)
+    process.env.KBO_ALERT_WEBHOOK_URL = `http://127.0.0.1:${port}/alert`
+
+    const firstAlert = recordAlert({
+      kind: 'source_failure_threshold',
+      reason: 'KBO source failure threshold reached',
+      value: 1
+    })
+    const secondAlert = recordAlert({
+      kind: 'source_failure_threshold',
+      reason: 'KBO source failure threshold reached',
+      value: 2
+    })
+    releaseSink()
+    await Promise.all([firstAlert, secondAlert])
+    await close(sink)
+
+    const snapshot = getMetricsSnapshot()
+    expect(requestCount).toBe(1)
+    expect(snapshot.counters.alerts.sent).toBe(1)
+    expect(snapshot.counters.alerts.suppressed).toBe(1)
+  })
+})
