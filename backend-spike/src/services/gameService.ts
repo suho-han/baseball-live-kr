@@ -192,10 +192,14 @@ export async function getTodayGames(date?: string) {
 
       return value
     } catch (error) {
-      await recordSourceFailure()
+      void recordSourceFailure().catch((observabilityError) => {
+        console.warn('[observability] recordSourceFailure failed', observabilityError)
+      })
       const stale = todayGamesCache.get(kboDate)
       if (stale && stale.staleUntil > Date.now()) {
-        await recordCacheStale()
+        void recordCacheStale().catch((observabilityError) => {
+          console.warn('[observability] recordCacheStale failed', observabilityError)
+        })
         return stale.value
       }
 
