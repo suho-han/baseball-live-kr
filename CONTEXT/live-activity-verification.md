@@ -20,12 +20,12 @@ Baseball LIVE KR iOS app에서 진행 중 경기 Live Activity를 실제 기기 
 - 실제 iPhone 기기 필요. Dynamic Island 검증은 지원 기기에서만 가능하다.
 - iOS 설정에서 Live Activities가 허용되어 있어야 한다.
 - 앱은 backend에서 `status: live`인 경기를 받아야 한다.
-- 로컬 fixture 검증 시 backend를 `KBO_USE_TEST_LIVE_GAME=1`로 실행한다.
+- 로컬 fixture 검증 시 backend를 `NODE_ENV=development KBO_USE_TEST_LIVE_GAME=1`로 실행한다.
 
 예시:
 
 ```bash
-KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
+NODE_ENV=development KBO_USE_TEST_LIVE_GAME=1 FORCE_RESTART=1 PORT=3000 ./scripts/run-macos-app-with-packaged-backend.sh
 ```
 
 iOS 실제 기기에서는 Mac host backend 접근을 위해 `BASEBALL_LIVE_KR_BASE_URL` 또는 앱 설정의 Custom URL을 Mac의 접근 가능한 IP로 맞춘다.

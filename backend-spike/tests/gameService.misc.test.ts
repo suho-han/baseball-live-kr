@@ -45,6 +45,20 @@ describe('gameService misc flows', () => {
     })
   })
 
+  it('keeps test live fixture mode enabled for the local packaged helper runtime', async () => {
+    process.env.NODE_ENV = 'development'
+    process.env.KBO_USE_TEST_LIVE_GAME = '1'
+
+    const result = await getTodayGames(TEST_INPUT_DATE)
+
+    expect(result.date).toBe(TEST_DATE)
+    expect(result.games).toHaveLength(1)
+    expect(result.games[0]).toMatchObject({
+      gameId: `${TEST_DATE}LTHH0`,
+      status: 'live'
+    })
+  })
+
   it('ignores test live fixture mode for normalized production responses', async () => {
     process.env.NODE_ENV = 'production'
     process.env.KBO_USE_TEST_LIVE_GAME = '1'

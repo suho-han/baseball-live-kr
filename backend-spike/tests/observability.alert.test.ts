@@ -74,6 +74,9 @@ describe('observability alerts', () => {
     mockGameDate.mockRejectedValue(new Error('source down'))
 
     const stale = await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      expect(getMetricsSnapshot().counters.alerts.recorded).toBe(1)
+    })
     const snapshot = getMetricsSnapshot()
 
     expect(stale).toEqual(cached)
@@ -93,6 +96,11 @@ describe('observability alerts', () => {
 
     await getTodayGames(TEST_INPUT_DATE)
     await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      const snapshot = getMetricsSnapshot()
+      expect(snapshot.counters.alerts.recorded).toBe(1)
+      expect(snapshot.counters.alerts.suppressed).toBe(1)
+    })
     const snapshot = getMetricsSnapshot()
 
     expect(snapshot.counters.alerts.recorded).toBe(1)
@@ -117,6 +125,9 @@ describe('observability alerts', () => {
     await getTodayGames(TEST_INPUT_DATE)
     mockGameDate.mockRejectedValue(new Error('source down'))
     await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      expect(payloads.join('')).not.toBe('')
+    })
     await close(sink)
 
     const body = payloads.join('')
@@ -146,13 +157,38 @@ describe('observability alerts', () => {
     await getTodayGames(TEST_INPUT_DATE)
     mockGameDate.mockRejectedValue(new Error('source down'))
     await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      const snapshot = getMetricsSnapshot()
+      expect(requestCount).toBe(1)
+      expect(snapshot.counters.alerts.failed).toBe(1)
+    })
     await getTodayGames(TEST_INPUT_DATE)
+    await vi.waitFor(() => {
+      const snapshot = getMetricsSnapshot()
+      expect(requestCount).toBe(2)
+      expect(snapshot.counters.alerts.failed).toBe(2)
+    })
     await close(sink)
 
     const snapshot = getMetricsSnapshot()
     expect(requestCount).toBe(2)
     expect(snapshot.counters.alerts.failed).toBe(2)
     expect(snapshot.counters.alerts.suppressed).toBe(0)
+  })
+
+  it('treats non-http webhook URLs as unconfigured alert sinks', async () => {
+    process.env.KBO_ALERT_WEBHOOK_URL = 'ftp://example.test/alert'
+
+    await recordAlert({
+      kind: 'source_failure_threshold',
+      reason: 'KBO source failure threshold reached',
+      value: 1
+    })
+
+    const snapshot = getMetricsSnapshot()
+    expect(snapshot.state.alerts.webhookConfigured).toBe(false)
+    expect(snapshot.counters.alerts.recorded).toBe(1)
+    expect(snapshot.counters.alerts.failed).toBe(0)
   })
 
   it('suppresses concurrent same-kind alerts while delivery is in flight', async () => {

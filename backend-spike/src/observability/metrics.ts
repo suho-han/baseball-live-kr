@@ -1,6 +1,6 @@
 import { backendVersion } from '../version.js'
 import { getAlertSnapshot, recordAlert, resetAlertsForTests } from './alerts.js'
-import type { AlertEvent } from './alerts.js'
+import type { AlertEvent, AlertKind } from './alerts.js'
 
 type StatusClass = '1xx' | '2xx' | '3xx' | '4xx' | '5xx' | 'other'
 
@@ -136,6 +136,19 @@ function cacheStaleThreshold(): number {
   return envInteger('KBO_ALERT_STALE_THRESHOLD', 3)
 }
 
+function recordAlertSideEffect(input: {
+  readonly kind: AlertKind
+  readonly reason: string
+  readonly value: number
+}): void {
+  void recordAlert(input).catch((error) => {
+    console.warn(JSON.stringify({
+      event: 'operational_alert_side_effect_failed',
+      message: error instanceof Error ? error.message : 'unknown alert failure'
+    }))
+  })
+}
+
 export function recordHttpRequest(input: {
   readonly statusCode: number
   readonly latencyMs: number
@@ -153,11 +166,11 @@ export function recordCacheMiss(): void {
   state.cacheMiss += 1
 }
 
-export async function recordCacheStale(): Promise<void> {
+export function recordCacheStale(): void {
   state.cacheStale += 1
   state.lastStaleAt = new Date().toISOString()
   if (state.cacheStale >= cacheStaleThreshold()) {
-    await recordAlert({
+    recordAlertSideEffect({
       kind: 'cache_stale_threshold',
       reason: 'stale cache returned after source failure',
       value: state.cacheStale
@@ -172,12 +185,12 @@ export function recordSourceSuccess(latencyMs: number): void {
   recordLatency(state.sourceLatency, latencyMs)
 }
 
-export async function recordSourceFailure(): Promise<void> {
+export function recordSourceFailure(): void {
   state.sourceFailure += 1
   state.sourceConsecutiveFailures += 1
   state.lastSourceFailureAt = new Date().toISOString()
   if (state.sourceConsecutiveFailures >= sourceFailureThreshold()) {
-    await recordAlert({
+    recordAlertSideEffect({
       kind: 'source_failure_threshold',
       reason: 'KBO source failure threshold reached',
       value: state.sourceConsecutiveFailures
