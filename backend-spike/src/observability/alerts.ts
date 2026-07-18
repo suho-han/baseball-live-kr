@@ -59,14 +59,17 @@ function webhookUrl(): URL | null {
   }
 
   try {
-    return new URL(rawValue)
-  } catch (error) {
-    if (error instanceof TypeError) {
-      return null
+    const url = new URL(rawValue)
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return url
     }
-
-    throw error
+  } catch (error) {
+    if (!(error instanceof TypeError)) {
+      throw error
+    }
   }
+
+  return null
 }
 
 function shouldSuppress(kind: AlertKind, now: number): boolean {
