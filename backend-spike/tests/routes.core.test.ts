@@ -38,6 +38,7 @@ describe('games routes core', () => {
     delete process.env.BASEBALL_LIVE_KR_DB_ENABLED
     delete process.env.BASEBALL_LIVE_KR_DB_PATH
     delete process.env.BASEBALL_LIVE_KR_DEBUG_SOURCE_ENABLED
+    delete process.env.KBO_ALERT_WEBHOOK_URL
     delete process.env.KBO_SOURCE_TIMEOUT_MS
     delete process.env.NODE_ENV
   })
@@ -220,6 +221,28 @@ describe('games routes core', () => {
           errors: [{
             key: 'KBO_SOURCE_TIMEOUT_MS',
             message: 'must be a non-negative integer'
+          }]
+        }
+      }
+    })
+    await server.close()
+  })
+
+  it('returns not ready when the alert webhook URL is invalid', async () => {
+    process.env.KBO_ALERT_WEBHOOK_URL = 'not-a-url'
+    const server = buildServer()
+
+    const readiness = await server.inject('/v1/ready')
+
+    expect(readiness.statusCode).toBe(503)
+    expect(JSON.parse(readiness.body)).toMatchObject({
+      ok: false,
+      checks: {
+        config: {
+          ok: false,
+          errors: [{
+            key: 'KBO_ALERT_WEBHOOK_URL',
+            message: 'must be a valid http or https URL'
           }]
         }
       }

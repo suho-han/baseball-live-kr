@@ -53,14 +53,38 @@ function readRuntimeNumberChecks(): readonly RuntimeNumberCheck[] {
   ]
 }
 
+function readWebhookUrlError(): RuntimeConfigError | null {
+  const rawValue = process.env.KBO_ALERT_WEBHOOK_URL
+  if (rawValue === undefined || rawValue.trim().length === 0) {
+    return null
+  }
+
+  try {
+    const url = new URL(rawValue)
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return null
+    }
+  } catch (error) {
+    if (!(error instanceof TypeError)) {
+      throw error
+    }
+  }
+
+  return {
+    key: 'KBO_ALERT_WEBHOOK_URL',
+    message: 'must be a valid http or https URL'
+  }
+}
+
 export function validateRuntimeConfig(): RuntimeConfigValidation {
   const errors = readRuntimeNumberChecks()
     .map((check) => check.error)
     .filter((error): error is RuntimeConfigError => error !== null)
+  const webhookUrlError = readWebhookUrlError()
 
   return {
-    ok: errors.length === 0,
-    errors
+    ok: errors.length === 0 && webhookUrlError === null,
+    errors: webhookUrlError === null ? errors : [...errors, webhookUrlError]
   }
 }
 

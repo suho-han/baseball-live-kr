@@ -334,11 +334,11 @@ Phase 4: operationalize
 
 ## 13. 다음 작업
 
-완료된 hardening/evidence:
+현재 hardening 상태:
 
-- structured request/source/cache observability, `/metrics`, stale/source-failure alert path, production metrics exposure gate는 구현 및 검증 evidence가 있다.
-- live capture/replay 기반 공식 source field mapping 재검증은 완료되었고, live game 부재 시 committed fixture replay와 no-live-game evidence를 남기는 기준을 적용했다.
-- backend 전체 test/typecheck/build 재검증과 manual QA evidence audit는 완료 evidence가 있다.
+- structured request/source/cache observability, `/metrics`, stale/source-failure alert path, production metrics exposure gate를 backend spike에 둔다.
+- live capture/replay 기반 공식 source field mapping은 committed fixture replay와 raw evidence 기준을 분리한다.
+- backend 검증 evidence는 PR, CI, 또는 release gate에서 해당 commit SHA 기준으로 남긴다.
 - `/v1` compatibility, readiness config validation, production generic 500, production debug route gate, production fixture mode gate는 현재 hardened behavior로 유지한다.
 
 남은 product/operations follow-up:

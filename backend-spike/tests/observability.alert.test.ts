@@ -130,4 +130,27 @@ describe('observability alerts', () => {
     expect(body).not.toContain('KBO_ALERT_WEBHOOK_URL')
     expect(body).not.toContain(process.env.KBO_ALERT_WEBHOOK_URL)
   })
+
+  it('does not suppress retries after webhook delivery fails', async () => {
+    let requestCount = 0
+    const sink = createServer((request, response) => {
+      request.resume()
+      requestCount += 1
+      response.writeHead(503)
+      response.end()
+    })
+    const port = await listen(sink)
+    process.env.KBO_ALERT_WEBHOOK_URL = `http://127.0.0.1:${port}/alert`
+
+    await getTodayGames(TEST_INPUT_DATE)
+    mockGameDate.mockRejectedValue(new Error('source down'))
+    await getTodayGames(TEST_INPUT_DATE)
+    await getTodayGames(TEST_INPUT_DATE)
+    await close(sink)
+
+    const snapshot = getMetricsSnapshot()
+    expect(requestCount).toBe(2)
+    expect(snapshot.counters.alerts.failed).toBe(2)
+    expect(snapshot.counters.alerts.suppressed).toBe(0)
+  })
 })

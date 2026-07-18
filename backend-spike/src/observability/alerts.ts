@@ -153,7 +153,9 @@ export async function recordAlert(input: {
     state.failed += 1
   }
 
-  state.lastSentAtByKind.set(input.kind, now)
+  if (delivery !== 'failed') {
+    state.lastSentAtByKind.set(input.kind, now)
+  }
   state.lastEvent = event
 }
 
