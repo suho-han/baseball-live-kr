@@ -1,6 +1,8 @@
 import { fetchKboTeamRankDailyPage } from '../clients/kboClient.js'
+import { canUseTestLiveGame } from '../config/runtimeConfig.js'
 import { makeTestLiveGame } from '../fixtures/testLiveGame.js'
 import { parseKboTeamRankDaily } from '../mappers/teamRankMapper.js'
+import { recordCacheHit, recordCacheMiss, recordCacheStale, recordSourceFailure, recordSourceSuccess } from '../observability/metrics.js'
 import { listLatestGameSnapshots } from '../repositories/gameSnapshotRepository.js'
 import { listTeamSeasonRecords, upsertTeamSeasonRecords } from '../repositories/teamRecordRepository.js'
 import { enrichPreviousAtBatResult } from './liveTextEnrichment.js'
@@ -92,7 +94,10 @@ async function loadTeamStandingsEntries(kboDate: string): Promise<TeamRankEntry[
       .sort((lhs, rhs) => (lhs.rank ?? Number.MAX_SAFE_INTEGER) - (rhs.rank ?? Number.MAX_SAFE_INTEGER))
     try {
       upsertTeamSeasonRecords(kboDate, standings)
-    } catch {
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        throw error
+      }
       // DB persistence must not break the live source response path.
     }
 
@@ -138,7 +143,7 @@ async function loadMonthGames(kboDate: string) {
 export async function getTodayGames(date?: string) {
   const kboDate = toKboDate(date)
 
-  if (process.env.KBO_USE_TEST_LIVE_GAME === '1') {
+  if (canUseTestLiveGame()) {
     return {
       date: kboDate,
       games: [makeTestLiveGame(kboDate)]
@@ -156,6 +161,7 @@ export async function getTodayGames(date?: string) {
   const now = Date.now()
   const cached = todayGamesCache.get(kboDate)
   if (cached && cached.expiresAt > now) {
+    recordCacheHit()
     return cached.value
   }
 
@@ -164,13 +170,16 @@ export async function getTodayGames(date?: string) {
     return inFlight
   }
 
+  recordCacheMiss()
   const request = (async (): Promise<TodayGamesResult> => {
+    const sourceStartedAt = Date.now()
     try {
       const { games } = await loadMonthGames(kboDate)
       const value = {
         date: kboDate,
         games
       }
+      recordSourceSuccess(Date.now() - sourceStartedAt)
       const cacheTtlMs = gameCacheTtlSeconds(games) * 1000
       const staleTtlMs = staleIfErrorSeconds() * 1000
       const writtenAt = Date.now()
@@ -183,8 +192,10 @@ export async function getTodayGames(date?: string) {
 
       return value
     } catch (error) {
+      await recordSourceFailure()
       const stale = todayGamesCache.get(kboDate)
       if (stale && stale.staleUntil > Date.now()) {
+        await recordCacheStale()
         return stale.value
       }
 
@@ -217,7 +228,7 @@ export async function getTeamStandings(date?: string) {
 export async function getTodayGamesRaw(date?: string) {
   const kboDate = toKboDate(date)
 
-  if (process.env.KBO_USE_TEST_LIVE_GAME === '1') {
+  if (canUseTestLiveGame()) {
     const game = makeTestLiveGame(kboDate)
 
     return {

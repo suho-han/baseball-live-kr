@@ -314,17 +314,35 @@ Phase 4: operationalize
 
 ## 12. Open Questions
 
+현재 닫힌 질문:
+
+- `/v1` route compatibility는 구현되어 있다. `/v1/games/today`, `/v1/games/:gameId`, `/v1/standings`, `/v1/teams/standings`, `/v1/players/search`, `/v1/players/:playerId/season`, `/v1/health`, `/v1/ready`를 유지한다.
+- `/v1/ready`는 H1 이후 단순 stub가 아니라 runtime config validation 결과를 반환한다. 실패 시 503과 `checks.config.errors`를 반환한다.
+- production 500 응답은 generic `INTERNAL_ERROR` message를 반환하고 raw error detail은 response body에 싣지 않는다.
+- production에서 `/debug/source/today`는 명시적으로 enable하지 않으면 숨긴다.
+- production에서 `KBO_USE_TEST_LIVE_GAME` fixture mode는 normalized/raw response 모두에 적용하지 않는다.
+- E1 기준 공식 원천이 확인된 필드만 현재 contract/adoption 대상으로 둔다. `boxScore.hits/errors/walks`, `boxScore.linescore`, `lineupPreview`, `analysis`는 공식 raw evidence 전까지 defer한다.
+- v1 destructive cleanup 후보는 `CONTEXT/api-v2-cleanup-candidates.md`에 v2-only로 분리한다.
+
+남은 질문:
+
 - production hosting 후보를 어디로 둘 것인가: Fly.io, Render, Railway, Cloud Run, VPS 중 선택 필요
-- cache backend는 process memory로 시작할지 Redis/SQLite를 바로 둘지 결정 필요
-- production에서 `/debug/source/today`를 완전히 제거할지 private auth 뒤에 둘지 결정 필요
+- cache backend는 현재 process memory 중심으로 동작한다. production에서 Redis/SQLite 등 외부 cache/store를 붙일지 결정 필요
+- 구현된 `/metrics`와 alerting을 운영에서 어떤 대시보드/알림 정책으로 연결할지 결정 필요
+- stale cache 반환을 response metadata로 노출할지, internal log/metrics/alert로만 둘지 결정 필요
 - 앱스토어 배포 시 local backend 설정 UI를 숨길지 developer mode로 남길지 결정 필요
 
 ## 13. 다음 작업
 
-권장 Linear follow-up:
+완료된 hardening/evidence:
 
-- `/v1` route compatibility 추가
-- memory cache + in-flight dedupe 구현
-- `/ready` endpoint 추가
-- staging hosting 후보 2개 비교 spike
-- app backend environment preset UI 추가
+- structured request/source/cache observability, `/metrics`, stale/source-failure alert path, production metrics exposure gate는 구현 및 검증 evidence가 있다.
+- live capture/replay 기반 공식 source field mapping 재검증은 완료되었고, live game 부재 시 committed fixture replay와 no-live-game evidence를 남기는 기준을 적용했다.
+- backend 전체 test/typecheck/build 재검증과 manual QA evidence audit는 완료 evidence가 있다.
+- `/v1` compatibility, readiness config validation, production generic 500, production debug route gate, production fixture mode gate는 현재 hardened behavior로 유지한다.
+
+남은 product/operations follow-up:
+
+- staging hosting 후보 2개 비교 spike를 진행하되 deploy target, private endpoint, host, IP, token, port 값은 tracked docs에 기록하지 않는다.
+- production cache/store 선택을 확정하고 stale response contract 변경이 필요하면 v2 cleanup candidate 또는 additive v1 metadata로 분리한다.
+- 앱 backend environment preset UI의 App Store 노출 정책을 확정한다.

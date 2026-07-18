@@ -37,6 +37,9 @@ describe('games routes core', () => {
   afterEach(async () => {
     delete process.env.BASEBALL_LIVE_KR_DB_ENABLED
     delete process.env.BASEBALL_LIVE_KR_DB_PATH
+    delete process.env.BASEBALL_LIVE_KR_DEBUG_SOURCE_ENABLED
+    delete process.env.KBO_SOURCE_TIMEOUT_MS
+    delete process.env.NODE_ENV
   })
 
   it('returns today games through Fastify injection', async () => {
@@ -132,7 +135,94 @@ describe('games routes core', () => {
       ok: true,
       source: 'kbo-official-spike',
       version: backendVersion,
-      checks: { config: true }
+      checks: {
+        config: {
+          ok: true,
+          errors: []
+        }
+      }
+    })
+    await server.close()
+  })
+
+  it('returns metrics payloads through operational routes', async () => {
+    const server = buildServer()
+
+    const metrics = await server.inject('/metrics')
+    const v1Metrics = await server.inject('/v1/metrics')
+
+    expect(metrics.statusCode).toBe(200)
+    expect(v1Metrics.statusCode).toBe(200)
+    const expectedShape = {
+      service: 'baseball-live-kr-backend-spike',
+      version: backendVersion,
+      counters: {
+        requests: {
+          total: expect.any(Number)
+        },
+        source: {
+          success: expect.any(Number),
+          failure: expect.any(Number)
+        },
+        cache: {
+          hit: expect.any(Number),
+          miss: expect.any(Number),
+          stale: expect.any(Number)
+        },
+        alerts: {
+          recorded: expect.any(Number),
+          sent: expect.any(Number),
+          suppressed: expect.any(Number)
+        }
+      },
+      process: {
+        nodeVersion: process.version,
+        pid: process.pid,
+        uptimeSeconds: expect.any(Number)
+      }
+    }
+    expect(JSON.parse(metrics.body)).toMatchObject(expectedShape)
+    expect(JSON.parse(v1Metrics.body)).toMatchObject(expectedShape)
+    await server.close()
+  })
+
+  it('denies metrics in production without explicit enablement', async () => {
+    process.env.NODE_ENV = 'production'
+    const server = buildServer()
+
+    const response = await server.inject('/metrics')
+
+    expect(response.statusCode).toBe(404)
+    expect(JSON.parse(response.body)).toMatchObject({
+      error: {
+        code: 'NOT_FOUND',
+        message: 'Not found',
+        statusCode: 404
+      }
+    })
+    await server.close()
+  })
+
+  it('returns not ready when runtime config is invalid', async () => {
+    process.env.KBO_SOURCE_TIMEOUT_MS = 'not-a-timeout'
+    const server = buildServer()
+
+    const readiness = await server.inject('/v1/ready')
+
+    expect(readiness.statusCode).toBe(503)
+    expect(JSON.parse(readiness.body)).toMatchObject({
+      ok: false,
+      source: 'kbo-official-spike',
+      version: backendVersion,
+      checks: {
+        config: {
+          ok: false,
+          errors: [{
+            key: 'KBO_SOURCE_TIMEOUT_MS',
+            message: 'must be a non-negative integer'
+          }]
+        }
+      }
     })
     await server.close()
   })
@@ -146,6 +236,24 @@ describe('games routes core', () => {
     await server.close()
   })
 
+  it('denies debug source payloads in production without explicit enablement', async () => {
+    process.env.NODE_ENV = 'production'
+    const server = buildServer()
+
+    const response = await server.inject(`/debug/source/today?date=${TEST_INPUT_DATE}`)
+
+    expect(response.statusCode).toBe(404)
+    expect(JSON.parse(response.body)).toMatchObject({
+      error: {
+        code: 'NOT_FOUND',
+        message: 'Not found',
+        statusCode: 404
+      }
+    })
+    expect(mockTodayGamesRaw).not.toHaveBeenCalled()
+    await server.close()
+  })
+
   it('maps invalid and unexpected errors to normalized responses', async () => {
     mockTodayGames.mockRejectedValueOnce(new KboDateInputError('2026'))
     const server = buildServer()
@@ -154,6 +262,13 @@ describe('games routes core', () => {
     const unexpected = await server.inject('/games/today')
     expect(invalid.statusCode).toBe(400)
     expect(unexpected.statusCode).toBe(500)
+    expect(JSON.parse(unexpected.body)).toEqual({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Internal server error',
+        statusCode: 500
+      }
+    })
     await server.close()
   })
 })

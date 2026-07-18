@@ -13,6 +13,7 @@ vi.mock('../src/clients/kboClient.js', () => ({
 
 import type { RawKboScheduleListResponse } from '../src/dto/kboScheduleList.dto.js'
 import { makeTestLiveGame } from '../src/fixtures/testLiveGame.js'
+import { getMetricsSnapshot, resetObservabilityForTests } from '../src/observability/metrics.js'
 import { upsertGameSnapshots } from '../src/repositories/gameSnapshotRepository.js'
 import { upsertTeamSeasonRecords } from '../src/repositories/teamRecordRepository.js'
 import { getTeamStandings, getTodayGames } from '../src/services/gameService.js'
@@ -35,10 +36,12 @@ describe('gameService cache', () => {
 
   beforeEach(() => {
     resetGameServiceTestState()
+    resetObservabilityForTests()
   })
 
   afterEach(() => {
     cleanupGameServiceTestState(tempDirs)
+    resetObservabilityForTests()
   })
 
   it('serves repeated today requests from cache while the cache is fresh', async () => {
@@ -99,6 +102,22 @@ describe('gameService cache', () => {
 
     expect(fallback).toEqual(cached)
     expect(mockGameDate).toHaveBeenCalledTimes(2)
+  })
+
+  it('records cache stale and source failure metrics when stale data is returned', async () => {
+    process.env.KBO_CACHE_TTL_GAME_IDLE_SEC = '0'
+    process.env.KBO_CACHE_STALE_IF_ERROR_SEC = '600'
+    const cached = await getTodayGames(TEST_INPUT_DATE)
+
+    mockGameDate.mockRejectedValue(new Error('source down'))
+
+    const fallback = await getTodayGames(TEST_INPUT_DATE)
+    const snapshot = getMetricsSnapshot()
+
+    expect(fallback).toEqual(cached)
+    expect(snapshot.counters.source.failure).toBe(1)
+    expect(snapshot.counters.cache.stale).toBe(1)
+    expect(snapshot.state.cache.lastStaleAt).toEqual(expect.any(String))
   })
 
   it('falls back to DB-backed team standings when the source fails and cache is empty', async () => {

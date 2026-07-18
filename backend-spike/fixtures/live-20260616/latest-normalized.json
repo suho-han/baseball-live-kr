@@ -13,24 +13,10 @@
         "away": 6,
         "home": 2
       },
-      "inning": {
-        "number": 9,
-        "half": "bottom"
-      },
-      "count": {
-        "balls": 3,
-        "strikes": 3,
-        "outs": 3
-      },
-      "bases": {
-        "first": false,
-        "second": false,
-        "third": true
-      },
-      "current": {
-        "batter": "박영현",
-        "pitcher": "카메론"
-      },
+      "inning": null,
+      "count": null,
+      "bases": null,
+      "current": null,
       "recentPlay": null
     },
     {
@@ -41,24 +27,10 @@
         "away": 1,
         "home": 4
       },
-      "inning": {
-        "number": 9,
-        "half": "top"
-      },
-      "count": {
-        "balls": 1,
-        "strikes": 2,
-        "outs": 3
-      },
-      "bases": {
-        "first": false,
-        "second": false,
-        "third": false
-      },
-      "current": {
-        "batter": "안치홍",
-        "pitcher": "김재윤"
-      },
+      "inning": null,
+      "count": null,
+      "bases": null,
+      "current": null,
       "recentPlay": null
     },
     {
@@ -69,24 +41,10 @@
         "away": 10,
         "home": 6
       },
-      "inning": {
-        "number": 9,
-        "half": "bottom"
-      },
-      "count": {
-        "balls": 0,
-        "strikes": 3,
-        "outs": 3
-      },
-      "bases": {
-        "first": false,
-        "second": true,
-        "third": true
-      },
-      "current": {
-        "batter": "최준용",
-        "pitcher": "조형우"
-      },
+      "inning": null,
+      "count": null,
+      "bases": null,
+      "current": null,
       "recentPlay": null
     },
     {
@@ -97,24 +55,10 @@
         "away": 8,
         "home": 2
       },
-      "inning": {
-        "number": 9,
-        "half": "bottom"
-      },
-      "count": {
-        "balls": 3,
-        "strikes": 2,
-        "outs": 3
-      },
-      "bases": {
-        "first": false,
-        "second": false,
-        "third": false
-      },
-      "current": {
-        "batter": "김진수",
-        "pitcher": "변우혁"
-      },
+      "inning": null,
+      "count": null,
+      "bases": null,
+      "current": null,
       "recentPlay": null
     },
     {
@@ -125,24 +69,10 @@
         "away": 5,
         "home": 6
       },
-      "inning": {
-        "number": 9,
-        "half": "top"
-      },
-      "count": {
-        "balls": 1,
-        "strikes": 0,
-        "outs": 3
-      },
-      "bases": {
-        "first": false,
-        "second": false,
-        "third": false
-      },
-      "current": {
-        "batter": "이원석",
-        "pitcher": "전사민"
-      },
+      "inning": null,
+      "count": null,
+      "bases": null,
+      "current": null,
       "recentPlay": null
     }
   ]

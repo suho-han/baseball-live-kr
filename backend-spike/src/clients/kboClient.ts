@@ -1,4 +1,5 @@
 import { buildKboHeaders } from '../config/kboHeaders.js'
+import { kboSourceTimeoutMs } from '../config/runtimeConfig.js'
 import { rawKboGameDateResponseSchema } from '../dto/kboGameDate.dto.js'
 import { rawKboGameListResponseSchema } from '../dto/kboGameList.dto.js'
 import { rawKboPitcherRecordAnalysisResponseSchema } from '../dto/kboPitcherRecordAnalysis.dto.js'
@@ -63,7 +64,10 @@ function recordRawSource(input: {
       statusCode: input.statusCode,
       body: input.body
     })
-  } catch {
+  } catch (error) {
+    if (!(error instanceof Error)) {
+      throw error
+    }
     // Raw source persistence is observability data. Source fetch behavior must stay independent.
   }
 }
@@ -72,7 +76,8 @@ async function postForm<T>(endpoint: KboEndpoint, path: string, payload: Record<
   const response = await fetch(`${BASE_URL}/${path}`, {
     method: 'POST',
     headers: buildKboHeaders(referer),
-    body: new URLSearchParams(payload)
+    body: new URLSearchParams(payload),
+    signal: AbortSignal.timeout(kboSourceTimeoutMs())
   })
 
   const text = await response.text()
@@ -209,7 +214,8 @@ export async function fetchKboTeamRankDailyPage(date: string) {
       'User-Agent': 'Mozilla/5.0',
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       Referer: 'https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx'
-    }
+    },
+    signal: AbortSignal.timeout(kboSourceTimeoutMs())
   })
 
   const text = await response.text()

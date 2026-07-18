@@ -1,5 +1,6 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
+import { validateRuntimeConfig } from '../config/runtimeConfig.js'
 import { backendVersion } from '../version.js'
 
 function healthPayload() {
@@ -12,12 +13,14 @@ function healthPayload() {
 }
 
 function readinessPayload() {
+  const config = validateRuntimeConfig()
+
   return {
-    ok: true,
+    ok: config.ok,
     source: 'kbo-official-spike',
     version: backendVersion,
     checks: {
-      config: true
+      config
     },
     now: new Date().toISOString()
   }
@@ -32,11 +35,15 @@ export function registerHealthRoutes(server: FastifyInstance) {
     return healthPayload()
   })
 
-  server.get('/ready', async () => {
-    return readinessPayload()
-  })
+  const readinessHandler = async (_request: FastifyRequest, reply: FastifyReply) => {
+    const payload = readinessPayload()
+    if (!payload.ok) {
+      reply.status(503)
+    }
 
-  server.get('/v1/ready', async () => {
-    return readinessPayload()
-  })
+    return payload
+  }
+
+  server.get('/ready', readinessHandler)
+  server.get('/v1/ready', readinessHandler)
 }
