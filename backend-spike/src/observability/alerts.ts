@@ -34,6 +34,7 @@ const state = {
   failed: 0,
   suppressed: 0,
   lastEvent: null as AlertEvent | null,
+  inFlightByKind: new Set<AlertKind>(),
   lastSentAtByKind: new Map<AlertKind, number>()
 }
 
@@ -69,6 +70,10 @@ function webhookUrl(): URL | null {
 }
 
 function shouldSuppress(kind: AlertKind, now: number): boolean {
+  if (state.inFlightByKind.has(kind)) {
+    return true
+  }
+
   const lastSentAt = state.lastSentAtByKind.get(kind)
   return lastSentAt !== undefined && now - lastSentAt < alertCooldownMs()
 }
@@ -141,7 +146,13 @@ export async function recordAlert(input: {
     severity: 'warning',
     value: input.value
   }
-  const delivery = await deliverAlert(pendingEvent)
+  state.inFlightByKind.add(input.kind)
+  let delivery: AlertDelivery
+  try {
+    delivery = await deliverAlert(pendingEvent)
+  } finally {
+    state.inFlightByKind.delete(input.kind)
+  }
   const event = { ...pendingEvent, delivery }
 
   state.recorded += 1
@@ -180,5 +191,6 @@ export function resetAlertsForTests(): void {
   state.failed = 0
   state.suppressed = 0
   state.lastEvent = null
+  state.inFlightByKind.clear()
   state.lastSentAtByKind.clear()
 }

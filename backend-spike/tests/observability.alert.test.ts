@@ -10,6 +10,7 @@ vi.mock('../src/clients/kboClient.js', () => ({
   fetchKboTeamRankDailyPage: vi.fn()
 }))
 
+import { recordAlert } from '../src/observability/alerts.js'
 import { getMetricsSnapshot, resetObservabilityForTests } from '../src/observability/metrics.js'
 import { getTodayGames } from '../src/services/gameService.js'
 import {
@@ -152,5 +153,41 @@ describe('observability alerts', () => {
     expect(requestCount).toBe(2)
     expect(snapshot.counters.alerts.failed).toBe(2)
     expect(snapshot.counters.alerts.suppressed).toBe(0)
+  })
+
+  it('suppresses concurrent same-kind alerts while delivery is in flight', async () => {
+    let requestCount = 0
+    let releaseSink: () => void = () => {}
+    const sinkReleased = new Promise<void>((resolve) => {
+      releaseSink = resolve
+    })
+    const sink = createServer(async (request, response) => {
+      request.resume()
+      requestCount += 1
+      await sinkReleased
+      response.writeHead(204)
+      response.end()
+    })
+    const port = await listen(sink)
+    process.env.KBO_ALERT_WEBHOOK_URL = `http://127.0.0.1:${port}/alert`
+
+    const firstAlert = recordAlert({
+      kind: 'source_failure_threshold',
+      reason: 'KBO source failure threshold reached',
+      value: 1
+    })
+    const secondAlert = recordAlert({
+      kind: 'source_failure_threshold',
+      reason: 'KBO source failure threshold reached',
+      value: 2
+    })
+    releaseSink()
+    await Promise.all([firstAlert, secondAlert])
+    await close(sink)
+
+    const snapshot = getMetricsSnapshot()
+    expect(requestCount).toBe(1)
+    expect(snapshot.counters.alerts.sent).toBe(1)
+    expect(snapshot.counters.alerts.suppressed).toBe(1)
   })
 })
