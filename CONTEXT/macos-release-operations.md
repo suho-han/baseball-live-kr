@@ -127,6 +127,12 @@ PORT=17361 \
 ./scripts/baseball-live-kr.sh deploy-backend
 ```
 
+운영 접속 주의:
+- Production backend 서버는 공개 IP 직접 SSH보다 Tailscale 경로를 우선 사용한다.
+- 실제 Tailnet host, SSH port, remote dir, health URL 값은 tracked 문서에 쓰지 않고 local-only `.connect/backend-deploy.env`에 둔다.
+- 복구/배포를 재시도하기 전에 `.connect/backend-deploy.env`의 `SSH_TARGET`이 Tailscale host를 가리키는지 확인한다.
+- 인스턴스 reboot 후 user service가 SSH 세션 종료와 함께 내려가면 `sudo loginctl enable-linger ubuntu`를 적용하고 `systemctl --user enable --now baseball-live-kr-backend.service`로 상주시킨다.
+
 배포 루틴:
 
 - `backend-spike` 의존성이 없거나 오래됐으면 `npm ci` 실행
