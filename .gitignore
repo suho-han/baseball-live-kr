@@ -10,6 +10,7 @@ backend-spike/dist/
 # Runtime outputs
 artifacts/
 .data/
+outputs/
 backend-spike/.data/
 backend-spike/artifacts/
 backend-spike/logs/polling/
@@ -19,6 +20,7 @@ BaseballLiveKRApp/Shared/TeamBrandAssets/**/download__*
 
 # Build outputs & tool caches
 /.xcode/
+/.gjc/
 /.omo/
 /dist/
 *.tar.gz
