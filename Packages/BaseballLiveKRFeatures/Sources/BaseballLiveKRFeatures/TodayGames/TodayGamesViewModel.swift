@@ -246,8 +246,12 @@ public final class TodayGamesViewModel: ObservableObject {
     }
 
     public func loadIfNeeded(date: String? = nil) async {
-        guard state == .idle else { return }
-        await load(date: date)
+        switch state {
+        case .idle, .failed:
+            await load(date: date)
+        case .loading, .loaded:
+            break
+        }
     }
 
     public func load(date: String? = nil) async {
@@ -476,6 +480,11 @@ public final class TodayGamesViewModel: ObservableObject {
                 guard Task.isCancelled == false else { return }
                 self.state = .failed(message: Self.message(for: error))
             }
+
+            guard let self else { return }
+            guard Task.isCancelled == false else { return }
+
+            self.pollingTask = nil
         }
     }
 }

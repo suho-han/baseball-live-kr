@@ -456,6 +456,54 @@ struct TodayGamesViewModelTests {
         #expect(viewModel.games == [game])
     }
 
+    @Test func pollingRestartsAfterStreamFailureOnNextLoad() async throws {
+        let initialGame = makeGame(id: "live", status: .live, startHour: 17)
+        let updatedGame = makeGame(id: "live", status: .final, startHour: 17)
+        let repository = ScriptedGameRepository(
+            responses: [
+                .success(TodayGames(date: "20260612", games: [initialGame])),
+                .failure(TestError.offline)
+            ],
+            fallback: TodayGames(date: "20260612", games: [updatedGame])
+        )
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(repository: repository, pollingInterval: .milliseconds(50)),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.load()
+        try await waitUntilState(viewModel, equals: .failed(message: "서버에 연결할 수 없습니다."))
+
+        await viewModel.load()
+
+        #expect(viewModel.state == .loaded)
+        #expect(viewModel.games == [updatedGame])
+        try await waitUntilFetchCount(repository, isAtLeast: 4)
+    }
+
+    @Test func loadIfNeededRetriesAfterFailedLoad() async {
+        let game = makeGame(id: "live", status: .live, startHour: 17)
+        let repository = ScriptedGameRepository(
+            responses: [.failure(TestError.offline)],
+            fallback: TodayGames(date: "20260612", games: [game])
+        )
+        let viewModel = TodayGamesViewModel(
+            client: GameFeedClient(repository: repository, pollingInterval: .seconds(3_600)),
+            loadSelectedTeamID: { nil },
+            saveSelectedTeamID: { _ in }
+        )
+
+        await viewModel.loadIfNeeded()
+
+        #expect(viewModel.state == .failed(message: "서버에 연결할 수 없습니다."))
+
+        await viewModel.loadIfNeeded()
+
+        #expect(viewModel.state == .loaded)
+        #expect(viewModel.games == [game])
+    }
+
     @Test func pollingIdenticalPayloadDoesNotPublishGamesAgain() async throws {
         let game = makeGame(id: "live", status: .live, startHour: 17)
         let repository = SequenceGameRepository(
@@ -553,7 +601,7 @@ private func makeGame(
 }
 
 private func waitUntilFetchCount(
-    _ repository: SequenceGameRepository,
+    _ repository: some FetchCountingRepository,
     isAtLeast expectedCount: Int
 ) async throws {
     for _ in 0..<100 {
@@ -593,7 +641,11 @@ private func waitUntilState(_ viewModel: TodayGamesViewModel, equals expectedSta
     #expect(Bool(false), "Timed out waiting for state \(expectedState)")
 }
 
-private actor SequenceGameRepository: GameRepository {
+private protocol FetchCountingRepository: Actor {
+    var fetchCount: Int { get }
+}
+
+private actor SequenceGameRepository: GameRepository, FetchCountingRepository {
     private let todayGamesResponses: [TodayGames]
     private(set) var fetchCount = 0
 
@@ -610,6 +662,32 @@ private actor SequenceGameRepository: GameRepository {
     func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
         let games = todayGamesResponses[min(fetchCount, todayGamesResponses.count - 1)].games
         return GameDetail(date: date ?? "", game: games.first(where: { $0.id == gameId }))
+    }
+
+    func fetchTeamStandings(date: String?) async throws -> TeamStandings {
+        TeamStandings(date: date ?? "", standings: [])
+    }
+}
+
+private actor ScriptedGameRepository: GameRepository, FetchCountingRepository {
+    private var responses: [Result<TodayGames, Error>]
+    private let fallback: TodayGames
+    private(set) var fetchCount = 0
+
+    init(responses: [Result<TodayGames, Error>], fallback: TodayGames) {
+        self.responses = responses
+        self.fallback = fallback
+    }
+
+    func fetchTodayGames(date: String?) async throws -> TodayGames {
+        defer { fetchCount += 1 }
+
+        guard responses.isEmpty == false else { return fallback }
+        return try responses.removeFirst().get()
+    }
+
+    func fetchGameDetail(gameId: String, date: String?) async throws -> GameDetail {
+        GameDetail(date: date ?? "", game: fallback.games.first(where: { $0.id == gameId }))
     }
 
     func fetchTeamStandings(date: String?) async throws -> TeamStandings {
