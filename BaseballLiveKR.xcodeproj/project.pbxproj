@@ -54,12 +54,14 @@
 		2DF940DCE5FFCA04D0797C5F /* BaseballLiveKR.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9052D52F177B008933A08AD3 /* BaseballLiveKR.icns */; };
 		302EE68A70AA5620DE5AFD20 /* BackendSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09F768894B7B87FB854B4E8 /* BackendSettingsModel.swift */; };
 		331B87BE4EB4D6AF43EB3FA6 /* BaseballLiveKRHomeRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC722B7BFCBAF5DB7937F59 /* BaseballLiveKRHomeRootView.swift */; };
+		340673CF612B5EF9B3EDA2D2 /* SparkleUpdateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA33A29F70FB544BDBEF178 /* SparkleUpdateModel.swift */; };
 		351FCA73834BF1B52D60A63A /* SampleGameFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E54EDD5D622B4520DADB248 /* SampleGameFactory.swift */; };
 		376707AA12E45DA73949F12A /* MenuBarGameSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF3F366EA8804F7D73DE8E1 /* MenuBarGameSummary.swift */; };
 		3AE1EB3E52C312242946D87D /* LiveBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C1ECAC06D0909D2CC17A2A /* LiveBadgeView.swift */; };
 		3B492B357F9FE6F411ABAF44 /* TodayGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB70D97EA207C65C4F1E06F1 /* TodayGamesView.swift */; };
 		3C3F151ED9E320108C5BD4F6 /* GameFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B19334A8BD3D1E6FA9239 /* GameFeed.swift */; };
 		3F692F2D19C5B138D99B44FD /* TeamStandingsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F59EFFA0682B099AB3779A /* TeamStandingsDTO.swift */; };
+		43EC62B8B0A345A91497F479 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 4C39EEA52F9EFA0EAC0F9F6A /* Sparkle */; };
 		440BDE4697569945FE28B344 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794CD06FD26339AF8669E73A /* AppSettingsView.swift */; };
 		4427C6B46CF48126D7BC197C /* TeamStandingsDTOMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8820E4E84682C2561A535C5 /* TeamStandingsDTOMapper.swift */; };
 		4523B980FCBEE89DEDEB9DA5 /* KboMetricRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A2797A218DC238F5103948 /* KboMetricRow.swift */; };
@@ -343,10 +345,22 @@
 		EBB711E7EFE2999D337FF288 /* BaseballLiveKRAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseballLiveKRAPIClient.swift; sourceTree = "<group>"; };
 		ECB8604D81A4F932F7BE30DC /* TeamColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamColorPalette.swift; sourceTree = "<group>"; };
 		EE948F405F731D4ED93C02AE /* LaunchAtLoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginController.swift; sourceTree = "<group>"; };
+		EEA33A29F70FB544BDBEF178 /* SparkleUpdateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleUpdateModel.swift; sourceTree = "<group>"; };
 		F7DEC0C30CDF85BB208210D1 /* LaunchAtLoginControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginControllerTests.swift; sourceTree = "<group>"; };
 		FD70158091D1753D9676B30B /* MenuBarPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPresentationTests.swift; sourceTree = "<group>"; };
 		FF66BBD410E21F99EB2709BF /* LiveGamePollingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGamePollingService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		07EC88699300CAA601A9113D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43EC62B8B0A345A91497F479 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0A2071E9F664D4D869347A4F /* iOS */ = {
@@ -378,8 +392,8 @@
 			isa = PBXGroup;
 			children = (
 				57FC9DAFCA00F566131B7EA7 /* BackendSettingsModelTests.swift */,
-				5F9682295065CB7A5247EDC1 /* MenuBarExtraLabelPolicyTests.swift */,
 				F7DEC0C30CDF85BB208210D1 /* LaunchAtLoginControllerTests.swift */,
+				5F9682295065CB7A5247EDC1 /* MenuBarExtraLabelPolicyTests.swift */,
 				FD70158091D1753D9676B30B /* MenuBarPresentationTests.swift */,
 			);
 			name = Tests;
@@ -539,6 +553,7 @@
 				939FEF51317FF1A6114BCC21 /* MenuBarDashboardView.swift */,
 				4673A65E174CFDB4CA92F863 /* MenuBarStatusItemController.swift */,
 				4029E390E7C3CB2E90A5B026 /* SettingsView.swift */,
+				EEA33A29F70FB544BDBEF178 /* SparkleUpdateModel.swift */,
 			);
 			name = macOS;
 			path = BaseballLiveKRApp/macOS;
@@ -675,6 +690,7 @@
 			buildPhases = (
 				2B8C662F24895BF6826E8A0B /* Sources */,
 				E1FC9BACDF5D780BFF770742 /* Resources */,
+				07EC88699300CAA601A9113D /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -682,6 +698,7 @@
 			);
 			name = BaseballLiveKRmacOS;
 			packageProductDependencies = (
+				4C39EEA52F9EFA0EAC0F9F6A /* Sparkle */,
 			);
 			productName = BaseballLiveKRmacOS;
 			productReference = 936E924EBC6DF99202A97674 /* BaseballLiveKRmacOS.app */;
@@ -762,15 +779,18 @@
 			);
 			mainGroup = 65911489BE868162A05D6B1A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0315A5BAA3E26D71C2C43E13 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 59A29A9EFF79945B5EBF3EC5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A9E9975EC814207B5ABC50FC /* BaseballLiveKRWidgetExtension */,
 				B8F9D7D7CFC68D898DCEE5B5 /* BaseballLiveKRiOS */,
 				36F4DAF0BCF639FC3953DFAB /* BaseballLiveKRmacOS */,
 				C914FC03BB840B8B1F415768 /* BaseballLiveKRmacOSTests */,
+				A9E9975EC814207B5ABC50FC /* BaseballLiveKRWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -861,6 +881,7 @@
 				351FCA73834BF1B52D60A63A /* SampleGameFactory.swift in Sources */,
 				22B3DD6C5A71C5988E9462A6 /* ScoreDigitsView.swift in Sources */,
 				B5CA52A14DC14965DA16243D /* SettingsView.swift in Sources */,
+				340673CF612B5EF9B3EDA2D2 /* SparkleUpdateModel.swift in Sources */,
 				A97AC4DDE43A522C71F9C738 /* TeamBadgeView.swift in Sources */,
 				A9EB41B1D03D173C24FBE7FA /* TeamColorPalette.swift in Sources */,
 				C498D90C145DD018900FA6D4 /* TeamColorResolver.swift in Sources */,
@@ -883,8 +904,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				55A713434C28CDEE1F81AE3C /* BackendSettingsModelTests.swift in Sources */,
-				BED9770EDCE5AD14D7B02C95 /* MenuBarExtraLabelPolicyTests.swift in Sources */,
 				8F80CBB58CCFD0460E63820C /* LaunchAtLoginControllerTests.swift in Sources */,
+				BED9770EDCE5AD14D7B02C95 /* MenuBarExtraLabelPolicyTests.swift in Sources */,
 				D61974EA4B450AAA51C3DE7D /* MenuBarPresentationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1362,6 +1383,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0315A5BAA3E26D71C2C43E13 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = exactVersion;
+				version = 2.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4C39EEA52F9EFA0EAC0F9F6A /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0315A5BAA3E26D71C2C43E13 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E7355555621ECD79D6B7C47C /* Project object */;
 }

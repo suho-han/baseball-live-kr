@@ -10,6 +10,10 @@ settings:
     MARKETING_VERSION: 0.1.0
     CURRENT_PROJECT_VERSION: 1
     GENERATE_INFOPLIST_FILE: YES
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.0
 targets:
   BaseballLiveKRiOS:
     type: application
@@ -48,6 +52,8 @@ targets:
       - path: BaseballLiveKRApp/macOS
       - path: BaseballLiveKRApp/macOS/BaseballLiveKR.icns
         buildPhase: resources
+    dependencies:
+      - package: Sparkle
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: kr.suhohan.baseballlivekr.macos

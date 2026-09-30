@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var settings: BackendSettingsModel
-    @ObservedObject var updateChecker: AppUpdateCheckModel
     @Binding var appearanceMode: KboAppearanceMode
     @Binding var isMenuBarEnabled: Bool
     @Binding var isLaunchAtLoginEnabled: Bool
@@ -16,7 +15,6 @@ struct SettingsView: View {
         AppSettingsView(
             viewModel: viewModel,
             settings: settings,
-            updateChecker: updateChecker,
             appearanceMode: $appearanceMode,
             isMenuBarEnabled: $isMenuBarEnabled,
             isLaunchAtLoginEnabled: $isLaunchAtLoginEnabled,

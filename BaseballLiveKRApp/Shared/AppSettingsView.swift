@@ -4,6 +4,9 @@ import AppKit
 #elseif canImport(UIKit)
 import UIKit
 #endif
+#if os(macOS)
+import Sparkle
+#endif
 #if canImport(BaseballLiveKRCore)
 import BaseballLiveKRCore
 #endif
@@ -18,6 +21,9 @@ struct AppSettingsView: View {
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var settings: BackendSettingsModel
     @ObservedObject var updateChecker: AppUpdateCheckModel
+#if os(macOS)
+    @EnvironmentObject private var sparkleUpdater: SparkleUpdateModel
+#endif
     @Binding var appearanceMode: KboAppearanceMode
     @Binding var isMenuBarEnabled: Bool
     @Binding var isLaunchAtLoginEnabled: Bool
@@ -29,7 +35,7 @@ struct AppSettingsView: View {
     init(
         viewModel: TodayGamesViewModel,
         settings: BackendSettingsModel,
-        updateChecker: AppUpdateCheckModel,
+        updateChecker: AppUpdateCheckModel = AppUpdateCheckModel(),
         appearanceMode: Binding<KboAppearanceMode>,
         isMenuBarEnabled: Binding<Bool> = .constant(true),
         isLaunchAtLoginEnabled: Binding<Bool> = .constant(false),
@@ -77,10 +83,17 @@ struct AppSettingsView: View {
                 }
 #endif
 
+#if os(macOS)
+            macOSUpdateSettingsView
+                .tabItem {
+                    Label("업데이트", systemImage: "arrow.down.circle")
+                }
+#else
             updateSettingsView
                 .tabItem {
                     Label("업데이트", systemImage: "arrow.down.circle")
                 }
+#endif
         }
     }
 
@@ -262,6 +275,59 @@ struct AppSettingsView: View {
         }
         .formStyle(.grouped)
     }
+
+#if os(macOS)
+    private var macOSUpdateSettingsView: some View {
+        Form {
+            Section {
+                LabeledContent("현재 버전", value: sparkleUpdater.currentVersionText)
+
+                LabeledContent("마지막 확인", value: sparkleUpdater.lastCheckedText)
+
+                LabeledContent("상태") {
+                    sparkleUpdateStatusLabel
+                }
+
+                Button {
+                    sparkleUpdater.checkForUpdates()
+                } label: {
+                    Label("업데이트 확인", systemImage: "arrow.clockwise")
+                }
+                .disabled(sparkleUpdater.state == .checking)
+
+                Button {
+                    sparkleUpdater.openRepositoryPage()
+                } label: {
+                    Label("Repository", systemImage: "arrow.up.right.square")
+                }
+            } header: {
+                Text("버전 업데이트")
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    @ViewBuilder
+    private var sparkleUpdateStatusLabel: some View {
+        switch sparkleUpdater.state {
+        case .idle:
+            Text("미확인")
+                .foregroundStyle(.secondary)
+        case .checking:
+            ProgressView()
+                .controlSize(.small)
+        case .upToDate:
+            Label("최신 버전", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+        case .updateAvailable(let title):
+            Label(title, systemImage: "arrow.down.circle.fill")
+                .foregroundStyle(.blue)
+        case .failed:
+            Label("업데이트 정보를 확인할 수 없습니다.", systemImage: "xmark.circle.fill")
+                .foregroundStyle(.red)
+        }
+    }
+#endif
 
 #if os(macOS)
     private var menuBarSettingsView: some View {

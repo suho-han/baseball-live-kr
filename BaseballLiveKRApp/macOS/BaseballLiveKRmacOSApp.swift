@@ -22,7 +22,7 @@ struct BaseballLiveKRmacOSApp: App {
     @StateObject private var viewModel: TodayGamesViewModel
     @StateObject private var settings = BackendSettingsModel()
     @StateObject private var navigationModel = AppNavigationModel()
-    @StateObject private var updateChecker = AppUpdateCheckModel()
+    @StateObject private var sparkleUpdater = SparkleUpdateModel()
     @StateObject private var launchAtLoginController = LaunchAtLoginController()
     @AppStorage("kboLiveFontScale") private var fontScale = Double(KboFontScale.defaultValue)
     @AppStorage(KboAppearanceMode.storageKey) private var appearanceModeRawValue = KboAppearanceMode.defaultValue.rawValue
@@ -50,7 +50,6 @@ struct BaseballLiveKRmacOSApp: App {
                 viewModel: viewModel,
                 settings: settings,
                 navigationModel: navigationModel,
-                updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
                 isMenuBarEnabled: $isMenuBarEnabled,
                 isLaunchAtLoginEnabled: launchAtLoginBinding,
@@ -66,23 +65,12 @@ struct BaseballLiveKRmacOSApp: App {
                 .background(menuBarPresenter)
                 .environment(\.kboFontScale, CGFloat(fontScale))
                 .preferredColorScheme(appearanceMode.preferredColorScheme)
+                .environmentObject(sparkleUpdater)
                 .onAppear {
                     applyApplicationAppearance(appearanceMode)
                 }
                 .onChange(of: appearanceMode) { newValue in
                     applyApplicationAppearance(newValue)
-                }
-                .task {
-                    updateChecker.startAutomaticChecks()
-                }
-                .alert("업데이트가 있습니다.", isPresented: $updateChecker.isShowingUpdateAlert) {
-                    Button("다운로드") {
-                        updateChecker.openReleasePage()
-                    }
-
-                    Button("나중에", role: .cancel) {}
-                } message: {
-                    Text(updateChecker.alertMessage)
                 }
         }
         .defaultSize(
@@ -112,7 +100,6 @@ struct BaseballLiveKRmacOSApp: App {
             SettingsView(
                 viewModel: viewModel,
                 settings: settings,
-                updateChecker: updateChecker,
                 appearanceMode: appearanceModeBinding,
                 isMenuBarEnabled: $isMenuBarEnabled,
                 isLaunchAtLoginEnabled: launchAtLoginBinding,
@@ -124,6 +111,7 @@ struct BaseballLiveKRmacOSApp: App {
             .background(menuBarPresenter)
             .environment(\.kboFontScale, CGFloat(fontScale))
             .preferredColorScheme(appearanceMode.preferredColorScheme)
+            .environmentObject(sparkleUpdater)
         }
     }
 

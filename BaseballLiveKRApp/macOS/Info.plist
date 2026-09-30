@@ -31,5 +31,11 @@
 	</dict>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUFeedURL</key>
+	<string>https://github.com/suho-han/baseball-live-kr/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>kceIJHfjT4VZumzs6rwzFTdY6K4DhQuQllYzNzi0gZM=</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>3600</integer>
 </dict>
 </plist>
