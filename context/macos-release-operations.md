@@ -1,7 +1,7 @@
 # macOS Release And Remote Test Operations
 
 작성일: 2026-06-17
-Updated: 2026-07-09
+Updated: 2026-10-01
 
 ## 1. 목적
 
@@ -57,9 +57,12 @@ archive 포함 항목:
 생성물:
 
 ```text
-.build/transfer/BaseballLiveKR-0.1.0-macOS.dmg
-.build/transfer/BaseballLiveKR-0.1.0-macOS.dmg.sha256
+.build/transfer/BaseballLiveKR-<version>-macOS.dmg
+.build/transfer/BaseballLiveKR-<version>-macOS.dmg.sha256
+.build/transfer/appcast.xml
 ```
+
+`appcast.xml`은 `scripts/package-macos-dmg.sh`가 Sparkle `sign_update`로 DMG를 EdDSA 서명하면서 생성한다. DMG 버전은 패키징되는 앱 Info.plist에서 자동으로 읽는다. 앱은 `SUFeedURL`로 `releases/latest/download/appcast.xml`을 바라보므로 릴리즈마다 새 appcast를 같은 이름으로 업로드하면 된다. Sparkle EdDSA 사설키는 keychain에만 둔다.
 
 DMG 포함 항목:
 
@@ -215,14 +218,20 @@ Credentials required:
 후속 결정:
 
 - Developer ID Application 인증서 사용 여부
-- Sparkle 또는 자체 업데이트 채널 도입 여부
+
+Sparkle 자동 업데이트 채널은 채택했다 (2026-10-01):
+
+- macOS 앱에 Sparkle 2.10.0 (SPM, macOS 타깃 전용) 도입. `BaseballLiveKRmacOSApp`이 `SparkleUpdateModel`로 updater를 시작하고, 기존 자체 GitHub API 체커와 커스텀 알림은 macOS에서 제거했다 (iOS는 기존 체커 유지).
+- `SUFeedURL`은 `https://github.com/suho-han/baseball-live-kr/releases/latest/download/appcast.xml`, `SUPublicEDKey`는 Info.plist에 기록. 자동 확인 주기는 1시간.
+- Sparkle 업데이트는 EdDSA 서명으로 검증되므로 Developer ID/notarization 없이도 설치 후 업데이트는 Gatekeeper를 우회한다. 첫 설치 경고는 notarization 전까지 동일하다.
+- 백엔드처럼 CI로 DMG를 자동 업로드하려면 EdDSA 사설키를 GitHub Secrets에 두는 작업이 필요하다 (미결).
 
 ## 8. Versioning And Changelog
 
 현재 XcodeGen 기준:
 
-- `MARKETING_VERSION`: `0.1.0`
-- `CURRENT_PROJECT_VERSION`: `1`
+- `MARKETING_VERSION`: `0.1.1`
+- `CURRENT_PROJECT_VERSION`: `2`
 
 권장 정책:
 
@@ -237,7 +246,7 @@ Credentials required:
 - backend `npm run build` 통과
 - `BaseballLiveKRmacOS` xcodebuild 통과
 - `./scripts/package-macmini-runtime.sh` 통과
-- `./scripts/package-macos-dmg.sh` 통과
+- `./scripts/package-macos-dmg.sh` 통과 (Sparkle EdDSA 서명과 appcast.xml 생성 포함)
 - `./scripts/verify-release-assets.sh .xcode/DerivedData/Build/Products .build/macmini-runtime .build/transfer` 통과
 - archive 안에 `BaseballLiveKR.app`, packaged backend, run script 포함
 - DMG Finder 창에 왼쪽 `BaseballLiveKR.app`, 오른쪽 `/Applications` symlink, 드래그 화살표 배경 이미지 표시

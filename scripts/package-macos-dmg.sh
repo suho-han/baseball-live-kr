@@ -8,16 +8,15 @@ APP_PATH="${APP_PATH:-$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/BaseballL
 OUT_DIR="${OUT_DIR:-$ROOT_DIR/.build/transfer}"
 STAGING_DIR="${STAGING_DIR:-$ROOT_DIR/.build/macos-dmg}"
 WORK_DIR="${WORK_DIR:-$ROOT_DIR/.build/macos-dmg-work}"
-VERSION="${VERSION:-0.1.0}"
+VERSION="${VERSION:-}"
 VOLUME_NAME="${VOLUME_NAME:-Baseball LIVE KR}"
-DMG_PATH="${DMG_PATH:-$OUT_DIR/BaseballLiveKR-$VERSION-macOS.dmg}"
-RW_DMG_PATH="$WORK_DIR/BaseballLiveKR-$VERSION-macOS-rw.dmg"
 BACKGROUND_DIR="$STAGING_DIR/.background"
 BACKGROUND_PATH="$BACKGROUND_DIR/dmg-background.png"
 BACKGROUND_SCRIPT="$WORK_DIR/dmg-background.swift"
 SIGN_IDENTITY="${SIGN_IDENTITY:-}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-}"
-APP_ZIP_PATH="$WORK_DIR/BaseballLiveKR-$VERSION-macOS-app.zip"
+SPARKLE_TOOLS_DIR="${SPARKLE_TOOLS_DIR:-$ROOT_DIR/.build/sparkle-cli/bin}"
+RELEASE_DOWNLOAD_URL_PREFIX="${RELEASE_DOWNLOAD_URL_PREFIX:-https://github.com/suho-han/baseball-live-kr/releases/download}"
 
 require_tool() {
   local tool_name="$1"
@@ -135,13 +134,20 @@ fi
 
 SETFILE_BIN="$(find_setfile)"
 
-rm -rf "$STAGING_DIR" "$WORK_DIR" "$DMG_PATH" "$DMG_PATH.sha256"
+rm -rf "$STAGING_DIR" "$WORK_DIR"
 mkdir -p "$BACKGROUND_DIR" "$WORK_DIR" "$OUT_DIR"
 
 cp -R "$APP_PATH" "$STAGING_DIR/BaseballLiveKR.app"
 
 STAGED_APP="$STAGING_DIR/BaseballLiveKR.app"
 xattr -cr "$STAGED_APP"
+
+VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$STAGED_APP/Contents/Info.plist")"
+BUILD_NUMBER="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$STAGED_APP/Contents/Info.plist")"
+DMG_PATH="${DMG_PATH:-$OUT_DIR/BaseballLiveKR-$VERSION-macOS.dmg}"
+RW_DMG_PATH="$WORK_DIR/BaseballLiveKR-$VERSION-macOS-rw.dmg"
+APP_ZIP_PATH="$WORK_DIR/BaseballLiveKR-$VERSION-macOS-app.zip"
+rm -f "$DMG_PATH" "$DMG_PATH.sha256"
 
 if [[ -n "$SIGN_IDENTITY" ]]; then
   codesign --force --deep --options runtime --timestamp --sign "$SIGN_IDENTITY" "$STAGED_APP"
@@ -196,7 +202,7 @@ if [[ -n "$SETFILE_BIN" ]]; then
   "$SETFILE_BIN" -a V "$mount_path/.background" || true
 fi
 
-osascript <<APPLESCRIPT
+if ! osascript <<APPLESCRIPT
 tell application "Finder"
   tell disk "$layout_volume_name"
     open
@@ -216,10 +222,14 @@ tell application "Finder"
   end tell
 end tell
 APPLESCRIPT
+then
+  printf 'Finder icon layout failed (automation permission or Finder busy); continuing with default DMG layout.\n' >&2
+  printf 'Re-run this script from a terminal with Finder automation permission to arrange the icons.\n' >&2
+fi
 
 bless --folder "$mount_path" --openfolder "$mount_path" >/dev/null 2>&1 || true
 sync
-hdiutil detach "$mount_path" >/dev/null
+hdiutil detach "$mount_path" >/dev/null 2>&1 || hdiutil detach "$mount_path" -force >/dev/null 2>&1
 trap - EXIT
 
 hdiutil convert "$RW_DMG_PATH" \
@@ -239,6 +249,50 @@ if [[ -n "$NOTARY_PROFILE" ]]; then
   spctl --assess --type open --context context:primary-signature --verbose=4 "$DMG_PATH"
 fi
 
+if [[ -n "${SPARKLE_SIGN_UPDATE:-}" ]]; then
+  SPARKLE_SIGN_UPDATE_BIN="$SPARKLE_SIGN_UPDATE"
+elif [[ -x "$SPARKLE_TOOLS_DIR/sign_update" ]]; then
+  SPARKLE_SIGN_UPDATE_BIN="$SPARKLE_TOOLS_DIR/sign_update"
+elif command -v sign_update >/dev/null 2>&1; then
+  SPARKLE_SIGN_UPDATE_BIN="$(command -v sign_update)"
+else
+  printf 'Sparkle sign_update is required to sign the DMG and generate appcast.xml.\n' >&2
+  printf 'Set SPARKLE_TOOLS_DIR to a directory containing sign_update (keychain EdDSA key required).\n' >&2
+  exit 1
+fi
+
+SIGNATURE_OUTPUT="$("$SPARKLE_SIGN_UPDATE_BIN" "$DMG_PATH")"
+ED_SIGNATURE="$(printf '%s\n' "$SIGNATURE_OUTPUT" | sed -n 's/.*sparkle:edSignature="\([^"]*\)".*/\1/p')"
+SIGNATURE_LENGTH="$(printf '%s\n' "$SIGNATURE_OUTPUT" | sed -n 's/.*length="\([0-9]*\)".*/\1/p')"
+
+if [[ -z "$ED_SIGNATURE" || -z "$SIGNATURE_LENGTH" ]]; then
+  printf 'Failed to parse sign_update output: %s\n' "$SIGNATURE_OUTPUT" >&2
+  exit 1
+fi
+
+APPCAST_PATH="${APPCAST_PATH:-$OUT_DIR/appcast.xml}"
+DOWNLOAD_URL="$RELEASE_DOWNLOAD_URL_PREFIX/v$VERSION/$(basename "$DMG_PATH")"
+
+cat > "$APPCAST_PATH" <<XML
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+    <channel>
+        <title>Baseball LIVE KR</title>
+        <link>https://github.com/suho-han/baseball-live-kr/releases/latest/download/appcast.xml</link>
+        <description>Baseball LIVE KR 자동 업데이트 피드</description>
+        <language>ko</language>
+        <item>
+            <title>Baseball LIVE KR $VERSION</title>
+            <pubDate>$(date -u +"%a, %d %b %Y %H:%M:%S %z")</pubDate>
+            <sparkle:version>$BUILD_NUMBER</sparkle:version>
+            <sparkle:shortVersionString>$VERSION</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure url="$DOWNLOAD_URL" sparkle:edSignature="$ED_SIGNATURE" length="$SIGNATURE_LENGTH" type="application/x-apple-diskimage"/>
+        </item>
+    </channel>
+</rss>
+XML
+
 printf 'Packaged macOS DMG: %s\n' "$DMG_PATH"
 printf 'SHA-256: %s\n' "$DMG_SHA256"
 if [[ -n "$SIGN_IDENTITY" ]]; then
@@ -251,3 +305,5 @@ if [[ -n "$NOTARY_PROFILE" ]]; then
 else
   printf 'Notarization: skipped\n'
 fi
+printf 'Sparkle EdDSA: signed (%s bytes, sparkle:version %s)\n' "$SIGNATURE_LENGTH" "$BUILD_NUMBER"
+printf 'Sparkle appcast: %s\n' "$APPCAST_PATH"

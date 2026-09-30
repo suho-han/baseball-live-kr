@@ -49,7 +49,7 @@ swift test
 프로젝트 파일은 `project.yml`에서 생성합니다.
 
 ```bash
-/private/tmp/XcodeGen/.build/release/xcodegen generate
+xcodegen generate
 open BaseballLiveKR.xcodeproj
 ```
 
@@ -167,6 +167,37 @@ NOTARY_PROFILE=baseball-live-kr-notary \
 ```
 
 사전 요구사항은 Developer ID Application 인증서와 `xcrun notarytool store-credentials`로 저장한 keychain profile이다. `SIGN_IDENTITY`와 `NOTARY_PROFILE`을 지정하지 않으면 기존처럼 ad-hoc DMG를 만든다.
+
+### Sparkle 자동 업데이트
+
+macOS 앱은 Sparkle 2로 자동 업데이트를 제공한다. `project.yml`의 `packages`에 Sparkle 2.10.0이고 macOS 타깃에만 연결되어 있다.
+
+- 앱 Info.plist(`BaseballLiveKRApp/macOS/Info.plist`)의 키:
+  - `SUFeedURL`: `https://github.com/suho-han/baseball-live-kr/releases/latest/download/appcast.xml` (latest 릴리즈의 appcast로 리다이렉트되는 안정 URL)
+  - `SUPublicEDKey`: EdDSA 공개키
+  - `SUScheduledCheckInterval`: 3600 (1시간)
+- EdDSA 사설키는 릴리즈 머신의 macOS keychain에만 존재한다(`generate_keys`가 저장). 저장소에 절대 기록하지 않는다.
+
+키 생성(1회, Sparkle CLI 도구 필요):
+
+```bash
+.build/sparkle-cli/bin/generate_keys
+```
+
+CLI 도구가 없으면 Sparkle 릴리즈 아카이브(`Sparkle-<version>.tar.xz`)를 `.build/sparkle-cli`에 풀어둔다. SPM 체크아웃에는 bin 도구가 포함되어 있지 않다.
+
+DMG 패키징 시 `scripts/package-macos-dmg.sh`가 자동으로 `sign_update`로 DMG를 서명하고 `.build/transfer/appcast.xml`을 생성한다. 버전은 패키징되는 앱의 Info.plist에서 자동으로 읽는다(`VERSION` 환경변수로 강제 지정 가능). `sign_update`를 찾지 못하면 스크립트가 실패한다.
+
+릴리즈에 업로드:
+
+```bash
+gh release upload v<version> \
+  .build/transfer/BaseballLiveKR-<version>-macOS.dmg \
+  .build/transfer/BaseballLiveKR-<version>-macOS.dmg.sha256 \
+  .build/transfer/appcast.xml --clobber
+```
+
+`appcast.xml`은 매 릴리즈마다 새로 생성해서 같은 이름으로 올린다. 앱의 `SUFeedURL`이 latest 릴리즈를 가리키므로 별도 호스팅은 필요 없다.
 
 원격 backend 서버에 systemd user service로 자동 배포:
 
