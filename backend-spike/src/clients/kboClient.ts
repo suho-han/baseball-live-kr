@@ -173,7 +173,8 @@ export async function fetchKboLiveTextView(input: LiveTextViewRequest): Promise<
 export async function fetchKboScheduleList(seasonId: string, gameMonth: string) {
   const json = await postForm('GetScheduleList', 'Schedule.asmx/GetScheduleList', {
     leId: '1',
-    srIdList: '0,9,6',
+    // 0,9,6 = 정규시즌, 3,4,5,7 = 포스트시즌 (KBO 일정 페이지 시리즈 분류 기준)
+    srIdList: '0,9,6,3,4,5,7',
     seasonId,
     gameMonth,
     teamId: ''
