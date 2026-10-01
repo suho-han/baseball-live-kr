@@ -22,8 +22,10 @@ final class SparkleUpdateModel: NSObject, ObservableObject {
     )
 
     private let repositoryPageURL = URL(string: "https://github.com/suho-han/baseball-live-kr")!
+    private let testFeedURL: String?
 
     override init() {
+        testFeedURL = Self.testFeedURLFromLaunchArguments()
         super.init()
         updaterController.startUpdater()
     }
@@ -66,9 +68,24 @@ final class SparkleUpdateModel: NSObject, ObservableObject {
         formatter.timeStyle = .short
         return formatter
     }()
+
+    private static func testFeedURLFromLaunchArguments() -> String? {
+        let arguments = ProcessInfo.processInfo.arguments
+
+        guard let argumentIndex = arguments.firstIndex(of: "-sparkleTestFeedURL"),
+              arguments.count > argumentIndex + 1 else {
+            return nil
+        }
+
+        return arguments[argumentIndex + 1]
+    }
 }
 
 extension SparkleUpdateModel: SPUUpdaterDelegate {
+    func feedURLString(for updater: SPUUpdater) -> String? {
+        testFeedURL
+    }
+
     func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
         state = .updateAvailable(item.displayVersionString)
         lastCheckedAt = Date()

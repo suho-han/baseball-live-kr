@@ -199,6 +199,24 @@ gh release upload v<version> \
 
 `appcast.xml`은 매 릴리즈마다 새로 생성해서 같은 이름으로 올린다. 앱의 `SUFeedURL`이 latest 릴리즈를 가리키므로 별도 호스팅은 필요 없다.
 
+### Sparkle 업데이트 테스트
+
+실제 릴리즈 채널을 건드리지 않고 업데이트 흐름(감지 → 다운로드 → 설치 → 재시작)을 테스트한다.
+
+```bash
+./scripts/test-sparkle-update.sh
+```
+
+이 스크립트는:
+
+1. 패키징된 DMG(`.build/transfer`)를 `.build/sparkle-test`로 복사하고, 현재 빌드 + 1을 광고하는 테스트 appcast를 만든다 (동일 EdDSA 키로 서명).
+2. `http://127.0.0.1:8899` 로컬 서버로 피드를 서빙한다 (`PORT`로 변경 가능).
+3. 앱을 `-sparkleTestFeedURL <url>` 런치 아규먼트와 함께 실행한다 — `SparkleUpdateModel`이 이 값을 받아 Info.plist의 `SUFeedURL` 대신 테스트 피드를 사용한다.
+
+앱이 뜨면 설정 > 업데이트 > 업데이트 확인 (또는 자동 확인 프롬프트 허용). 광고 버전이 더 높으므로 Sparkle이 업데이트 대화상자를 띄우고, 설치를 누르면 로컬 DMG를 받아 설치 후 앱을 재시작한다. 테스트 종료는 Ctrl+C.
+
+`APP_PATH`로 다른 앱 번들을 지정할 수 있다 (예: 설치 후 `APP_PATH=/Applications/BaseballLiveKR.app`). DMG에 광고 버전보다 낮은 실제 버전이 들어 있으므로, 설치 후 앱 버전은 그대로 0.1.1로 표시되는 것이 정상이다.
+
 원격 backend 서버에 systemd user service로 자동 배포:
 
 ```bash
