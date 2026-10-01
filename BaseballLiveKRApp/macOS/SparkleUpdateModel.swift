@@ -97,6 +97,16 @@ extension SparkleUpdateModel: SPUUpdaterDelegate {
     }
 
     func updater(_ updater: SPUUpdater, didAbortWithError error: any Error) {
+        // Sparkle also reports "no update found" and user-canceled installs
+        // through this callback; those are not update check failures.
+        let nsError = error as NSError
+        let errorCode = Int32(nsError.code)
+        guard nsError.domain == SUSparkleErrorDomain,
+              errorCode != SUError.noUpdateError.rawValue,
+              errorCode != SUError.installationCanceledError.rawValue else {
+            return
+        }
+
         state = .failed
         lastCheckedAt = Date()
     }
