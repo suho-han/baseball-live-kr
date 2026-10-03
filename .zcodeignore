@@ -1,0 +1,74 @@
+.DS_Store
+*.log
+*.tmp
+
+# Node
+node_modules/
+backend-spike/node_modules/
+backend-spike/dist/
+
+# Runtime outputs
+artifacts/
+.data/
+outputs/
+backend-spike/.data/
+backend-spike/artifacts/
+backend-spike/logs/polling/
+
+# Generated source downloads for team brand assets
+BaseballLiveKRApp/Shared/TeamBrandAssets/**/download__*
+
+# Build outputs & tool caches
+/.xcode/
+/.gjc/
+/.omo/
+/dist/
+*.tar.gz
+
+# Swift
+.build/
+DerivedData/
+Package.resolved
+
+# Xcode user data
+*.xcuserdata/
+*.xcuserstate
+
+# Local env
+.env
+.env.*
+.connect/
+
+# Python
+__pycache__/
+*.pyc
+
+# ===== ↑ 以上同步自 .gitignore（「从 .gitignore 同步」只重写以上部分）=====
+.git/
+.hg/
+.svn/
+bower_components/
+jspm_packages/
+site-packages/
+venv/
+coverage/
+htmlcov/
+lcov-report/
+cmakefiles/
+cmake-build-*/
+bazel-*/
+pods/
+deriveddata/
+storybook-static/
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+cdk.out/
+*.egg-info/
+*.dist-info/
+eggs/
+pip-wheel-metadata/
+wheels/
+# ----- ↑ 以上为 ZCode 默认排除规则（自定义规则请写在本行下方，不会被同步/恢复改动）-----
+# 自定义规则写在下方（本行提示可删除）

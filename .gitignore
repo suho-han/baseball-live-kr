@@ -22,6 +22,7 @@ BaseballLiveKRApp/Shared/TeamBrandAssets/**/download__*
 /.xcode/
 /.gjc/
 /.omo/
+/.zcode/
 /dist/
 *.tar.gz
 
