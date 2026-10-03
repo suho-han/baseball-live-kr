@@ -51,7 +51,7 @@ struct BackendSettingsView: View {
     private var presetSection: some View {
         settingsCard {
             VStack(alignment: .leading, spacing: Layout.cardSpacing) {
-                sectionTitle("환경", subtitle: "Production이 기본값입니다. Staging(Beta)는 운영 후보 backend에 연결하고, Local은 계정 기능이 준비되기 전까지 잠깁니다.")
+                sectionTitle("환경", subtitle: "Production이 기본값이며, Local과 Staging(Beta)는 계정 기능이 준비되기 전까지 잠깁니다.")
 
                 VStack(spacing: KboSpacingToken.small) {
                     ForEach(settings.orderedPresets) { preset in

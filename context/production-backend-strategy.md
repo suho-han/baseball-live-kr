@@ -304,8 +304,8 @@ Phase 3: app environment 전환
 - `BASEBALL_LIVE_KR_BASE_URL`은 모든 preset보다 우선한다.
 - `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`은 각 preset의 초기 URL로 사용한다.
 - 앱 설정에서 저장한 preset별 URL은 재시작 후에도 유지된다.
-- `Staging(Beta)` preset은 선택 가능하며(Local은 잠김 유지), staging URL은 환경변수/저장 preset URL로만 주입한다(트래킹 파일에 URL 기록 없음).
-- `scripts/deploy-remote-backend.sh`에 `DEPLOY_ENV=staging` 옵션이 있다. 같은 운영 호스트에 `-staging` 접미 systemd user service(별도 포트)로 배포하며 접속 값은 git-ignored `.connect/backend-deploy-staging.env`로 관리한다. GitHub Release polling updater의 staging/prerelease 채널은 아직 미구현이다.
+- 백엔드는 production 단일로 운영한다(별도 staging 인스턴스는 운영하지 않는다). 앱의 `Staging(Beta)`/`Local` preset은 계정 기능 준비 전까지 잠금을 유지한다.
+- staging backend가 필요해지면 `scripts/deploy-remote-backend.sh`의 `DEPLOY_ENV=staging` 옵션으로 같은 운영 호스트에 `-staging` 접미 systemd user service(별도 포트)로 배포할 수 있다. 접속 값은 git-ignored `.connect/backend-deploy-staging.env`로 관리한다. GitHub Release polling updater의 staging/prerelease 채널은 아직 미구현이다.
 
 Phase 4: operationalize
 
