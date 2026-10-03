@@ -47,7 +47,7 @@ final class BackendSettingsModel: ObservableObject {
 
     nonisolated(unsafe) static let presetPolicy = BackendPresetPolicy<BackendPreset>(
         displayOrder: [.production, .staging, .local],
-        selectablePresets: [.production]
+        selectablePresets: [.production, .staging]
     )
 
     private let defaults: UserDefaults
