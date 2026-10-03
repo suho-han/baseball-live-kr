@@ -109,7 +109,8 @@ struct BaseballLiveKRHomeRootView: View {
                         launchAtLoginStatusText: launchAtLoginStatusText,
                         launchAtLoginDetailText: launchAtLoginDetailText,
                         onRefreshLaunchAtLogin: onRefreshLaunchAtLogin,
-                        onApplyBackendSettings: applyBackendSettings
+                        onApplyBackendSettings: applyBackendSettings,
+                        usesInlineTabBar: true
                     )
                     .navigationTitle("설정")
 #if os(iOS)

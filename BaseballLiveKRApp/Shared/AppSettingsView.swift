@@ -17,12 +17,45 @@ import BaseballLiveKRDesignSystem
 import BaseballLiveKRFeatures
 #endif
 
+#if os(macOS)
+private enum AppSettingsInlineTab: CaseIterable, Identifiable {
+    case backend
+    case team
+    case display
+    case menuBar
+    case update
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .backend: return "백엔드"
+        case .team: return "응원팀"
+        case .display: return "표시"
+        case .menuBar: return "메뉴바"
+        case .update: return "업데이트"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .backend: return "server.rack"
+        case .team: return "star"
+        case .display: return "circle.lefthalf.filled"
+        case .menuBar: return "menubar.rectangle"
+        case .update: return "arrow.down.circle"
+        }
+    }
+}
+#endif
+
 struct AppSettingsView: View {
     @ObservedObject var viewModel: TodayGamesViewModel
     @ObservedObject var settings: BackendSettingsModel
     @ObservedObject var updateChecker: AppUpdateCheckModel
 #if os(macOS)
     @EnvironmentObject private var sparkleUpdater: SparkleUpdateModel
+    @State private var inlineTabSelection: AppSettingsInlineTab = .backend
 #endif
     @Binding var appearanceMode: KboAppearanceMode
     @Binding var isMenuBarEnabled: Bool
@@ -31,6 +64,7 @@ struct AppSettingsView: View {
     let launchAtLoginDetailText: String
     let onRefreshLaunchAtLogin: () -> Void
     let onApplyBackendSettings: () -> Void
+    private let usesInlineTabBar: Bool
 
     init(
         viewModel: TodayGamesViewModel,
@@ -42,7 +76,8 @@ struct AppSettingsView: View {
         launchAtLoginStatusText: String = "꺼짐",
         launchAtLoginDetailText: String = "Mac에 로그인하면 Baseball LIVE KR을 자동으로 엽니다.",
         onRefreshLaunchAtLogin: @escaping () -> Void = {},
-        onApplyBackendSettings: @escaping () -> Void
+        onApplyBackendSettings: @escaping () -> Void,
+        usesInlineTabBar: Bool = false
     ) {
         self.viewModel = viewModel
         self.settings = settings
@@ -54,9 +89,27 @@ struct AppSettingsView: View {
         self.launchAtLoginDetailText = launchAtLoginDetailText
         self.onRefreshLaunchAtLogin = onRefreshLaunchAtLogin
         self.onApplyBackendSettings = onApplyBackendSettings
+        self.usesInlineTabBar = usesInlineTabBar
     }
 
     var body: some View {
+#if os(macOS)
+        if usesInlineTabBar {
+            VStack(spacing: 0) {
+                inlineTabBar
+
+                inlineTabContent
+            }
+            .background(settingsBackground)
+        } else {
+            toolbarTabView
+        }
+#else
+        toolbarTabView
+#endif
+    }
+
+    private var toolbarTabView: some View {
         TabView {
             BackendSettingsView(
                 settings: settings,
@@ -96,6 +149,79 @@ struct AppSettingsView: View {
 #endif
         }
     }
+
+#if os(macOS)
+    private var inlineTabBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: KboSpacingToken.xSmall) {
+                ForEach(AppSettingsInlineTab.allCases) { tab in
+                    inlineTabButton(for: tab)
+                }
+            }
+            .padding(KboSpacingToken.small)
+        }
+        .background(KboSurfaceToken.glassControl)
+        .clipShape(RoundedRectangle(cornerRadius: KboRadiusToken.medium, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: KboRadiusToken.medium, style: .continuous)
+                .stroke(KboSurfaceToken.glassBorder.opacity(0.7), lineWidth: 1)
+        }
+        .padding(.horizontal, KboSpacingToken.large)
+        .padding(.vertical, KboSpacingToken.medium)
+    }
+
+    private func inlineTabButton(for tab: AppSettingsInlineTab) -> some View {
+        let isSelected = inlineTabSelection == tab
+
+        return Button {
+            inlineTabSelection = tab
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: tab.systemImage)
+                    .font(.system(size: 12, weight: .semibold))
+
+                Text(tab.title)
+                    .font(KboTypographyToken.footnote)
+                    .lineLimit(1)
+            }
+            .foregroundStyle(isSelected ? KboTheme.primaryText : KboTheme.secondaryText)
+            .padding(.horizontal, KboSpacingToken.medium)
+            .padding(.vertical, 7)
+            .background {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: KboRadiusToken.small, style: .continuous)
+                        .fill(KboSemanticColorToken.accentBlue.opacity(0.16))
+                }
+            }
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: KboRadiusToken.small, style: .continuous)
+                        .stroke(KboSemanticColorToken.accentBlue.opacity(0.38), lineWidth: 1)
+                }
+            }
+            .contentShape(RoundedRectangle(cornerRadius: KboRadiusToken.small, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(tab.title)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    @ViewBuilder
+    private var inlineTabContent: some View {
+        switch inlineTabSelection {
+        case .backend:
+            BackendSettingsView(settings: settings, onApply: onApplyBackendSettings)
+        case .team:
+            teamSettingsView
+        case .display:
+            appearanceSettingsView
+        case .menuBar:
+            menuBarSettingsView
+        case .update:
+            macOSUpdateSettingsView
+        }
+    }
+#endif
 
     private var teamSettingsView: some View {
         ScrollView {
