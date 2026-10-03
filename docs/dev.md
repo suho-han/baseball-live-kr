@@ -77,14 +77,36 @@ xcodebuild -scheme BaseballLiveKRiOS -project BaseballLiveKR.xcodeproj -destinat
 macOS 앱 기본 동작:
 
 - `BASEBALL_LIVE_KR_BASE_URL`을 지정하지 않으면 `Production` preset의 경기 데이터를 사용합니다.
-- 현재 내장 `Local`, `Staging` preset의 기본 URL은 `http://127.0.0.1:17361`입니다.
+- 설정 화면에서 선택 가능한 preset은 `Production`(기본값)과 `Staging(Beta)`입니다. `Local`은 계정 기능이 준비되기 전까지 잠겨 있습니다.
+- 내장 `Staging` preset의 기본 URL은 `http://127.0.0.1:17361`이며, 실제 staging backend 주소는 아래 방법으로 주입합니다.
 - 현재 내장 `Production` preset의 기본 URL은 `https://api.baseball-live.kro.kr`입니다.
 - macOS 앱은 로컬 개발 backend 접속을 위해 HTTP loopback ATS 예외를 포함합니다.
 - 앱은 기본적으로 최신 경기 정보용 주소를 호출합니다.
-- iOS/macOS 앱의 설정 화면에서 `Local`, `Staging`, `Production` 데이터 주소를 선택하고 저장할 수 있습니다.
 - `BASEBALL_LIVE_KR_BASE_URL` 환경변수는 `Local` preset 주소에만 사용됩니다.
-- `BASEBALL_LIVE_KR_STAGING_BASE_URL`, `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`을 지정하면 설정 화면의 Staging/Production preset 초기 URL로 사용합니다.
+- `BASEBALL_LIVE_KR_STAGING_BASE_URL` 환경변수 또는 `defaults write kr.suhohan.baseballlivekr.macos baseball-live-kr.backend-staging-base-url <url>`로 Staging preset URL을 주입합니다. 이 값들은 저장소에 기록하지 않습니다.
+- `BASEBALL_LIVE_KR_PRODUCTION_BASE_URL`을 지정하면 설정 화면의 Production preset 초기 URL로 사용합니다.
 - Production preset은 `https://api.baseball-live.kro.kr`를 기본 URL로 사용합니다.
+- staging을 http 포트로 직접 노출한 경우 macOS는 ATS 예외로 접속할 수 있지만, iOS는 ATS 기본 정책상 http URL에 접속할 수 없습니다(https staging 또는 iOS ATS 예외 별도 작업 필요).
+
+## BaseballLiveKR-Beta 앱
+
+staging backend 테스트용 macOS 앱 변형입니다. 운영 앱과 번들 ID가 다르므로(`kr.suhohan.baseballlivekr.macos.beta`) 동시에 실행할 수 있고 설정도 따로 저장됩니다.
+
+```bash
+./scripts/baseball-live-kr.sh open-beta
+```
+
+- 창 제목과 메뉴바 항목 이름이 `BaseballLiveKR-Beta`로 표시됩니다(번들 CFBundleDisplayName에서 파생).
+- 자동 업데이트는 꺼져 있습니다(`SUFeedURL`은 베타 앱캐스트 예약 URL, `SUScheduledCheckInterval=0`). 베타 빌드는 수동으로 설치합니다.
+- staging backend에 연결하려면 실행 전에 주입합니다:
+
+```bash
+launchctl setenv BASEBALL_LIVE_KR_STAGING_BASE_URL http://127.0.0.1:17362  # 실제 staging 주소로 교체
+./scripts/baseball-live-kr.sh open-beta
+launchctl unsetenv BASEBALL_LIVE_KR_STAGING_BASE_URL  # 사용 후 정리
+```
+
+- 베타 앱에서 설정 > 서버 연결 > 환경에서 `Staging(Beta)`를 선택하고 상태 확인으로 `/v1/ready` 응답을 검증합니다.
 
 ## 데이터 서버만 실행
 
@@ -231,6 +253,26 @@ PORT=17361 \
 ```bash
 DRY_RUN=1 ./scripts/deploy-remote-backend.sh
 ```
+
+### staging(beta) backend 배포
+
+운영 서버와 같은 호스트에 두 번째 systemd user service로 staging(beta) backend를 띄웁니다(nginx/도메인 없이 포트 직접 노출, 베타 테스트용).
+
+```bash
+DEPLOY_ENV=staging ./scripts/baseball-live-kr.sh deploy-backend
+```
+
+- `DEPLOY_ENV`는 `production`(기본값, 생략 시 기존 동작과 동일) 또는 `staging`만 허용합니다.
+- staging 기본값: `SERVICE_NAME=baseball-live-kr-backend-staging`, `PORT=17362`, `REMOTE_DIR`는 운영 기본 경로 뒤에 `-staging` 접미사. `HEALTH_URL`은 PORT에서 파생됩니다.
+- 접속 정보는 git-ignored 로컬 파일 `.connect/backend-deploy-staging.env`에 두고, 저장소에는 실제 값을 기록하지 않습니다(`SSH_TARGET` 필수, 나머지는 선택 재정의). 파일 템플릿이 이미 준비되어 있습니다.
+- `NODE_ENV`는 기본 `production`이며, 환경변수로 재정의하면 systemd 유닛에 그대로 반영됩니다.
+- 명령 구성만 먼저 확인:
+
+```bash
+DRY_RUN=1 DEPLOY_ENV=staging ./scripts/baseball-live-kr.sh deploy-backend
+```
+
+- 배포 후 방화벽에서 해당 포트를 허용해야 외부(베타 앱)에서 접속할 수 있고, 앱 쪽에서는 `BASEBALL_LIVE_KR_STAGING_BASE_URL=http://<staging-host>:<port>`로 주입합니다.
 
 GitHub Release를 기준으로 원격 backend 서버가 자동 배포하게 하려면 release asset workflow와 원격 polling timer를 같이 사용한다.
 
