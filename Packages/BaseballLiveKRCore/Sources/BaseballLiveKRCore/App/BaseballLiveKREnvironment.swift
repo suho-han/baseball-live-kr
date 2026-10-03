@@ -15,6 +15,12 @@ public struct BaseballLiveKREnvironment: Sendable, Equatable {
     public static let productionBaseURLEnvironmentName = "BASEBALL_LIVE_KR_PRODUCTION_BASE_URL"
     public static let legacyProductionBaseURLEnvironmentName = "BASEBALL_LIVE_KR_LEGACY_PRODUCTION_BASE_URL"
 
+    public static var appDisplayName: String {
+        (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
+            ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String)
+            ?? "Baseball LIVE KR"
+    }
+
     public let baseURL: URL
     public let apiPathPrefix: String
     public let pollingInterval: Duration

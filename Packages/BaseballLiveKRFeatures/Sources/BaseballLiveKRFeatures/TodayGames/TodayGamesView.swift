@@ -58,7 +58,7 @@ public struct TodayGamesView: View {
         NavigationStack {
             content
                 .background(backgroundView)
-                .navigationTitle("Baseball LIVE KR")
+                .navigationTitle(BaseballLiveKREnvironment.appDisplayName)
 #if os(iOS)
                 .toolbarBackground(.hidden, for: .navigationBar)
 #endif
@@ -110,7 +110,7 @@ public struct TodayGamesView: View {
 
     private func commandBar(width: CGFloat) -> some View {
         KboCommandBar(
-            title: "Baseball LIVE KR",
+            title: BaseballLiveKREnvironment.appDisplayName,
             subtitle: commandBarSubtitle
         ) {
             Image(systemName: "baseball.fill")

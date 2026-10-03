@@ -96,7 +96,7 @@ struct MenuBarDashboardView: View {
     private var headerSection: some View {
         HStack(alignment: .top) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(BaseballLiveKRmacOSApp.appDisplayName)
+                Text(BaseballLiveKREnvironment.appDisplayName)
                     .font(.headline.weight(.bold))
                     .foregroundStyle(KboTheme.primaryText)
 
