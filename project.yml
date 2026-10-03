@@ -50,6 +50,9 @@ targets:
           - TeamWordmarks/**
           - TeamBrandAssets/**
       - path: BaseballLiveKRApp/macOS
+        excludes:
+          - Info.plist
+          - Info.plist-Beta
       - path: BaseballLiveKRApp/macOS/BaseballLiveKR.icns
         buildPhase: resources
     dependencies:
@@ -60,6 +63,32 @@ targets:
         PRODUCT_NAME: BaseballLiveKR
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: BaseballLiveKRApp/macOS/Info.plist
+  BaseballLiveKRmacOSBeta:
+    type: application
+    platform: macOS
+    sources:
+      - path: Packages/BaseballLiveKRCore/Sources/BaseballLiveKRCore
+      - path: Packages/BaseballLiveKRDesignSystem/Sources/BaseballLiveKRDesignSystem
+      - path: Packages/BaseballLiveKRFeatures/Sources/BaseballLiveKRFeatures
+      - path: BaseballLiveKRApp/Shared
+        excludes:
+          - TeamLogos/**
+          - TeamWordmarks/**
+          - TeamBrandAssets/**
+      - path: BaseballLiveKRApp/macOS
+        excludes:
+          - Info.plist
+          - Info.plist-Beta
+      - path: BaseballLiveKRApp/macOS/BaseballLiveKR.icns
+        buildPhase: resources
+    dependencies:
+      - package: Sparkle
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: kr.suhohan.baseballlivekr.macos.beta
+        PRODUCT_NAME: BaseballLiveKR-Beta
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: BaseballLiveKRApp/macOS/Info.plist-Beta
   BaseballLiveKRmacOSTests:
     type: bundle.unit-test
     platform: macOS
@@ -116,6 +145,17 @@ schemes:
     test:
       targets:
         - BaseballLiveKRmacOSTests
+    run:
+      config: Debug
+  BaseballLiveKRmacOSBeta:
+    preActions:
+      - name: Clean Before Run
+        settingsTarget: BaseballLiveKRmacOSBeta
+        script: |
+          rm -rf "${BUILD_DIR}"
+    build:
+      targets:
+        BaseballLiveKRmacOSBeta: all
     run:
       config: Debug
   BaseballLiveKRWidgetExtension:

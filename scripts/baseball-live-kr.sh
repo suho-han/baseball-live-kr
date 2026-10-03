@@ -12,6 +12,8 @@ Usage:
   ./scripts/baseball-live-kr.sh run      Build and open the macOS app with game data
   ./scripts/baseball-live-kr.sh live     Open the macOS app with a sample live game
   ./scripts/baseball-live-kr.sh open     Build and open only the macOS app
+  ./scripts/baseball-live-kr.sh open-beta
+                                Build and open the BaseballLiveKR-Beta app
   ./scripts/baseball-live-kr.sh verify   Run local verification
   ./scripts/baseball-live-kr.sh package  Build the Mac mini test package
   ./scripts/baseball-live-kr.sh package-backend-release
@@ -24,12 +26,23 @@ Usage:
 Environment:
   FORCE_RESTART=1   Restart the local game data process
   PORT=17361        Use another local port
+  DEPLOY_ENV=staging
+                    deploy-backend targets the staging(beta) deployment
 TEXT
 }
 
 build_macos_app() {
   xcodebuild \
     -scheme BaseballLiveKRmacOS \
+    -project "$ROOT_DIR/BaseballLiveKR.xcodeproj" \
+    -destination 'platform=macOS' \
+    -derivedDataPath "$DERIVED_DATA_PATH" \
+    build
+}
+
+build_macos_beta_app() {
+  xcodebuild \
+    -scheme BaseballLiveKRmacOSBeta \
     -project "$ROOT_DIR/BaseballLiveKR.xcodeproj" \
     -destination 'platform=macOS' \
     -derivedDataPath "$DERIVED_DATA_PATH" \
@@ -51,6 +64,11 @@ case "$command" in
     build_macos_app
     launchctl unsetenv BASEBALL_LIVE_KR_BASE_URL
     open -n "$DERIVED_DATA_PATH/Build/Products/Debug/BaseballLiveKR.app"
+    ;;
+  open-beta)
+    build_macos_beta_app
+    launchctl unsetenv BASEBALL_LIVE_KR_BASE_URL
+    open -n "$DERIVED_DATA_PATH/Build/Products/Debug/BaseballLiveKR-Beta.app"
     ;;
   verify)
     "$ROOT_DIR/scripts/verify-local.sh"

@@ -45,7 +45,7 @@ struct BaseballLiveKRmacOSApp: App {
     }
 
     private var mainWindowScene: some Scene {
-        Window("Baseball LIVE KR", id: "main-window") {
+        Window(BaseballLiveKRmacOSApp.appDisplayName, id: "main-window") {
             BaseballLiveKRHomeRootView(
                 viewModel: viewModel,
                 settings: settings,
@@ -171,7 +171,10 @@ struct BaseballLiveKRmacOSApp: App {
 #endif
     }
 
-    static let menuBarItemTitle = "Baseball LIVE KR"
+    static let appDisplayName = (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
+        ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String)
+        ?? "Baseball LIVE KR"
+    static let menuBarItemTitle = appDisplayName
     static let menuBarItemSystemImage = "baseball.fill"
     static let menuBarItemAccessibilityIdentifier = "kr.suhohan.baseballlivekr.menubar"
     static let menuBarItemAutosaveName = "kr.suhohan.baseballlivekr.menubar"
